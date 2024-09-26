@@ -1,3 +1,5 @@
+import Button from '@mui/material/Button';
+
 export default function Page() {
-    return <h1>Hello, Next.js!</h1>
+    return <Button variant="contained">Hello, next.js!</Button>;
 }

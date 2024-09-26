@@ -1,9 +1,5 @@
-// importing mui by default fonts roboto
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-
+import '@fontsource/roboto/500.css'; // default font for whole app
+import {CssBaseline} from "@mui/material";
 
 export default function RootLayout(
     {children}: { children: React.ReactNode }
@@ -12,10 +8,13 @@ export default function RootLayout(
         <html lang="en">
             <head>
                 <title>Scribe</title>
+                <meta name="viewport" content="initial-scale=1, width=device-width"/>
             </head>
 
             <body>
-                {children}
+                <CssBaseline>
+                    {children}
+                </CssBaseline>
             </body>
         </html>
     );
