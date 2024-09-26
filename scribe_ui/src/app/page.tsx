@@ -1,5 +1,23 @@
-import Button from '@mui/material/Button';
+import AppBar from '@mui/material/AppBar';
+import Typography from '@mui/material/Typography';
+import {Box} from "@mui/material";
+import {IconButton} from "@mui/material";
+import MenuIcon from '@mui/icons-material/Menu';
+import {Toolbar} from "@mui/material";
 
 export default function Page() {
-    return <Button variant="contained">Hello, next.js!</Button>;
+    return (
+
+        <AppBar position={"static"}>
+            <Toolbar>
+                <IconButton
+                    size={"large"}
+                    color={"inherit"}
+                    edge={"start"}
+                >
+                    <MenuIcon/>
+                </IconButton>
+            </Toolbar>
+        </AppBar>
+    );
 }
