@@ -6,16 +6,16 @@ export default function RootLayout(
 ) {
     return (
         <html lang="en">
-            <head>
-                <title>Scribe</title>
-                <meta name="viewport" content="initial-scale=1, width=device-width"/>
-            </head>
+        <head>
+            <title>Scribe</title>
+            <meta name="viewport" content="initial-scale=1, width=device-width"/>
+        </head>
 
-            <body>
-                <CssBaseline>
-                    {children}
-                </CssBaseline>
-            </body>
+        <body>
+        <CssBaseline>
+            {children}
+        </CssBaseline>
+        </body>
         </html>
     );
 }
