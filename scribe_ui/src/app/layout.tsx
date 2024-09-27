@@ -34,7 +34,7 @@ export default function RootLayout(
                         <IconButton size={'large'} color={"inherit"}
                                     onClick={() => themeMode === lightTheme ? setThemeMode(darkTheme) : setThemeMode(lightTheme)}
                         >
-                            <DarkModeIcon/>
+                            {themeMode === lightTheme? <DarkModeIcon/>: <LightModeIcon/>}
                         </IconButton>
                     </Toolbar>
                 </AppBar>
