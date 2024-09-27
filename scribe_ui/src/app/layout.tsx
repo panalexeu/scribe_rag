@@ -11,7 +11,6 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 
 import {darkTheme, lightTheme} from "./theme";
-import {light} from "@mui/material/styles/createPalette";
 
 export default function RootLayout(
     {children}: { children: React.ReactNode }
