@@ -31,7 +31,7 @@ export default function RootLayout(
                 <AppBar position={"static"} color={"transparent"}>
                     <Toolbar>
                         <Typography variant={'h5'}>Scribe</Typography>
-                        <IconButton size={'large'} color={"inherit"}
+                        <IconButton size={'large'} color={"inherit"} sx={{marginLeft: 'auto'}}
                                     onClick={() => themeMode === lightTheme ? setThemeMode(darkTheme) : setThemeMode(lightTheme)}
                         >
                             {themeMode === lightTheme? <DarkModeIcon/>: <LightModeIcon/>}
