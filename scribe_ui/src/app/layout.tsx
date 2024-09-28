@@ -2,23 +2,14 @@
 
 import {useState} from "react";
 import '@fontsource/roboto/500.css'; // default font for whole app
-import {CssBaseline, Icon, Toolbar} from "@mui/material";
-import Typography from "@mui/material/Typography";
+import {CssBaseline, Toolbar} from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import {ThemeProvider} from "@mui/material";
 import {IconButton} from "@mui/material";
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
-import SettingsIcon from '@mui/icons-material/Settings';
 import Box from '@mui/material/Box';
-import KeyIcon from '@mui/icons-material/Key';
 
 import {darkTheme, lightTheme} from "./theme";
 import NavList from './components/NavList';
@@ -77,7 +68,7 @@ export default function RootLayout(
 
                 {/* Main page content */}
                 <Box
-                    marginLeft={`${drawerWidth}px`}
+                    marginLeft={`${drawerWidth + 8}px`}
                 >
                     {children}
                 </Box>
