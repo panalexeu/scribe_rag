@@ -68,7 +68,7 @@ export default function RootLayout(
 
                 {/* Main page content */}
                 <Box
-                    marginLeft={`${drawerWidth + 8}px`}
+                    marginLeft={`${drawerWidth}px`}
                 >
                     {children}
                 </Box>
