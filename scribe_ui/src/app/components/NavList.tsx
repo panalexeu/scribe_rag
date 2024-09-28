@@ -6,6 +6,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import KeyIcon from "@mui/icons-material/Key";
+import TerminalIcon from '@mui/icons-material/Terminal';
 
 export default function NavList() {
     const listItemSize = 64;
@@ -16,18 +17,29 @@ export default function NavList() {
             <ListItem disablePadding={true} sx={{height: listItemSize}}>
                 <ListItemButton>
                     <ListItemIcon>
-                        <SettingsIcon/>
+                        <TerminalIcon/>
                     </ListItemIcon>
-                    <ListItemText primary={"Settings"}/>
+                    <ListItemText primary={"Dashboard"}/>
                 </ListItemButton>
             </ListItem>
             <Divider/>
+
             <ListItem disablePadding={true} sx={{height: listItemSize}}>
                 <ListItemButton>
                     <ListItemIcon>
                         <KeyIcon/>
                     </ListItemIcon>
                     <ListItemText primary={"Credentials"}/>
+                </ListItemButton>
+            </ListItem>
+            <Divider/>
+
+            <ListItem disablePadding={true} sx={{height: listItemSize}}>
+                <ListItemButton>
+                    <ListItemIcon>
+                        <SettingsIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary={"Settings"}/>
                 </ListItemButton>
             </ListItem>
             <Divider/>
