@@ -8,11 +8,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import TextField from '@mui/material/TextField';
 import {InputAdornment} from "@mui/material";
 import Stack from '@mui/material/Stack';
+import {Pagination} from '@mui/material';
 
 import ChatItem from './components/ChatItem';
 
 export default function Page() {
-    const chats = ['Item1', 'Item2', 'Item3','Item4','Item5','Item6','Item7', 'Item8',];
+    const chats = ['Item1', 'Item2', 'Item3','Item4','Item5','Item6','Item7', 'Item8', 'Item9', 'Item10'];
 
     return (
         <Box padding={1}>
@@ -69,6 +70,11 @@ export default function Page() {
                     )
                 }
             </Stack>
+
+            {/* Pagination */}
+            <Box display={"flex"} justifyContent={'flex-end'}>
+                <Pagination count={10}/>
+            </Box>
         </Box>
     );
 }
