@@ -13,11 +13,18 @@ export default function Page() {
     return (
         <Box padding={1}>
             <Toolbar>
-                <Typography variant={'h6'}>Chats</Typography>
+                <Typography
+                    variant={'h6'}
+                    marginRight={1}
+                >
+                    Chats
+                </Typography>
 
                 {/* Search Bar*/}
                 <TextField
-                    sx={{marginLeft: 'auto'}}
+                    sx={{
+                        marginLeft: 'auto',
+                    }}
                     variant={'standard'}
                     label={"Search..."}
                     slotProps = {
