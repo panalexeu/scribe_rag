@@ -21,12 +21,13 @@ import Box from '@mui/material/Box';
 import KeyIcon from '@mui/icons-material/Key';
 
 import {darkTheme, lightTheme} from "./theme";
+import NavList from './components/NavList';
+import Logo from './components/Logo';
 
 export default function RootLayout(
     {children}: { children: React.ReactNode }
 ) {
     const [themeMode, setThemeMode] = useState(lightTheme);
-    const listItemSize = 64;
     const drawerWidth = 256;
 
     return (
@@ -40,10 +41,16 @@ export default function RootLayout(
         <ThemeProvider theme={themeMode}>
             <CssBaseline>
                 {/*APP_BAR*/}
-                <AppBar position={"static"} color={"transparent"}>
+                <AppBar
+                    position={"static"}
+                    color={"transparent"}
+                    sx={{
+                        width: `calc(100% - ${drawerWidth}px)`,
+                        ml: `${drawerWidth}px`
+                    }}
+                >
                     <Toolbar>
-                        {/*<Typography variant={'h5'}>Scribe</Typography>*/}
-                        <IconButton size={'large'} color={"inherit"} sx={{marginLeft: 'auto'}}
+                        <IconButton  sx={{marginLeft: 'auto'}}
                                     onClick={() => themeMode === lightTheme ? setThemeMode(darkTheme) : setThemeMode(lightTheme)}
                         >
                             {themeMode === lightTheme ? <DarkModeIcon/> : <LightModeIcon/>}
@@ -57,43 +64,23 @@ export default function RootLayout(
                     variant={"permanent"}
                     sx={{
                         width: drawerWidth,
-                        flexShrink: 0,
                         '& .MuiDrawer-paper': {
                             width: drawerWidth,
                             boxSizing: 'border-box',
                         }
                     }}
+                    color={"transparent"}
                 >
-                    {/*Logo*/}
-                    <Toolbar>
-                        <Typography variant={'h5'}>
-                            Scribe
-                        </Typography>
-                    </Toolbar>
-                    <Divider/>
-
-                    {/*List*/}
-                    <List disablePadding={true}>
-                        <ListItem disablePadding={true} sx={{height:listItemSize}}>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <SettingsIcon/>
-                                </ListItemIcon>
-                                <ListItemText primary={"Settings"}/>
-                            </ListItemButton>
-                        </ListItem>
-                        <Divider/>
-                        <ListItem disablePadding={true} sx={{height:listItemSize}}>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <KeyIcon/>
-                                </ListItemIcon>
-                                <ListItemText primary={"Credentials"}/>
-                            </ListItemButton>
-                        </ListItem>
-                        <Divider/>
-                    </List>
+                    <Logo/>
+                    <NavList/>
                 </Drawer>
+
+                {/* Main page content */}
+                <Box
+                    marginLeft={`${drawerWidth}px`}
+                >
+                    {children}
+                </Box>
             </CssBaseline>
         </ThemeProvider>
         </body>
