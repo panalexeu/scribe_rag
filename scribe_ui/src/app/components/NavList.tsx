@@ -8,14 +8,21 @@ import Divider from "@mui/material/Divider";
 import KeyIcon from "@mui/icons-material/Key";
 import TerminalIcon from '@mui/icons-material/Terminal';
 
+import { useRouter } from 'next/navigation';
+
 export default function NavList() {
-    const listItemSize = 64;
+    const router = useRouter();
 
     return (
-
         <List disablePadding={true}>
-            <ListItem disablePadding={true} sx={{height: listItemSize}}>
-                <ListItemButton>
+
+            {/* DASHBOARD */}
+            <ListItem disablePadding={true}>
+                <ListItemButton
+                    onClick = {
+                        () => router.push('/dashboard')
+                    }
+                >
                     <ListItemIcon>
                         <TerminalIcon/>
                     </ListItemIcon>
@@ -24,8 +31,13 @@ export default function NavList() {
             </ListItem>
             <Divider/>
 
-            <ListItem disablePadding={true} sx={{height: listItemSize}}>
-                <ListItemButton>
+            {/* CREDERNTIALS */}
+            <ListItem disablePadding={true}>
+                <ListItemButton
+                    onClick = {
+                        () => router.push('/credentials')
+                    }
+                >
                     <ListItemIcon>
                         <KeyIcon/>
                     </ListItemIcon>
@@ -34,8 +46,13 @@ export default function NavList() {
             </ListItem>
             <Divider/>
 
-            <ListItem disablePadding={true} sx={{height: listItemSize}}>
-                <ListItemButton>
+            {/* SETTINGS */}
+            <ListItem disablePadding={true}>
+                <ListItemButton
+                    onClick = {
+                        () => router.push('/settings')
+                    }
+                >
                     <ListItemIcon>
                         <SettingsIcon/>
                     </ListItemIcon>

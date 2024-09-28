@@ -1,5 +1,4 @@
 import {
-    Box,
     Toolbar,
     Typography,
     IconButton
@@ -8,27 +7,24 @@ import EditIcon from '@mui/icons-material/Edit';
 import LaunchIcon from '@mui/icons-material/Launch';
 
 
+export default function ChatItem({name}: { name: string }) {
+    return (
+        <Toolbar>
+            <Typography>{name}</Typography>
 
-export default function ChatItem({ name }: {name: string}) {
-    return(
-        <Box>
-            <Toolbar>
-                <Typography>{name}</Typography>
+            {/* edit */}
+            <IconButton>
+                <EditIcon/>
+            </IconButton>
 
-                {/* edit */}
-                <IconButton>
-                    <EditIcon/>
-                </IconButton>
-
-                {/* launch */}
-                <IconButton
-                    sx={{
-                        marginLeft: 'auto'
-                    }}
-                >
-                    <LaunchIcon/>
-                </IconButton>
-            </Toolbar>
-        </Box>
+            {/* launch */}
+            <IconButton
+                sx={{
+                    marginLeft: 'auto'
+                }}
+            >
+                <LaunchIcon/>
+            </IconButton>
+        </Toolbar>
     );
 }
