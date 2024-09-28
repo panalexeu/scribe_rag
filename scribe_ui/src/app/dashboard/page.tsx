@@ -7,15 +7,20 @@ import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import TextField from '@mui/material/TextField';
 import {InputAdornment} from "@mui/material";
+import Stack from '@mui/material/Stack';
 
+import ChatItem from './components/ChatItem';
 
 export default function Page() {
+    const chats = ['Item1', 'Item2', 'Item3','Item4','Item5','Item6','Item7', 'Item8',];
+
     return (
         <Box padding={1}>
+            {/*TOOLBAR*/}
             <Toolbar>
                 <Typography
                     variant={'h6'}
-                    marginRight={1}
+                    paddingRight={1}
                 >
                     Chats
                 </Typography>
@@ -42,13 +47,28 @@ export default function Page() {
                     }
                 />
 
+                {/* Add chat button*/}
                 <Divider orientation={'vertical'}/>
                 <IconButton>
                     <AddIcon/>
                 </IconButton>
-
             </Toolbar>
             <Divider/>
+
+            {/* Chats */}
+            <Stack
+                divider={
+                    <Divider/>
+                }
+            >
+                {
+                    chats.map(
+                        (chat, _) => (
+                            <ChatItem name={chat}/>
+                        )
+                    )
+                }
+            </Stack>
         </Box>
     );
 }
