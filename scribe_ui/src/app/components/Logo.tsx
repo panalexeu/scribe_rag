@@ -1,12 +1,19 @@
-import {Toolbar} from "@mui/material";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import Box from "@mui/material/Box";
+import {
+    Toolbar,
+    IconButton,
+    Typography,
+    Divider,
+    Box
+} from "@mui/material";
+import HomeIcon from '@mui/icons-material/Home';
 
 export default function Logo() {
     return (
         <Box>
             <Toolbar>
+                <IconButton edge={'start'}>
+                    <HomeIcon/>
+                </IconButton>
                 <Typography variant={'h5'}>
                     Scribe
                 </Typography>
