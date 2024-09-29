@@ -11,14 +11,19 @@ import {
     IconButton,
     Tooltip,
     Button,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import {useRouter} from 'next/navigation';
-
+import {useState} from "react";
 
 export default function Page() {
     const router = useRouter();
+    const [chatType, setChatType] = useState('Instruction');
 
     return (
         <Box>
@@ -30,7 +35,6 @@ export default function Page() {
                     Add new chat
                 </Typography>
             </Toolbar>
-
             <Divider/>
 
             <Stack
@@ -50,6 +54,22 @@ export default function Page() {
                         label={'Chat name'}
                         sx={{flexGrow: 1}}
                     />
+
+                    {/* Chat type*/}
+                    <FormControl>
+                        <InputLabel>Chat Type</InputLabel>
+                        <Select
+                            value={chatType}
+                            onChange={
+                                (event) => setChatType(event.target.value)
+                            }
+                            sx={{flexGrow: 1}}
+                            label={'Chat Type'}
+                        >
+                            <MenuItem value={'Instruction'}>Instruction</MenuItem>
+                            <MenuItem value={'History'}>History</MenuItem>
+                        </Select>
+                    </FormControl>
                 </Box>
 
                 {/* SYSTEM PROMPT*/}
