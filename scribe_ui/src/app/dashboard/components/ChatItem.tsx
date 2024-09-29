@@ -1,10 +1,12 @@
 import {
     Toolbar,
     Typography,
-    IconButton
+    IconButton,
+    Tooltip
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import LaunchIcon from '@mui/icons-material/Launch';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 export default function ChatItem({name}: { name: string }) {
@@ -13,18 +15,29 @@ export default function ChatItem({name}: { name: string }) {
             <Typography>{name}</Typography>
 
             {/* edit */}
-            <IconButton>
-                <EditIcon/>
-            </IconButton>
+            <Tooltip title={'Edit chat'}>
+                <IconButton>
+                    <EditIcon/>
+                </IconButton>
+            </Tooltip>
+
+            {/* delete */}
+            <Tooltip title={'Delete chat'}>
+                <IconButton edge={'start'}>
+                    <DeleteIcon/>
+                </IconButton>
+            </Tooltip>
 
             {/* launch */}
-            <IconButton
-                sx={{
-                    marginLeft: 'auto'
-                }}
-            >
-                <LaunchIcon/>
-            </IconButton>
+            <Tooltip title={'Open chat'}>
+                <IconButton
+                    sx={{
+                        marginLeft: 'auto'
+                    }}
+                >
+                    <LaunchIcon/>
+                </IconButton>
+            </Tooltip>
         </Toolbar>
     );
 }
