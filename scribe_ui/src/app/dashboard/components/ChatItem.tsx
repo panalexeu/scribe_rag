@@ -15,7 +15,9 @@ export default function ChatItem({name}: { name: string }) {
             <Typography>{name}</Typography>
 
             {/* edit */}
-            <Tooltip title={'Edit chat'}>
+            <Tooltip
+                title={'Edit chat'}
+            >
                 <IconButton>
                     <EditIcon/>
                 </IconButton>
@@ -31,6 +33,7 @@ export default function ChatItem({name}: { name: string }) {
             {/* launch */}
             <Tooltip title={'Open chat'}>
                 <IconButton
+                    edge={'end'}
                     sx={{
                         marginLeft: 'auto'
                     }}
