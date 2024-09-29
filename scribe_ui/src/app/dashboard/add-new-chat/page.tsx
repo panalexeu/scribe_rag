@@ -9,10 +9,13 @@ import {
     Stack,
     Autocomplete,
     IconButton,
-    Tooltip
+    Tooltip,
+    Button,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 import {useRouter} from 'next/navigation';
+
 
 export default function Page() {
     const router = useRouter();
@@ -89,7 +92,7 @@ export default function Page() {
                             (params) => <TextField {...params} label={'LLM Provider'}/>
                         }
                         options={['OpenAI', 'Anthropic']}
-                        sx={{flexGrow: 0.5}}
+                        sx={{flexGrow: 1}}
                     />
 
                     {/*Embedding model*/}
@@ -98,7 +101,7 @@ export default function Page() {
                             (params) => <TextField {...params} label={'Embedding Model Provider'}/>
                         }
                         options={['OpenAI', 'Anthropic']}
-                        sx={{flexGrow: 0.5}}
+                        sx={{flexGrow: 1}}
                     />
 
                     <Tooltip title={'Add new credential provider'}>
@@ -110,6 +113,25 @@ export default function Page() {
                         </IconButton>
                     </Tooltip>
                 </Box>
+
+                {/*DOCUMENTS*/}
+                <Typography>
+                    Documents
+                </Typography>
+                <Divider/>
+
+                <Box
+                    display={'flex'}
+                    justifyContent={'end'}
+                >
+                    <Button
+                        variant={'outlined'}
+                        startIcon={<UploadFileIcon/>}
+                    >
+                        Upload Documents
+                    </Button>
+                </Box>
+
             </Stack>
         </Box>
     );
