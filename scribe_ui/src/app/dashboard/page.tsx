@@ -1,3 +1,5 @@
+'use client';
+
 import {
     Toolbar,
     Divider,
@@ -12,16 +14,19 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
+import { useRouter } from 'next/navigation';
 
 import ChatItem from './components/ChatItem';
 
 export default function Page() {
     const chats = ['Item1', 'Item2', 'Item3', 'Item4', 'Item5', 'Item6', 'Item7', 'Item8', 'Item9', 'Item10'];
+    const router = useRouter();
 
     return (
         <Box>
             {/*TOOLBAR*/}
             <Toolbar>
+                {/* Name */}
                 <Typography
                     variant={'h6'}
                     paddingRight={1}
@@ -54,8 +59,16 @@ export default function Page() {
                 <Divider orientation={'vertical'}/>
 
                 {/* Add chat button*/}
-                <Tooltip title={'Add new chat'}>
-                    <IconButton>
+                <Tooltip
+                    title={'Add new chat'}
+                >
+                    <IconButton
+                        onClick={
+                            () => {
+                                router.push('/dashboard/add-new-chat');
+                            }
+                        }
+                    >
                         <AddIcon/>
                     </IconButton>
                 </Tooltip>
