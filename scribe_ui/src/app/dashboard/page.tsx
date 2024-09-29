@@ -29,7 +29,7 @@ export default function Page() {
                 {/* Name */}
                 <Typography
                     variant={'h6'}
-                    paddingRight={1}
+                    marginRight={2}
                 >
                     Chats
                 </Typography>
