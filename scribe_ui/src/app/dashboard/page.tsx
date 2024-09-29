@@ -56,8 +56,6 @@ export default function Page() {
                     }
                 />
 
-                <Divider orientation={'vertical'}/>
-
                 {/* Add chat button*/}
                 <Tooltip
                     title={'Add new chat'}
@@ -68,6 +66,7 @@ export default function Page() {
                                 router.push('/dashboard/add-new-chat');
                             }
                         }
+                        edge={'end'}
                     >
                         <AddIcon/>
                     </IconButton>
