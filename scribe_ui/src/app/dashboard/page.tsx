@@ -1,19 +1,22 @@
-import {Toolbar} from "@mui/material";
-import {Divider} from "@mui/material";
-import {Box} from "@mui/material";
-import Typography from "@mui/material/Typography";
-import IconButton from '@mui/material/IconButton';
+import {
+    Toolbar,
+    Divider,
+    Box,
+    Typography,
+    IconButton,
+    TextField,
+    InputAdornment,
+    Stack,
+    Pagination,
+    Tooltip
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
-import TextField from '@mui/material/TextField';
-import {InputAdornment} from "@mui/material";
-import Stack from '@mui/material/Stack';
-import {Pagination} from '@mui/material';
 
 import ChatItem from './components/ChatItem';
 
 export default function Page() {
-    const chats = ['Item1', 'Item2', 'Item3','Item4','Item5','Item6','Item7', 'Item8', 'Item9', 'Item10'];
+    const chats = ['Item1', 'Item2', 'Item3', 'Item4', 'Item5', 'Item6', 'Item7', 'Item8', 'Item9', 'Item10'];
 
     return (
         <Box>
@@ -33,7 +36,7 @@ export default function Page() {
                     }}
                     variant={'standard'}
                     label={"Search..."}
-                    slotProps = {
+                    slotProps={
                         {
                             input: {
                                 endAdornment: (
@@ -48,11 +51,14 @@ export default function Page() {
                     }
                 />
 
-                {/* Add chat button*/}
                 <Divider orientation={'vertical'}/>
-                <IconButton>
-                    <AddIcon/>
-                </IconButton>
+
+                {/* Add chat button*/}
+                <Tooltip title={'Add new chat'}>
+                    <IconButton>
+                        <AddIcon/>
+                    </IconButton>
+                </Tooltip>
             </Toolbar>
             <Divider/>
 
