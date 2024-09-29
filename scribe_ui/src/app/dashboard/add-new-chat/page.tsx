@@ -42,7 +42,6 @@ export default function Page() {
                 gap={2}
             >
                 {/* CHAT */}
-
                 <Box
                     display={'flex'}
                     flexDirection={'row'}
@@ -70,6 +69,19 @@ export default function Page() {
                             <MenuItem value={'History'}>History</MenuItem>
                         </Select>
                     </FormControl>
+                </Box>
+
+                {/* Chat description*/}
+                <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    gap={2}
+                    width={'33%'}
+                >
+                    <TextField
+                        label={'Chat description'}
+                        sx={{flexGrow: 1}}
+                    />
                 </Box>
 
                 {/* SYSTEM PROMPT*/}
