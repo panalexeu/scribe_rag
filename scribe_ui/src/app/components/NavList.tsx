@@ -1,13 +1,14 @@
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
+import {
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Divider
+} from '@mui/material';
 import SettingsIcon from "@mui/icons-material/Settings";
-import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
 import KeyIcon from "@mui/icons-material/Key";
 import TerminalIcon from '@mui/icons-material/Terminal';
-
 import { useRouter } from 'next/navigation';
 
 export default function NavList() {
