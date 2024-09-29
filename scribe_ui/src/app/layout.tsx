@@ -2,14 +2,19 @@
 
 import {useState} from "react";
 import '@fontsource/roboto/500.css'; // default font for whole app
-import {CssBaseline, Toolbar} from "@mui/material";
-import AppBar from "@mui/material/AppBar";
-import {ThemeProvider} from "@mui/material";
-import {IconButton} from "@mui/material";
+import {
+    CssBaseline,
+    Toolbar,
+    AppBar,
+    ThemeProvider,
+    IconButton,
+    Drawer,
+    Box,
+    Tooltip
+
+} from '@mui/material';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import Drawer from '@mui/material/Drawer';
-import Box from '@mui/material/Box';
 
 import {darkTheme, lightTheme} from "./theme";
 import NavList from './components/NavList';
@@ -41,11 +46,13 @@ export default function RootLayout(
                     }}
                 >
                     <Toolbar>
-                        <IconButton  sx={{marginLeft: 'auto'}}
-                                    onClick={() => themeMode === lightTheme ? setThemeMode(darkTheme) : setThemeMode(lightTheme)}
-                        >
-                            {themeMode === lightTheme ? <DarkModeIcon/> : <LightModeIcon/>}
-                        </IconButton>
+                        <Tooltip title={'Change theme'}>
+                            <IconButton  sx={{marginLeft: 'auto'}}
+                                        onClick={() => themeMode === lightTheme ? setThemeMode(darkTheme) : setThemeMode(lightTheme)}
+                            >
+                                {themeMode === lightTheme ? <DarkModeIcon/> : <LightModeIcon/>}
+                            </IconButton>
+                        </Tooltip>
                     </Toolbar>
                 </AppBar>
 
