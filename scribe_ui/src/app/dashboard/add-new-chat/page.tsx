@@ -101,6 +101,7 @@ export default function Page() {
                         label={'System prompt'}
                         multiline={true}
                         minRows={16}
+                        maxRows={24}
                         sx={{flexGrow: 1}}
                     />
                 </Box>
