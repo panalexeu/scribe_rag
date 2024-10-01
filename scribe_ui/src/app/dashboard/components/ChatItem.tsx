@@ -7,9 +7,12 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import LaunchIcon from '@mui/icons-material/Launch';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useRouter } from 'next/navigation';
 
 
 export default function ChatItem({name}: { name: string }) {
+    const router = useRouter();
+
     return (
         <Toolbar>
             <Typography>{name}</Typography>
@@ -37,6 +40,9 @@ export default function ChatItem({name}: { name: string }) {
                     sx={{
                         marginLeft: 'auto'
                     }}
+                    onClick={
+                        () => router.push(`/dashboard/instruction-chat/${name}`)
+                    }
                 >
                     <LaunchIcon/>
                 </IconButton>
