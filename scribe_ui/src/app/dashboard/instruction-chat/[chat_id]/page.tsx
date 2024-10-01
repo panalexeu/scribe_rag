@@ -32,14 +32,12 @@ export default function Page({params}: {params: {chat_id: string}}) {
                 <Paper
                     variant={'outlined'}
                     sx={{
-                        flexGrow: 1
+                        height: '50vh',
+                        overflow: 'auto'
                     }}
                 >
                     <Typography>
-                        LLM OUTPUT LLM OUTPUT LLM OUTPUT
-                        LLM OUTPUT LLM OUTPUT LLM OUTPUT
-                        LLM OUTPUT LLM OUTPUT LLM OUTPUT
-
+                        LLM output
                     </Typography>
                 </Paper>
 
