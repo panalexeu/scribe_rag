@@ -36,7 +36,7 @@ export default function Page({params}: {params: {chat_id: string}}) {
                         overflow: 'auto'
                     }}
                 >
-                    <Typography>
+                    <Typography component={'div'}>
                         LLM output
                     </Typography>
                 </Paper>
