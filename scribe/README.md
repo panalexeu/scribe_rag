@@ -1,2 +1,5 @@
 ## notes
-* add a makefile ro run the project;
+
+| Task                              | Status |
+|-----------------------------------|--------|
+| add a makefile ro run the project | ✅      |  
