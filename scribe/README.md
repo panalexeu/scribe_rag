@@ -24,3 +24,5 @@ or
 * https://api.python.langchain.com/en/latest/langchain_api_reference.html
 * https://python.langchain.com/docs/tutorials/rag/
 * https://python.langchain.com/api_reference/langchain/chains/langchain.chains.combine_documents.stuff.create_stuff_documents_chain.html
+* https://fastapi.tiangolo.com/learn/
+* https://huggingface.co/learn/cookbook/rag_evaluation
