@@ -7,5 +7,5 @@ router = APIRouter(
 
 
 @router.get('/')
-async def invoke():
+def invoke():
     return {'msg': 'instruction invoked'}
