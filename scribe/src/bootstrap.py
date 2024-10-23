@@ -5,9 +5,14 @@ from mediatr import Mediator
 from src.services.chat import print_msg
 
 
+def di_handler_class_manager(HandlerCls: type, is_behaviour=False):
+    return HandlerCls()
+
+
 class Container(DeclarativeContainer):
     mediatr = Singleton(
-        Mediator
+        Mediator,
+        di_handler_class_manager
     )
 
     chat_service = Callable(
@@ -20,7 +25,7 @@ def wire_dependencies():
     container = Container()
     container.wire(
         modules=[
-            'src.api.routers.chat',
-            'src.handlers.chat'
+            'src.handlers.chat',
+            'src.api.routers.chat'
         ]
     )

@@ -15,6 +15,7 @@ router = APIRouter(
 @router.post('/')
 @inject
 def post_chat(
-    mediatr=Annotated[Mediator, Depends(Provide['mediatr'])]
+    mediatr: Mediator = Depends(Provide['mediatr'])
 ):
-    mediatr.send(ChatPostRequest(msg='chat posted'))
+    res = mediatr.send(ChatPostRequest(msg='chat posted'))
+    return {'msg': res}
