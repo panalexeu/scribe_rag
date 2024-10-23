@@ -10,10 +10,6 @@ class ChatPostRequest(GenericQuery[str]):
     msg: str
 
 
-# def chat_post_handler(request: ChatPostRequest):
-#     dep = 'mock'
-#     print(f'request {request} with dep: {dep}')
-
 @Mediator.handler
 class ChatPostHandler:
     @inject
