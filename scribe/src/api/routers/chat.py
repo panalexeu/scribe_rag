@@ -1,7 +1,10 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 from dependency_injector.wiring import inject, Provide
+from mediatr import Mediator
 
-from src.bootstrap import Container
+from src.handlers.chat import ChatPostRequest
 
 router = APIRouter(
     tags=['chat'],
@@ -12,6 +15,6 @@ router = APIRouter(
 @router.post('/')
 @inject
 def post_chat(
-        printer=Depends(Provide[Container.printer])
+    mediatr=Annotated[Mediator, Depends(Provide['mediatr'])]
 ):
-    return {'chat': 'injected'}
+    mediatr.send(ChatPostRequest(msg='chat posted'))

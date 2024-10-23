@@ -1,13 +1,18 @@
 from dependency_injector.containers import DeclarativeContainer
-from dependency_injector.providers import Callable
+from dependency_injector.providers import Callable, Singleton
+from mediatr import Mediator
 
-from .services.chat import print_msg
+from src.services.chat import print_msg
 
 
 class Container(DeclarativeContainer):
-    printer = Callable(
+    mediatr = Singleton(
+        Mediator
+    )
+
+    chat_service = Callable(
         print_msg,
-        'DI'
+        'mediator'
     )
 
 
@@ -16,5 +21,6 @@ def wire_dependencies():
     container.wire(
         modules=[
             'src.api.routers.chat',
+            'src.handlers.chat'
         ]
     )
