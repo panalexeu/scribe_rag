@@ -118,6 +118,24 @@ def test_scribe_folder_sets_up_multiple_times(set_fake_home_path):
     assert scanned_dir[0] == KEY_FILE
 
 
+def test_keys_are_the_same_after_multiple_set_ups():
+    setup_scribe_folder()
+    key = read_scribe_key()
+
+    # spam files and dirs
+    with open(os.path.join(get_scribe_folder_path(), 'test1.txt'), 'w') as file:
+        file.write('test')
+
+    fake_dir_path = os.path.join(get_scribe_folder_path(), 'test_folder')
+    os.mkdir(fake_dir_path)
+
+    # setting folder again
+    setup_scribe_folder()
+    key_new = read_scribe_key()
+
+    assert key == key_new
+
+
 def test_read_and_write_of_scribe_key(set_fake_home_path):
     key = write_scribe_key()
 

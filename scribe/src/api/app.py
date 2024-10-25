@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 
+from src.bootstrap import bootstrap
+
 
 def app_factory():
     app_ = FastAPI()
+
+    bootstrap()
 
     return app_
 
