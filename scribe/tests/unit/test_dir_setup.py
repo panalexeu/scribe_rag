@@ -59,7 +59,37 @@ def test_scribe_folder_is_cleaned_from_unnecessary_files(set_fake_home_path):
     assert scanned_dir[0] == KEY_FILE
 
 
-def test_scribe_folder_sets_up_multiple_times():
+def test_scribe_folder_recreates_deleted_key_file(set_fake_home_path):
+    setup_scribe_folder()
+
+    # key deleted
+    key_path = os.path.join(get_scribe_folder_path(), KEY_FILE)
+    os.remove(key_path)
+
+    setup_scribe_folder()
+
+    assert os.path.exists(key_path)
+
+
+def test_scribe_folder_rewrites_changed_invalid_key(set_fake_home_path):
+    # initial key
+    setup_scribe_folder()
+    read_scribe_key()
+
+    # key rewritten
+    key_path = os.path.join(get_scribe_folder_path(), KEY_FILE)
+    with open(key_path, 'w') as file:
+        file.write('bla, bla')
+
+    with pytest.raises(ValueError):
+        read_scribe_key()
+
+    # key recreated
+    setup_scribe_folder()
+    read_scribe_key()
+
+
+def test_scribe_folder_sets_up_multiple_times(set_fake_home_path):
     setup_scribe_folder()
 
     # spam files and dirs
@@ -112,4 +142,4 @@ def test_validate_key():
             123 * ? 
         """)
 
-    assert validate_key('LvHrHVBQN1iyTpJHHqCGx1t9SWdG-dyWT3qjnlj99iQ=') is None
+    validate_key('LvHrHVBQN1iyTpJHHqCGx1t9SWdG-dyWT3qjnlj99iQ=')

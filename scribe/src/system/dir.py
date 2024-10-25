@@ -9,8 +9,7 @@ KEY_FILE = 'scribe.key'
 
 def setup_scribe_folder() -> None:
     """
-    Sets up .scribe folder in $HOME directory.
-    If the folder exists, cleans it leaving only 'scribe.key' file.
+    Sets up .scribe folder in $HOME directory. If the folder exists, cleans it.
     """
     if os.path.exists(get_scribe_folder_path()):
         clean_scribe_folder()
@@ -22,7 +21,7 @@ def setup_scribe_folder() -> None:
 
 def clean_scribe_folder() -> None:
     """
-    Cleans $HOME/.scribe dir, leaving only 'scribe.key' file.
+    Cleans $HOME/.scribe dir, leaving only 'scribe.key' file. Rewrites deleted or changed 'scribe.key' file.
     """
 
     with os.scandir(get_scribe_folder_path()) as scan:
@@ -32,6 +31,15 @@ def clean_scribe_folder() -> None:
             else:
                 if file.name != KEY_FILE:
                     os.remove(file)
+
+    key_path = os.path.join(get_scribe_folder_path(), KEY_FILE)
+    if os.path.exists(key_path):
+        try:
+            read_scribe_key()
+        except ValueError:
+            write_scribe_key()
+    else:
+        write_scribe_key()
 
 
 def get_scribe_folder_path() -> str:
