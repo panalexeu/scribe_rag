@@ -89,7 +89,7 @@ def test_scribe_folder_rewrites_changed_invalid_key(set_fake_home_path):
     read_scribe_key()
 
 
-def test_scribe_folder_sets_up_multiple_times(set_fake_home_path):
+def test_scribe_folder_sets_up_multiple_times_and_saves_key(set_fake_home_path):
     setup_scribe_folder()
 
     # spam files and dirs
@@ -136,7 +136,7 @@ def test_keys_are_the_same_after_multiple_set_ups():
     assert key == key_new
 
 
-def test_read_and_write_of_scribe_key(set_fake_home_path):
+def test_read_and_write_scribe_key(set_fake_home_path):
     key = write_scribe_key()
 
     assert os.path.exists(os.path.join(get_scribe_folder_path(), KEY_FILE))
