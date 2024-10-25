@@ -8,3 +8,6 @@ dev:
 
 prod:
 	poetry run fastapi run $(APP_PATH)
+
+test:
+	pytest
