@@ -34,7 +34,7 @@ def test_scribe_folder_sets_up(set_fake_home_path):
     assert os.path.exists(fake_home_path)
 
 
-def test_scribe_folder_cleans_unnecessary_files(set_fake_home_path):
+def test_scribe_folder_is_cleaned_from_unnecessary_files(set_fake_home_path):
     setup_scribe_folder()
 
     # spam files
@@ -59,7 +59,7 @@ def test_scribe_folder_cleans_unnecessary_files(set_fake_home_path):
     assert scanned_dir[0] == KEY_FILE
 
 
-def test_scribe_folder_setup_several_times():
+def test_scribe_folder_sets_up_multiple_times():
     setup_scribe_folder()
 
     # spam files and dirs
@@ -88,7 +88,7 @@ def test_scribe_folder_setup_several_times():
     assert scanned_dir[0] == KEY_FILE
 
 
-def test_write_scribe_key(set_fake_home_path):
+def test_read_and_write_of_scribe_key(set_fake_home_path):
     key = write_scribe_key()
 
     assert os.path.exists(os.path.join(get_scribe_folder_path(), KEY_FILE))
@@ -98,7 +98,7 @@ def test_write_scribe_key(set_fake_home_path):
     assert read_key == key
 
 
-def test_is_valid_key():
+def test_validate_key():
     with pytest.raises(ValueError):
         validate_key('привіт')
 
