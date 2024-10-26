@@ -10,6 +10,8 @@ def setup_scribe_dir(
 ) -> None:
     """
     Sets up .scribe folder in $HOME directory. If the folder exists, cleans it.
+
+    :raises OSError:
     """
     if os.path.exists(scribe_dir):
         __clean_scribe_dir(scribe_dir, scribe_key_file)
@@ -21,7 +23,7 @@ def setup_scribe_dir(
 
 def get_scribe_dir_path() -> str:
     """
-    :return: str - $HOME/.scribe file path.
+    :returns: str - $HOME/.scribe file path.
     """
     home = os.environ['HOME']
     scribe_path = os.path.join(home, '.scribe')
@@ -31,7 +33,7 @@ def get_scribe_dir_path() -> str:
 
 def get_scribe_key_file() -> str:
     """
-    :return: str - $HOME/.scribe/scribe.key file path.
+    :returns: str - $HOME/.scribe/scribe.key file path.
     """
     key_path = os.path.join(os.environ.get('HOME'), '.scribe', 'scribe.key')
 
@@ -44,6 +46,8 @@ def __clean_scribe_dir(
 ) -> None:
     """
     Cleans $HOME/.scribe dir, leaving only 'scribe.key' file. Rewrites deleted or changed 'scribe.key' file.
+
+    :raises OSError:
     """
 
     with os.scandir(scribe_dir) as scan:
@@ -70,6 +74,8 @@ def __write_scribe_key(
     Writes base64-encoded (base64.urlsafe_b64encode) 32-byte generated key (os.urandom).
 
     :returns: str - A generated base64-encoded 32-byte key.
+
+    :raises OSError:
     """
     key: bytes = Fernet.generate_key()
     key_to_str: str = key.decode()
@@ -83,7 +89,12 @@ def __write_scribe_key(
 def __read_scribe_key(
         scribe_key_file: str
 ) -> str:
-    """Reads scribe.key file."""
+    """
+    Reads scribe.key file.
+
+    :raises FileNotFoundError: If key file is not found.
+    :raises ValueError: If key is not valid.
+    """
 
     with open(scribe_key_file, 'r') as file:
         key = file.read()
@@ -95,6 +106,8 @@ def __read_scribe_key(
 def __validate_key(key: str) -> None:
     """
     Validates Fernet generated key.
+
+    :raises ValueError: If provided key is not valid base64 encoded 32 byte key.
     """
 
     Fernet(key)
