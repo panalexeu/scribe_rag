@@ -3,58 +3,62 @@ import shutil
 
 from cryptography.fernet import Fernet
 
-DIR = '.scribe'
-KEY_FILE = 'scribe.key'
 
-
-def setup_scribe_folder() -> None:
+def setup_scribe_dir(
+        scribe_dir: str,
+        scribe_key_file: str
+) -> None:
     """
     Sets up .scribe folder in $HOME directory. If the folder exists, cleans it.
     """
-    if os.path.exists(get_scribe_folder_path()):
-        clean_scribe_folder()
+    if os.path.exists(scribe_dir):
+        clean_scribe_dir(scribe_dir, scribe_key_file)
         return
 
-    os.mkdir(get_scribe_folder_path())
-    write_scribe_key()
+    os.mkdir(scribe_dir)
+    write_scribe_key(scribe_key_file)
 
 
-def clean_scribe_folder() -> None:
+def clean_scribe_dir(
+        scribe_dir: str,
+        scribe_key_file: str
+) -> None:
     """
     Cleans $HOME/.scribe dir, leaving only 'scribe.key' file. Rewrites deleted or changed 'scribe.key' file.
     """
 
-    with os.scandir(get_scribe_folder_path()) as scan:
+    with os.scandir(scribe_dir) as scan:
         for file in scan:
             if file.is_dir():
-                shutil.rmtree(os.path.join(get_scribe_folder_path(), file.name))
+                shutil.rmtree(os.path.join(scribe_dir, file.name))
             else:
-                if file.name != KEY_FILE:
+                if file.name != os.path.basename(scribe_key_file):
                     os.remove(file)
 
-    key_path = os.path.join(get_scribe_folder_path(), KEY_FILE)
-    if os.path.exists(key_path):
+    if os.path.exists(scribe_key_file):
         try:
-            read_scribe_key()
+            read_scribe_key(scribe_key_file)
         except ValueError:
-            write_scribe_key()
+            write_scribe_key(scribe_key_file)
     else:
-        write_scribe_key()
+        write_scribe_key(scribe_key_file)
 
 
-def get_scribe_folder_path() -> str:
+def get_scribe_dir_path() -> str:
     """
     Returns $HOME/.scribe file path
 
     :return: str
     """
     home = os.environ['HOME']
-    scribe_path = os.path.join(home, DIR)
+    scribe_path = os.path.join(home, '.scribe')
 
     return scribe_path
 
 
-def write_scribe_key() -> str:
+def write_scribe_key(
+        scribe_key_file: str
+) -> str:
     """
     Writes base64-encoded (base64.urlsafe_b64encode) 32-byte generated key (os.urandom).
 
@@ -62,18 +66,19 @@ def write_scribe_key() -> str:
     """
     key: bytes = Fernet.generate_key()
     key_to_str: str = key.decode()
-    key_file = os.path.join(get_scribe_folder_path(), KEY_FILE)
 
-    with open(key_file, 'w') as file:
+    with open(scribe_key_file, 'w') as file:
         file.write(key_to_str)
 
     return key_to_str
 
 
-def read_scribe_key() -> str:
-    key_file = os.path.join(get_scribe_folder_path(), KEY_FILE)
+def read_scribe_key(
+        scribe_key_file: str
+) -> str:
+    """Reads scribe.key file."""
 
-    with open(key_file, 'r') as file:
+    with open(scribe_key_file, 'r') as file:
         key = file.read()
         validate_key(key)
 
@@ -81,4 +86,17 @@ def read_scribe_key() -> str:
 
 
 def validate_key(key: str) -> None:
+    """Validates Fernet generated key."""
+
     Fernet(key)
+
+
+def get_scribe_key_file() -> str:
+    """
+    Returns $HOME/.scribe/scribe.key file path.
+
+    :return: str
+    """
+    key_path = os.path.join(os.environ.get('HOME'), '.scribe', 'scribe.key')
+
+    return key_path
