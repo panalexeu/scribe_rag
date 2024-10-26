@@ -6,10 +6,10 @@ import pytest
 from src.system.dir import (
     get_scribe_dir_path,
     setup_scribe_dir,
-    clean_scribe_dir,
-    write_scribe_key,
-    read_scribe_key,
-    validate_key,
+    __clean_scribe_dir,
+    __write_scribe_key,
+    __read_scribe_key,
+    __validate_key,
     get_scribe_key_file
 )
 
@@ -59,7 +59,7 @@ def test_scribe_folder_is_cleaned_from_unnecessary_files(fake_setup):
     os.mkdir(os.path.join(fake_dir_path, 'test_folder1'))
 
     # cleaning
-    clean_scribe_dir(*fake_setup)
+    __clean_scribe_dir(*fake_setup)
 
     # only scribe.key is left
     scanned_dir = [file.name for file in os.scandir(fake_dir)]
@@ -85,18 +85,19 @@ def test_scribe_folder_rewrites_changed_invalid_key(fake_setup):
 
     # initial key
     setup_scribe_dir(*fake_setup)
-    read_scribe_key(fake_key_file)
+    __read_scribe_key(fake_key_file)
 
     # key rewritten
     with open(fake_key_file, 'w') as file:
         file.write('bla, bla')
 
     with pytest.raises(ValueError):
-        read_scribe_key(fake_key_file)
+        __read_scribe_key(fake_key_file)
 
     # key recreated
     setup_scribe_dir(*fake_setup)
-    read_scribe_key(fake_key_file)
+    # key is valid
+    __read_scribe_key(fake_key_file)
 
 
 def test_scribe_folder_sets_up_multiple_times_and_saves_key(fake_setup):
@@ -134,7 +135,7 @@ def test_keys_are_the_same_after_multiple_set_ups(fake_setup):
     fake_dir, fake_key_file = fake_setup
 
     setup_scribe_dir(*fake_setup)
-    key = read_scribe_key(fake_key_file)
+    key = __read_scribe_key(fake_key_file)
 
     # spam files and dirs
     with open(os.path.join(fake_dir, 'test1.txt'), 'w') as file:
@@ -145,7 +146,7 @@ def test_keys_are_the_same_after_multiple_set_ups(fake_setup):
 
     # setting folder again
     setup_scribe_dir(*fake_setup)
-    key_new = read_scribe_key(fake_key_file)
+    key_new = __read_scribe_key(fake_key_file)
 
     assert key == key_new
 
@@ -153,27 +154,27 @@ def test_keys_are_the_same_after_multiple_set_ups(fake_setup):
 def test_read_and_write_scribe_key(fake_setup):
     fake_dir, fake_key_file = fake_setup
 
-    key = write_scribe_key(fake_key_file)
+    key = __write_scribe_key(fake_key_file)
 
-    assert os.path.exists(os.path.join(fake_key_file))
+    assert os.path.exists(fake_key_file)
 
-    read_key = read_scribe_key(fake_key_file)
+    read_key = __read_scribe_key(fake_key_file)
 
     assert read_key == key
 
 
 def test_validate_key():
     with pytest.raises(ValueError):
-        validate_key('привіт')
+        __validate_key('привіт')
 
     with pytest.raises(ValueError):
-        validate_key('ASDasdADmklasd123{}1@')
+        __validate_key('ASDasdADmklasd123{}1@')
 
     with pytest.raises(ValueError):
-        validate_key("""
+        __validate_key("""
             adsds
              sad
             123 * ?
         """)
 
-    validate_key('LvHrHVBQN1iyTpJHHqCGx1t9SWdG-dyWT3qjnlj99iQ=')
+    __validate_key('LvHrHVBQN1iyTpJHHqCGx1t9SWdG-dyWT3qjnlj99iQ=')

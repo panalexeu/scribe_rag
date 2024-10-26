@@ -20,4 +20,10 @@ class Container(DeclarativeContainer):
 
 def bootstrap():
     container = Container()
-    container.wire()
+    container.wire(
+        modules=[
+            'src.handlers.app_start_handler'
+        ]
+    )
+
+    container.mediatr().send()

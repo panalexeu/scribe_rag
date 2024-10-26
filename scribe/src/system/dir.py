@@ -12,14 +12,33 @@ def setup_scribe_dir(
     Sets up .scribe folder in $HOME directory. If the folder exists, cleans it.
     """
     if os.path.exists(scribe_dir):
-        clean_scribe_dir(scribe_dir, scribe_key_file)
+        __clean_scribe_dir(scribe_dir, scribe_key_file)
         return
 
     os.mkdir(scribe_dir)
-    write_scribe_key(scribe_key_file)
+    __write_scribe_key(scribe_key_file)
 
 
-def clean_scribe_dir(
+def get_scribe_dir_path() -> str:
+    """
+    :return: str - $HOME/.scribe file path.
+    """
+    home = os.environ['HOME']
+    scribe_path = os.path.join(home, '.scribe')
+
+    return scribe_path
+
+
+def get_scribe_key_file() -> str:
+    """
+    :return: str - $HOME/.scribe/scribe.key file path.
+    """
+    key_path = os.path.join(os.environ.get('HOME'), '.scribe', 'scribe.key')
+
+    return key_path
+
+
+def __clean_scribe_dir(
         scribe_dir: str,
         scribe_key_file: str
 ) -> None:
@@ -37,26 +56,14 @@ def clean_scribe_dir(
 
     if os.path.exists(scribe_key_file):
         try:
-            read_scribe_key(scribe_key_file)
+            __read_scribe_key(scribe_key_file)
         except ValueError:
-            write_scribe_key(scribe_key_file)
+            __write_scribe_key(scribe_key_file)
     else:
-        write_scribe_key(scribe_key_file)
+        __write_scribe_key(scribe_key_file)
 
 
-def get_scribe_dir_path() -> str:
-    """
-    Returns $HOME/.scribe file path
-
-    :return: str
-    """
-    home = os.environ['HOME']
-    scribe_path = os.path.join(home, '.scribe')
-
-    return scribe_path
-
-
-def write_scribe_key(
+def __write_scribe_key(
         scribe_key_file: str
 ) -> str:
     """
@@ -73,30 +80,21 @@ def write_scribe_key(
     return key_to_str
 
 
-def read_scribe_key(
+def __read_scribe_key(
         scribe_key_file: str
 ) -> str:
     """Reads scribe.key file."""
 
     with open(scribe_key_file, 'r') as file:
         key = file.read()
-        validate_key(key)
+        __validate_key(key)
 
     return key
 
 
-def validate_key(key: str) -> None:
-    """Validates Fernet generated key."""
+def __validate_key(key: str) -> None:
+    """
+    Validates Fernet generated key.
+    """
 
     Fernet(key)
-
-
-def get_scribe_key_file() -> str:
-    """
-    Returns $HOME/.scribe/scribe.key file path.
-
-    :return: str
-    """
-    key_path = os.path.join(os.environ.get('HOME'), '.scribe', 'scribe.key')
-
-    return key_path
