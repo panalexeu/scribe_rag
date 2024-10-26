@@ -3,6 +3,7 @@ from dependency_injector.containers import DeclarativeContainer
 from dependency_injector.providers import Singleton, Callable
 
 from src.system.dir import get_scribe_dir_path, get_scribe_key_file
+from src.handlers.app_start_handler import AppStartQuery
 
 
 class Container(DeclarativeContainer):
@@ -26,4 +27,4 @@ def bootstrap():
         ]
     )
 
-    container.mediatr().send()
+    container.mediatr().send(AppStartQuery())
