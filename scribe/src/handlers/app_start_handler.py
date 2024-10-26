@@ -1,3 +1,5 @@
+import logging
+
 from mediatr import Mediator, GenericQuery
 from dependency_injector.wiring import inject, Provide
 
@@ -20,4 +22,5 @@ class AppStartQueryHandler:
         self.scribe_key_file = scribe_key_file
 
     def handle(self, request: AppStartQuery):
+        logging.info('APP STARTUP COMPLETE')
         setup_scribe_dir(self.scribe_dir, self.scribe_key_file)
