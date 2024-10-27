@@ -6,7 +6,8 @@ from cryptography.fernet import Fernet
 
 def setup_scribe_dir(
         scribe_dir: str,
-        scribe_key_file: str
+        scribe_key_file: str,
+        log_dir: str
 ) -> None:
     """
     Sets up .scribe folder in $HOME directory. If the folder exists, cleans it.
@@ -14,10 +15,12 @@ def setup_scribe_dir(
     :raises OSError:
     """
     if os.path.exists(scribe_dir):
-        __clean_scribe_dir(scribe_dir, scribe_key_file)
+        __clean_scribe_dir(scribe_dir, scribe_key_file, log_dir)
         return
 
+    # setting up directories and key file
     os.mkdir(scribe_dir)
+    os.mkdir(log_dir)
     __write_scribe_key(scribe_key_file)
 
 
@@ -31,6 +34,15 @@ def get_scribe_dir_path() -> str:
     return scribe_path
 
 
+def get_scribe_log_dir_path() -> str:
+    """
+    :returns: str - $HOME/.scribe/logs file path.
+    """
+    log_path = os.path.join(os.environ.get('HOME'), '.scribe', 'logs')
+
+    return log_path
+
+
 def get_scribe_key_file() -> str:
     """
     :returns: str - $HOME/.scribe/scribe.key file path.
@@ -40,31 +52,71 @@ def get_scribe_key_file() -> str:
     return key_path
 
 
+def read_scribe_key(
+        scribe_key_file: str
+) -> str:
+    """
+    Reads scribe.key file.
+
+    :raises FileNotFoundError: If key file is not found.
+    :raises ValueError: If key is not valid.
+    """
+
+    with open(scribe_key_file, 'r') as file:
+        key = file.read()
+        __validate_key(key)
+
+    return key
+
+
 def __clean_scribe_dir(
         scribe_dir: str,
-        scribe_key_file: str
+        scribe_key_file: str,
+        log_dir: str
 ) -> None:
     """
-    Cleans $HOME/.scribe dir, leaving only 'scribe.key' file. Rewrites deleted or changed 'scribe.key' file.
+    Cleans $HOME/.scribe dir, leaving only 'scribe.key' file and logs dir. Rewrites deleted or
+    changed 'scribe.key' file. Cleans logs directory content.
 
     :raises OSError:
     """
 
+    # cleaning
     with os.scandir(scribe_dir) as scan:
         for file in scan:
-            if file.is_dir():
+            if file.is_dir() and file.name != os.path.basename(log_dir):
                 shutil.rmtree(os.path.join(scribe_dir, file.name))
-            else:
-                if file.name != os.path.basename(scribe_key_file):
-                    os.remove(file)
+            elif file.is_file() and file.name != os.path.basename(scribe_key_file):
+                os.remove(file)
 
+    # handling key file
     if os.path.exists(scribe_key_file):
         try:
-            __read_scribe_key(scribe_key_file)
+            read_scribe_key(scribe_key_file)
         except ValueError:
             __write_scribe_key(scribe_key_file)
     else:
         __write_scribe_key(scribe_key_file)
+
+    # handling log dir
+    if os.path.exists(log_dir):
+        __clean_log_dir(log_dir)
+    else:
+        os.mkdir(log_dir)
+
+
+def __clean_log_dir(log_dir: str) -> None:
+    """
+    Cleans $HOME/.scribe/logs directory from not *.log files or directories.
+
+    :raises OSError:
+    """
+    with os.scandir(log_dir) as scan:
+        for file in scan:
+            if file.is_dir():
+                shutil.rmtree(os.path.join(log_dir, file.name))
+            elif os.path.splitext(os.path.join(log_dir, file.name))[-1] != '.log':
+                os.remove(file)
 
 
 def __write_scribe_key(
@@ -84,23 +136,6 @@ def __write_scribe_key(
         file.write(key_to_str)
 
     return key_to_str
-
-
-def __read_scribe_key(
-        scribe_key_file: str
-) -> str:
-    """
-    Reads scribe.key file.
-
-    :raises FileNotFoundError: If key file is not found.
-    :raises ValueError: If key is not valid.
-    """
-
-    with open(scribe_key_file, 'r') as file:
-        key = file.read()
-        __validate_key(key)
-
-    return key
 
 
 def __validate_key(key: str) -> None:

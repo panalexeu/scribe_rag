@@ -1,18 +1,18 @@
 import logging
 
 from src.di_container import Container
-from src.handlers.app_start_handler import AppStartQuery
+from src.handlers.app_start import AppStartQuery
 from src.api.start_api import start_api
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+from src.system.logging import configure_logging
 
 
 def bootstrap():
+    configure_logging()
+
     container = Container()
     container.wire(
         modules=[
-            'src.handlers.app_start_handler'
+            'src.handlers.app_start'
         ]
     )
     container.mediatr().send(AppStartQuery())
@@ -21,4 +21,5 @@ def bootstrap():
 
 
 if __name__ == '__main__':
+
     bootstrap()
