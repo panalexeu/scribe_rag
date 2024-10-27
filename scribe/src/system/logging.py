@@ -1,5 +1,7 @@
-import yaml
 from logging import config
+
+import yaml
+from dependency_injector.wiring import Provide, inject
 
 
 def read_yaml(path: str) -> dict:
@@ -8,6 +10,7 @@ def read_yaml(path: str) -> dict:
         return obj
 
 
-def configure_logging(dev=True):
+@inject
+def configure_logging(config_: dict = Provide['log_config'], dev=True):
     if dev:
-        config.dictConfig(read_yaml('./log_configs/dev.yaml'))
+        config.dictConfig(config_)

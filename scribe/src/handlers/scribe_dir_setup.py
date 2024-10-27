@@ -6,12 +6,12 @@ from dependency_injector.wiring import inject, Provide
 from src.system.dir import setup_scribe_dir
 
 
-class AppStartQuery(GenericQuery[None]):
+class ScribeDirSetupQuery(GenericQuery[None]):
     pass
 
 
 @Mediator.handler
-class AppStartQueryHandler:
+class ScribeDirSetupQueryHandler:
     @inject
     def __init__(
             self,
@@ -23,6 +23,7 @@ class AppStartQueryHandler:
         self.scribe_key_file = scribe_key_file
         self.log_dir = log_dir
 
-    def handle(self, request: AppStartQuery):
-        logging.info('APP STARTUP COMPLETE')
+    def handle(self, request: ScribeDirSetupQuery):
+        logger = logging.getLogger(__name__)
+        logger.info('Scribe dir setup complete')
         setup_scribe_dir(self.scribe_dir, self.scribe_key_file, self.log_dir)

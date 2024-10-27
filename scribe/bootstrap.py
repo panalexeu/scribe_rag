@@ -1,20 +1,21 @@
 from src.di_container import Container
-from src.handlers.app_start import AppStartQuery
+from src.handlers.scribe_dir_setup import ScribeDirSetupQuery
 from src.api.start_api import start_api
 from src.system.logging import configure_logging
 
 
 def bootstrap():
-    configure_logging()
-
     container = Container()
     container.wire(
         modules=[
-            'src.handlers.app_start'
+            'src.handlers.scribe_dir_setup',
+            'src.system.logging',
+            'src.api.start_api'
         ]
     )
-    container.mediatr().send(AppStartQuery())
 
+    configure_logging()
+    container.mediatr().send(ScribeDirSetupQuery())
     start_api()
 
 
