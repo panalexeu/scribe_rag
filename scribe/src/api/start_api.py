@@ -8,5 +8,5 @@ def start_api(config: dict = Provide['log_config'], reload=True):
         app='src.api.app:app',
         host='0.0.0.0',
         reload=reload,
-        log_config=config
+        log_config=config,
     )

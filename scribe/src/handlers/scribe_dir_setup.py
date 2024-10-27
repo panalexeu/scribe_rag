@@ -25,5 +25,5 @@ class ScribeDirSetupQueryHandler:
 
     def handle(self, request: ScribeDirSetupQuery):
         logger = logging.getLogger(__name__)
-        logger.info('Scribe dir setup complete')
+        logger.info('Scribe dir setup complete.')
         setup_scribe_dir(self.scribe_dir, self.scribe_key_file, self.log_dir)
