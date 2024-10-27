@@ -13,12 +13,12 @@ handlers:
 
 loggers:
   uvicorn.error:
-    level: INFO
+    level: DEBUG
     handlers:
       - console
     propagate: no
   uvicorn.access:
-    level: INFO
+    level: DEBUG
     handlers:
       - console
     propagate: no
