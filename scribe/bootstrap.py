@@ -1,5 +1,3 @@
-import logging
-
 from src.di_container import Container
 from src.handlers.app_start import AppStartQuery
 from src.api.start_api import start_api
@@ -21,5 +19,4 @@ def bootstrap():
 
 
 if __name__ == '__main__':
-
     bootstrap()
