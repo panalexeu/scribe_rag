@@ -18,7 +18,7 @@ class Container(DeclarativeContainer):
     )
     log_config = Callable(
         read_log_config,
-        config_path='./log_configs/dev.yaml',
+        config_path='./log_config.yaml',
         log_dir=log_dir()
     )
 

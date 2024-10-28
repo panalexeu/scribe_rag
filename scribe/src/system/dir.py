@@ -1,4 +1,5 @@
 import os
+from os import DirEntry
 import shutil
 
 from cryptography.fernet import Fernet
@@ -115,8 +116,24 @@ def __clean_log_dir(log_dir: str) -> None:
         for file in scan:
             if file.is_dir():
                 shutil.rmtree(os.path.join(log_dir, file.name))
-            elif os.path.splitext(os.path.join(log_dir, file.name))[-1] != '.log':
+            elif not __is_valid_log_file(file):
                 os.remove(file)
+
+
+def __is_valid_log_file(file: DirEntry) -> bool:
+    """
+    :returns: bool - If a file has extension of *.log or *.log.1, ... *.log.n
+    """
+    file = os.path.basename(file)
+    split_file: list[str] = file.split('.')
+
+    match len(split_file):
+        case 2:
+            return split_file[-1] == 'log'
+        case 3:
+            return split_file[-2] == 'log' and split_file[-1].isdigit()
+        case _:
+            return False
 
 
 def __write_scribe_key(

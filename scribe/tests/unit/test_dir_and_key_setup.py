@@ -12,7 +12,8 @@ from src.system.dir import (
     __validate_key,
     get_scribe_key_file,
     get_scribe_log_dir_path,
-    __clean_log_dir
+    __clean_log_dir,
+    __is_valid_log_file
 )
 
 
@@ -76,6 +77,37 @@ def test_scribe_folder_is_cleaned_from_unnecessary_files(fake_setup):
     assert os.path.exists(fake_log_dir)
 
 
+def test_is_valid_log_file(fake_setup):
+    fake_dir = './fake_dir'
+
+    # spam files
+    with open(os.path.join(fake_dir, 'test.txt'), 'w') as file:
+        file.write('test')
+
+    with open(os.path.join(fake_dir, 'test'), 'w') as file:
+        file.write('test')
+
+    with open(os.path.join(fake_dir, 'test.exe'), 'w') as file:
+        file.write('test')
+
+    with open(os.path.join(fake_dir, 'test.ex.3000'), 'w') as file:
+        file.write('test')
+
+    # relevant log files
+    with open(os.path.join(fake_dir, 'test.log'), 'w') as file:
+        file.write('test')
+
+    with open(os.path.join(fake_dir, 'test.log.3'), 'w') as file:
+        file.write('test')
+
+    with open(os.path.join(fake_dir, 'test.log.300'), 'w') as file:
+        file.write('test')
+
+    # only two log files are relevant
+    valid_files = [__is_valid_log_file(file) for file in os.scandir(fake_dir)]
+    assert sum(valid_files) == 3
+
+
 def test_scribe_logs_folder_is_cleaned_from_unnecessary_files(fake_setup):
     _, _, fake_log_dir = fake_setup
     setup_scribe_dir(*fake_setup)
@@ -102,7 +134,10 @@ def test_scribe_logs_folder_is_cleaned_from_unnecessary_files(fake_setup):
     with open(os.path.join(fake_log_dir, 'test1.log'), 'w') as file:
         file.write('test')
 
-    with open(os.path.join(fake_log_dir, 'test2.log'), 'w') as file:
+    with open(os.path.join(fake_log_dir, 'test2.log.1'), 'w') as file:
+        file.write('test')
+
+    with open(os.path.join(fake_log_dir, 'test2.log.10'), 'w') as file:
         file.write('test')
 
     __clean_log_dir(fake_log_dir)
@@ -110,9 +145,10 @@ def test_scribe_logs_folder_is_cleaned_from_unnecessary_files(fake_setup):
     # only .log files are left
     scanned_dir = [file.name for file in os.scandir(fake_log_dir)]
 
-    assert len(scanned_dir) == 2
+    assert len(scanned_dir) == 3
     assert os.path.exists(os.path.join(fake_log_dir, 'test1.log'))
-    assert os.path.exists(os.path.join(fake_log_dir, 'test2.log'))
+    assert os.path.exists(os.path.join(fake_log_dir, 'test2.log.1'))
+    assert os.path.exists(os.path.join(fake_log_dir, 'test2.log.10'))
 
 
 def test_scribe_folder_recreates_deleted_key_file(fake_setup):
