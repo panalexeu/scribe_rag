@@ -151,6 +151,19 @@ def test_scribe_logs_folder_is_cleaned_from_unnecessary_files(fake_setup):
     assert os.path.exists(os.path.join(fake_log_dir, 'test2.log.10'))
 
 
+def test_scribe_log_folder_is_recreated(fake_setup):
+    fake_dir, _, fake_log_dir = fake_setup
+    setup_scribe_dir(*fake_setup)
+
+    # log dir is removed
+    os.rmdir(fake_log_dir)
+
+    # after new setup log dir is recreated
+    setup_scribe_dir(*fake_setup)
+
+    assert os.path.exists(fake_log_dir)
+
+
 def test_scribe_folder_recreates_deleted_key_file(fake_setup):
     fake_dir, fake_key_file, fake_log_dir = fake_setup
     setup_scribe_dir(*fake_setup)
@@ -158,6 +171,7 @@ def test_scribe_folder_recreates_deleted_key_file(fake_setup):
     # key deleted
     os.remove(fake_key_file)
 
+    # after new setup key is recreated
     setup_scribe_dir(*fake_setup)
 
     assert os.path.exists(fake_key_file)

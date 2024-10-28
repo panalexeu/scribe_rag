@@ -14,6 +14,11 @@ formatters:
       name:
         color: blue
 
+  # use `fmt_file` for file handler if viewing logs outside the terminal (e.g., with `cat`) to avoid ANSI symbols
+  fmt_file:
+    format: "%(levelname)s %(asctime)s %(name)s:      %(message)s"
+    datefmt: "%H:%M:%S %Y-%m-%d"
+
 
 handlers:
   console:
@@ -24,10 +29,10 @@ handlers:
 
   file:
     class: logging.handlers.RotatingFileHandler
-    maxBytes: 150 # 8242880 # 8 mb
+    maxBytes: 8388608 # bytes = 8 mb
     filename: placeholder  # the "placeholder" is changed on the startup with the value provided in src.system.logging.read_config
-    backupCount: 10
-    formatter: fmt_console
+    backupCount: 4
+    formatter: fmt_file
 
 loggers:
   uvicorn.error:

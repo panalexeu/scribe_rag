@@ -8,8 +8,6 @@ from src.api.start_api import start_api
 
 
 def bootstrap():
-    load_dotenv()
-
     container = Container()
     container.wire(
         modules=[
@@ -19,8 +17,11 @@ def bootstrap():
         ]
     )
 
-    logging.config.dictConfig(container.log_config())
     container.mediatr().send(ScribeDirSetupQuery())
+
+    logging.config.dictConfig(container.log_config())
+    logging.info('Scribe bootstrap complete.')
+
     start_api()
 
 
