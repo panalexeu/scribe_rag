@@ -1,7 +1,8 @@
 version: 1
 formatters:
   dev_console:
-    format: "%(levelname)s:     %(asctime)s %(name)s %(message)s"
+    class: coloredlogs.ColoredFormatter
+    format: "%(levelname)s %(asctime)s %(name)s:      %(message)s"
     datefmt: "%H:%M:%S %Y-%m-%d"
 
 handlers:

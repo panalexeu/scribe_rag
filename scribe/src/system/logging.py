@@ -1,6 +1,9 @@
+import logging
 from logging import config
 
 import yaml
+import coloredlogs
+
 from dependency_injector.wiring import Provide, inject
 
 

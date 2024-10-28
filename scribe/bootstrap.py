@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+
 from src.di_container import Container
 from src.handlers.scribe_dir_setup import ScribeDirSetupQuery
 from src.api.start_api import start_api
@@ -5,6 +7,8 @@ from src.system.logging import configure_logging
 
 
 def bootstrap():
+    load_dotenv()
+
     container = Container()
     container.wire(
         modules=[
