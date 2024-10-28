@@ -1,9 +1,19 @@
 version: 1
 formatters:
   dev_console:
-    class: coloredlogs.ColoredFormatter
-    format: "%(levelname)s %(asctime)s %(name)s:      %(message)s"
+    # full configuration of ColoredFormatter is possible - https://coloredlogs.readthedocs.io/en/latest/api.html#coloredlogs.ColoredFormatter
+    (): coloredlogs.ColoredFormatter # () allows class instantiation with properties at the same level as constructor arguments.
+    fmt: "%(levelname)s %(asctime)s %(name)s:      %(message)s"
     datefmt: "%H:%M:%S %Y-%m-%d"
+    field_styles:
+      levelname:
+        color: cyan
+        bold: True
+      asctime:
+        color: green
+      name:
+        color: blue
+
 
 handlers:
   console:
