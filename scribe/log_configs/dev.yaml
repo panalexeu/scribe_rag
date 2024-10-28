@@ -1,6 +1,6 @@
 version: 1
 formatters:
-  dev_console:
+  fmt_console:
     # full configuration of ColoredFormatter is possible - https://coloredlogs.readthedocs.io/en/latest/api.html#coloredlogs.ColoredFormatter
     (): coloredlogs.ColoredFormatter # () allows class instantiation with properties at the same level as constructor arguments.
     fmt: "%(levelname)s %(asctime)s %(name)s:      %(message)s"
@@ -14,27 +14,36 @@ formatters:
       name:
         color: blue
 
-
 handlers:
   console:
     class: logging.StreamHandler
     level: DEBUG
-    formatter: dev_console
+    formatter: fmt_console
     stream: ext://sys.stdout
+
+  file:
+    class: logging.handlers.RotatingFileHandler
+    maxBytes: 100
+    filename: placeholder  # the "placeholder" is changed on the startup with the value provided in src.system.logging.read_config
+    backupCount: 5
+    formatter: fmt_console
 
 loggers:
   uvicorn.error:
     level: DEBUG
     handlers:
       - console
+      - file
     propagate: no
   uvicorn.access:
     level: DEBUG
     handlers:
       - console
+      - file
     propagate: no
 
 root:
   level: DEBUG
   handlers:
     - console
+    - file

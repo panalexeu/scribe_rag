@@ -1,9 +1,10 @@
+import logging
+
 from dotenv import load_dotenv
 
 from src.di_container import Container
 from src.handlers.scribe_dir_setup import ScribeDirSetupQuery
 from src.api.start_api import start_api
-from src.system.logging import configure_logging
 
 
 def bootstrap():
@@ -18,7 +19,7 @@ def bootstrap():
         ]
     )
 
-    configure_logging()
+    logging.config.dictConfig(container.log_config())
     container.mediatr().send(ScribeDirSetupQuery())
     start_api()
 

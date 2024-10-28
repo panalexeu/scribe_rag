@@ -1,19 +1,20 @@
-import logging
-from logging import config
+import os.path
 
 import yaml
-import coloredlogs
-
-from dependency_injector.wiring import Provide, inject
 
 
-def read_yaml(path: str) -> dict:
-    with open(path, 'r') as file:
+def read_log_config(
+        config_path: str,
+        log_dir: str
+) -> dict:
+    """
+    Parses provided *.yaml logging config. Sets filename value for
+    the file handler with the 'log_dir'/scribe.log.
+    """
+
+    with open(config_path, 'r') as file:
         obj = yaml.safe_load(file.read())
+        # replacing 'placeholder' with an actual value
+        obj['handlers']['file']['filename'] = os.path.join(log_dir, 'scribe.log')
+
         return obj
-
-
-@inject
-def configure_logging(config_: dict = Provide['log_config'], dev=True):
-    if dev:
-        config.dictConfig(config_)
