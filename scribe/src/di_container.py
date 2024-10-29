@@ -3,6 +3,7 @@ import os
 from mediatr import Mediator
 from dependency_injector.containers import DeclarativeContainer
 from dependency_injector.providers import Singleton, Callable
+from sqlalchemy.orm import registry
 
 from src.system.dir import get_scribe_dir_path
 from src.system.logging import read_log_config
@@ -32,4 +33,7 @@ class Container(DeclarativeContainer):
 
     mediatr = Singleton(
         Mediator
+    )
+    registry = Singleton(
+        registry
     )
