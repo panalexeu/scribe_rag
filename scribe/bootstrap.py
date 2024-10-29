@@ -8,15 +8,6 @@ from src.adapters.orm_models import map_orm_models
 
 def bootstrap():
     container = Container()
-    container.wire(
-        modules=[
-            'src.handlers.scribe_dir_setup',
-            'src.system.logging',
-            'src.api.start_api',
-            'src.adapters.orm_models'
-        ]
-    )
-
     container.mediatr().send(ScribeDirSetupQuery())
 
     logging.config.dictConfig(container.log_config())

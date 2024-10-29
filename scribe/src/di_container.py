@@ -1,7 +1,7 @@
 import os
 
 from mediatr import Mediator
-from dependency_injector.containers import DeclarativeContainer
+from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
 from dependency_injector.providers import Singleton, Callable
 from sqlalchemy.orm import registry
 
@@ -10,6 +10,17 @@ from src.system.logging import read_log_config
 
 
 class Container(DeclarativeContainer):
+    wiring_config = WiringConfiguration(
+        packages=[
+            'src.handlers'
+        ],
+        modules=[
+            'src.system.logging',
+            'src.api.start_api',
+            'src.adapters.orm_models'
+        ]
+    )
+
     scribe_dir = Callable(
         get_scribe_dir_path,
         dir_name='.scribe'
