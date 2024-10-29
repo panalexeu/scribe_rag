@@ -25,20 +25,25 @@ def set_fake_home():
 @pytest.fixture(scope='function')
 def fake_setup(set_fake_home):
     os.mkdir('./fake_dir')
-    yield get_scribe_dir_path(), get_scribe_key_file(), get_scribe_log_dir_path()
+    scribe_dir = get_scribe_dir_path('.fake')
+    yield scribe_dir, get_scribe_key_file(scribe_dir, 'fake.key'), get_scribe_log_dir_path(scribe_dir, 'fakes')
     shutil.rmtree('./fake_dir', ignore_errors=True)
 
 
 def test_scribe_folder_path_returns(set_fake_home):
-    assert get_scribe_dir_path() == os.path.join(os.environ['HOME'], '.scribe')
+    assert get_scribe_dir_path('.fake') == os.path.join(os.environ['HOME'], '.fake')
 
 
 def test_scribe_key_path_returns(set_fake_home):
-    assert get_scribe_key_file() == os.path.join(os.environ['HOME'], '.scribe', 'scribe.key')
+    fake_scribe_dir = get_scribe_dir_path('.fake')
+
+    assert get_scribe_key_file(fake_scribe_dir, 'fake.key') == os.path.join(fake_scribe_dir, 'fake.key')
 
 
 def test_scribe_log_path_returns(set_fake_home):
-    assert get_scribe_log_dir_path() == os.path.join(os.environ['HOME'], '.scribe', 'logs')
+    fake_scribe_dir = get_scribe_dir_path('.fake')
+
+    assert get_scribe_log_dir_path(fake_scribe_dir, 'fakes') == os.path.join(fake_scribe_dir, 'fakes')
 
 
 def test_scribe_folder_sets_up(fake_setup):

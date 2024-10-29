@@ -25,30 +25,36 @@ def setup_scribe_dir(
     __write_scribe_key(scribe_key_file)
 
 
-def get_scribe_dir_path() -> str:
+def get_scribe_dir_path(dir_name: str) -> str:
     """
-    :returns: str - $HOME/.scribe file path.
+    :returns: str - $HOME/'dir_name' file path.
     """
     home = os.environ['HOME']
-    scribe_path = os.path.join(home, '.scribe')
+    scribe_path = os.path.join(home, dir_name)
 
     return scribe_path
 
 
-def get_scribe_log_dir_path() -> str:
+def get_scribe_log_dir_path(
+        scribe_dir: str,
+        log_dir_name: str
+) -> str:
     """
-    :returns: str - $HOME/.scribe/logs file path.
+    :returns: str - 'scribe_dir'/'log_dir_name' file path.
     """
-    log_path = os.path.join(os.environ.get('HOME'), '.scribe', 'logs')
+    log_path = os.path.join(scribe_dir, log_dir_name)
 
     return log_path
 
 
-def get_scribe_key_file() -> str:
+def get_scribe_key_file(
+        scribe_dir: str,
+        key_name: str
+) -> str:
     """
-    :returns: str - $HOME/.scribe/scribe.key file path.
+    :returns: str - 'scribe_dir'/'key_name' file path.
     """
-    key_path = os.path.join(os.environ.get('HOME'), '.scribe', 'scribe.key')
+    key_path = os.path.join(scribe_dir, key_name)
 
     return key_path
 
