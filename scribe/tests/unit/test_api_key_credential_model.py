@@ -22,7 +22,7 @@ def setup_orm_session():
     yield Session(engine)
 
 
-def test_encode_api_key_credential():
+def test_encode_api_key_credential_service():
     api_key_credential = ApiKeyCredential('fake-api', 'fake-key')
     api_key_credential_copy = copy(api_key_credential)
     codec = FernetCodec(key=Fernet.generate_key())
@@ -58,3 +58,7 @@ def test_api_key_orm_mapping(setup_orm_session):
         assert new_cohere.name == 'cohere'
         assert new_cohere.api_key == '123415'
         assert new_openai.api_key == '12345'
+
+
+def test_api_key_encode_service_and_orm_mapping():
+    ...
