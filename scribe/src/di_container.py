@@ -1,8 +1,10 @@
+import os
+
 from mediatr import Mediator
 from dependency_injector.containers import DeclarativeContainer
 from dependency_injector.providers import Singleton, Callable
 
-from src.system.dir import get_scribe_dir_path, get_scribe_key_file, get_scribe_log_dir_path
+from src.system.dir import get_scribe_dir_path
 from src.system.logging import read_log_config
 
 
@@ -12,14 +14,14 @@ class Container(DeclarativeContainer):
         dir_name='.scribe'
     )
     scribe_key_file = Callable(
-        get_scribe_key_file,
-        scribe_dir=scribe_dir(),
-        key_name='scribe.key'
+        os.path.join,
+        scribe_dir(),
+        'scribe.key'
     )
     log_dir = Callable(
-        get_scribe_log_dir_path,
-        scribe_dir=scribe_dir(),
-        log_dir_name='logs'
+        os.path.join,
+        scribe_dir(),
+        'logs'
     )
     log_config = Callable(
         read_log_config,

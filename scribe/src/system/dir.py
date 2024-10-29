@@ -35,30 +35,6 @@ def get_scribe_dir_path(dir_name: str) -> str:
     return scribe_path
 
 
-def get_scribe_log_dir_path(
-        scribe_dir: str,
-        log_dir_name: str
-) -> str:
-    """
-    :returns: str - 'scribe_dir'/'log_dir_name' file path.
-    """
-    log_path = os.path.join(scribe_dir, log_dir_name)
-
-    return log_path
-
-
-def get_scribe_key_file(
-        scribe_dir: str,
-        key_name: str
-) -> str:
-    """
-    :returns: str - 'scribe_dir'/'key_name' file path.
-    """
-    key_path = os.path.join(scribe_dir, key_name)
-
-    return key_path
-
-
 def read_scribe_key(
         scribe_key_file: str
 ) -> str:

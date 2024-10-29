@@ -6,12 +6,10 @@ import pytest
 from src.system.dir import (
     get_scribe_dir_path,
     setup_scribe_dir,
+    read_scribe_key,
     __clean_scribe_dir,
     __write_scribe_key,
-    read_scribe_key,
     __validate_key,
-    get_scribe_key_file,
-    get_scribe_log_dir_path,
     __clean_log_dir,
     __is_valid_log_file
 )
@@ -26,27 +24,15 @@ def set_fake_home():
 def fake_setup(set_fake_home):
     os.mkdir('./fake_dir')
     scribe_dir = get_scribe_dir_path('.fake')
-    yield scribe_dir, get_scribe_key_file(scribe_dir, 'fake.key'), get_scribe_log_dir_path(scribe_dir, 'fakes')
+    yield scribe_dir, os.path.join(scribe_dir, 'fake.key'), os.path.join(scribe_dir, 'fakes')
     shutil.rmtree('./fake_dir', ignore_errors=True)
 
 
-def test_scribe_folder_path_returns(set_fake_home):
+def test_scribe_dir_path_returns(set_fake_home):
     assert get_scribe_dir_path('.fake') == os.path.join(os.environ['HOME'], '.fake')
 
 
-def test_scribe_key_path_returns(set_fake_home):
-    fake_scribe_dir = get_scribe_dir_path('.fake')
-
-    assert get_scribe_key_file(fake_scribe_dir, 'fake.key') == os.path.join(fake_scribe_dir, 'fake.key')
-
-
-def test_scribe_log_path_returns(set_fake_home):
-    fake_scribe_dir = get_scribe_dir_path('.fake')
-
-    assert get_scribe_log_dir_path(fake_scribe_dir, 'fakes') == os.path.join(fake_scribe_dir, 'fakes')
-
-
-def test_scribe_folder_sets_up(fake_setup):
+def test_scribe_dir_sets_up(fake_setup):
     fake_dir, fake_key_file, fake_log_dir = fake_setup
     setup_scribe_dir(*fake_setup)
 
@@ -55,7 +41,7 @@ def test_scribe_folder_sets_up(fake_setup):
     assert os.path.exists(fake_log_dir)
 
 
-def test_scribe_folder_is_cleaned_from_unnecessary_files(fake_setup):
+def test_scribe_dir_is_cleaned_from_unnecessary_files(fake_setup):
     fake_dir, fake_key_file, fake_log_dir = fake_setup
     setup_scribe_dir(*fake_setup)
 
@@ -113,7 +99,7 @@ def test_is_valid_log_file(fake_setup):
     assert sum(valid_files) == 3
 
 
-def test_scribe_logs_folder_is_cleaned_from_unnecessary_files(fake_setup):
+def test_scribe_logs_dir_is_cleaned_from_unnecessary_files(fake_setup):
     _, _, fake_log_dir = fake_setup
     setup_scribe_dir(*fake_setup)
 
@@ -156,7 +142,7 @@ def test_scribe_logs_folder_is_cleaned_from_unnecessary_files(fake_setup):
     assert os.path.exists(os.path.join(fake_log_dir, 'test2.log.10'))
 
 
-def test_scribe_log_folder_is_recreated(fake_setup):
+def test_scribe_log_dir_is_recreated(fake_setup):
     fake_dir, _, fake_log_dir = fake_setup
     setup_scribe_dir(*fake_setup)
 
@@ -169,7 +155,7 @@ def test_scribe_log_folder_is_recreated(fake_setup):
     assert os.path.exists(fake_log_dir)
 
 
-def test_scribe_folder_recreates_deleted_key_file(fake_setup):
+def test_scribe_dir_recreates_deleted_key_file(fake_setup):
     fake_dir, fake_key_file, fake_log_dir = fake_setup
     setup_scribe_dir(*fake_setup)
 
@@ -182,7 +168,7 @@ def test_scribe_folder_recreates_deleted_key_file(fake_setup):
     assert os.path.exists(fake_key_file)
 
 
-def test_scribe_folder_rewrites_changed_invalid_key(fake_setup):
+def test_scribe_dir_rewrites_changed_invalid_key(fake_setup):
     fake_dir, fake_key_file, fake_log_dir = fake_setup
 
     # initial key
@@ -202,7 +188,7 @@ def test_scribe_folder_rewrites_changed_invalid_key(fake_setup):
     read_scribe_key(fake_key_file)
 
 
-def test_scribe_folder_sets_up_multiple_times(fake_setup):
+def test_scribe_dir_sets_up_multiple_times(fake_setup):
     fake_dir, fake_key_file, fake_log_dir = fake_setup
 
     setup_scribe_dir(*fake_setup)
