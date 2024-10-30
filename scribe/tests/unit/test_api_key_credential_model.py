@@ -1,9 +1,9 @@
 from copy import copy
+from datetime import datetime
 
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from rich import print
 
 from src.domain.models import ApiKeyCredential
 from src.domain.services import encode_api_key_credential
@@ -73,3 +73,20 @@ def test_api_key_encode_service_and_orm_mapping(setup_orm_session):
 
         # assert that key was encoded and not equals init_api_key
         assert retrieved_cred.api_key != init_api_key
+
+
+def test_datetime_is_mapped_to_api_key_credential(setup_orm_session):
+    with setup_orm_session as session:
+        credential = ApiKeyCredential(
+            'fake-cred',
+            'fake-key'
+        )
+
+        # adding new entity to the session
+        session.add(credential)
+
+        # flushing changes
+        session.flush()
+
+        # datetime is mapped to the credential object
+        assert isinstance(credential.datetime, datetime)
