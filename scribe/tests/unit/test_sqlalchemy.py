@@ -11,10 +11,11 @@ from sqlalchemy.orm import clear_mappers
 from src.adapters.orm_models import map_sqlalchemy_models
 from src.di_container import Container
 from src.domain.models import FakeModel
+from src.adapters.repository import SqlAlchemyRepository
 
 
 @pytest.fixture(scope='function')
-def setup_orm_session():
+def fake_session():
     container = Container()
     engine = create_engine('sqlite:///:memory:', echo=True)
     map_sqlalchemy_models()
@@ -23,8 +24,8 @@ def setup_orm_session():
     clear_mappers()
 
 
-def test_fake_model_orm_mapping(setup_orm_session):
-    with setup_orm_session as session:
+def test_fake_model_orm_mapping(fake_session):
+    with fake_session as session:
         fake1 = FakeModel(
             True,
             'cool-ship'
@@ -47,9 +48,9 @@ def test_fake_model_orm_mapping(setup_orm_session):
         assert isinstance(fake2.datetime, datetime)
 
 
-def test_fake_model_update(setup_orm_session):
+def test_fake_model_update(fake_session):
     init_name = 'stars-1'
-    with setup_orm_session as session:
+    with fake_session as session:
         fake = FakeModel(
             True,
             init_name
@@ -67,3 +68,12 @@ def test_fake_model_update(setup_orm_session):
         session.get(FakeModel, 1)
 
         assert fake.spaceship != init_name
+
+
+def test_add_sqlalchemy_repository_method(fake_session):
+    fake1 = FakeModel(
+        True,
+        'fallen-angel'
+    )
+    with fake_session as session:
+        pass
