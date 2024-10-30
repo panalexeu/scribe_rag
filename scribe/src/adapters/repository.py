@@ -44,7 +44,7 @@ class AbstractRepository[T](ABC):
         raise NotImplementedError
 
 
-class SqlAlchemyRepo[T](AbstractRepository):
+class SqlAlchemyRepository[T](AbstractRepository):
 
     def __init__(self, session: Session):
         self.session = session
@@ -65,7 +65,14 @@ class SqlAlchemyRepo[T](AbstractRepository):
 
     def update(self, id_: int, **kwargs) -> None:
         with self.session as session:
-            ...
+            obj_ = session.get(T, id_)
+            obj_dict = obj_.__dict__
+
+            # resolving attributes to be updated in obj_ based on the provided **kwargs
+            for key, item in kwargs.items():
+                if obj_dict.get(key):
+                    obj_dict[key] = item
+
             session.commit()
 
     def delete(self, id_: int) -> None:
