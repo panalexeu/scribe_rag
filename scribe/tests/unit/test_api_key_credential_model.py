@@ -3,21 +3,20 @@ from copy import copy
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from cryptography.fernet import Fernet
 from rich import print
 
 from src.domain.models import ApiKeyCredential
 from src.domain.services import encode_api_key_credential
-from src.adapters.codecs import FernetCodec
-from src.adapters.orm_models import map_orm_models
+from src.adapters.codecs import FakeCodec
+from src.adapters.orm_models import map_sqlalchemy_models
 from src.di_container import Container
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def setup_orm_session():
     container = Container()
     engine = create_engine('sqlite:///:memory:', echo=True)
-    map_orm_models()
+    map_sqlalchemy_models()
     container.registry().metadata.create_all(engine)
     yield Session(engine)
 
@@ -25,7 +24,7 @@ def setup_orm_session():
 def test_encode_api_key_credential_service():
     api_key_credential = ApiKeyCredential('fake-api', 'fake-key')
     api_key_credential_copy = copy(api_key_credential)
-    codec = FernetCodec(key=Fernet.generate_key())
+    codec = FakeCodec('fake-key')
 
     encode_api_key_credential(api_key_credential, codec)
 
@@ -46,19 +45,31 @@ def test_api_key_orm_mapping(setup_orm_session):
         )
 
         session.add_all([open_ai, cohere])
-        session.commit()
 
-    with setup_orm_session as session:
         new_openai: ApiKeyCredential = session.get(ApiKeyCredential, 1)
         new_cohere: ApiKeyCredential = session.get(ApiKeyCredential, 2)
-        print(new_openai, new_cohere)
 
         # ApiKeyCredential objects are successfully retrieved from the db
-        assert new_openai.name == 'open-ai'
-        assert new_cohere.name == 'cohere'
-        assert new_cohere.api_key == '123415'
-        assert new_openai.api_key == '12345'
+        assert new_openai.name == open_ai.name
+        assert new_cohere.name == cohere.name
+        assert new_cohere.api_key == cohere.api_key
+        assert new_openai.api_key == open_ai.api_key
 
 
-def test_api_key_encode_service_and_orm_mapping():
-    ...
+def test_api_key_encode_service_and_orm_mapping(setup_orm_session):
+    init_api_key = '12345'
+    with setup_orm_session as session:
+        credential = ApiKeyCredential(
+            'fake-cred',
+            init_api_key
+        )
+
+        # encode api key in the credential object
+        encode_api_key_credential(credential, FakeCodec('fake-key'))
+
+        session.add(credential)
+
+        retrieved_cred: ApiKeyCredential = session.get(ApiKeyCredential, 1)
+
+        # assert that key was encoded and not equals init_api_key
+        assert retrieved_cred.api_key != init_api_key

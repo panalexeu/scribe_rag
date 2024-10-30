@@ -15,6 +15,15 @@ class AbstractCodec(ABC):
         raise NotImplementedError
 
 
+class FakeCodec(AbstractCodec):
+
+    def encode(self, data: str) -> str:
+        return 'encoded_data'
+
+    def decode(self, encoded_data: str) -> str:
+        return 'decoded_data'
+
+
 class FernetCodec(AbstractCodec):
     def encode(self, data: str) -> str:
         byte_content = data.encode()

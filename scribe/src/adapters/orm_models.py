@@ -13,7 +13,10 @@ from src.domain.models import (
 
 
 @inject
-def map_orm_models(registry_: registry = Provide['registry']):
+def map_sqlalchemy_models(registry_: registry = Provide['registry']):
+    """
+    Maps sqlalchemy models with the domain models.
+    """
     api_key_credential_table = Table(
         "api_key_credential",
         registry_.metadata,
