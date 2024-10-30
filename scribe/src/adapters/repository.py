@@ -51,7 +51,7 @@ class SqlAlchemyRepository[T](AbstractRepository):
 
     def add(self, item: T) -> None:
         with self.session as session:
-            session.add(T)
+            session.add(item)
             session.commit()
 
     def read(self, id_: int) -> T:

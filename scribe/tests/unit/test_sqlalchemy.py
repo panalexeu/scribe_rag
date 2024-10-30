@@ -75,5 +75,13 @@ def test_add_sqlalchemy_repository_method(fake_session):
         True,
         'fallen-angel'
     )
+
+    repo = SqlAlchemyRepository[FakeModel](fake_session)
+    repo.add(fake1)
+
     with fake_session as session:
-        pass
+        fake1 = session.merge(fake1)
+        fake2 = session.get(FakeModel, 1)
+
+        assert fake2 == fake1
+        assert fake2 is fake1
