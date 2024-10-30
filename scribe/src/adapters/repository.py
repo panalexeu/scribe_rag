@@ -1,5 +1,8 @@
 from abc import ABC
 
+from sqlalchemy.orm import Session
+from sqlalchemy import select
+
 
 class AbstractRepository[T](ABC):
 
@@ -42,17 +45,31 @@ class AbstractRepository[T](ABC):
 
 
 class SqlAlchemyRepo[T](AbstractRepository):
+
+    def __init__(self, session: Session):
+        self.session = session
+
     def add(self, item: T) -> None:
-        pass
+        with self.session as session:
+            session.add(T)
+            session.commit()
 
     def read(self, id_: int) -> T:
-        pass
+        with self.session as session:
+            return session.get(T, id_)
 
     def read_all(self, offset: int | None, limit: int | None, **kwargs) -> list[T]:
-        pass
+        with self.session as session:
+            statement = select(T).offset(offset).limit(limit).filter_by(**kwargs)
+            return session.execute(statement).all()
 
     def update(self, id_: int, **kwargs) -> None:
-        pass
+        with self.session as session:
+            ...
+            session.commit()
 
     def delete(self, id_: int) -> None:
-        pass
+        with self.session as session:
+            obj_ = session.get(T, id_)
+            session.delete(obj_)
+            session.commit()
