@@ -1,14 +1,14 @@
 class FakeModel:
 
-    def __init__(self, portal_gun: bool, spaceship_name: str):
+    def __init__(self, portal_gun: bool, spaceship: str):
         self.portal_gun = portal_gun
-        self.spaceship_name = spaceship_name
+        self.spaceship = spaceship
 
     def __repr__(self):
-        return f'FakeModel<portal_gun={self.portal_gun}, spaceship_name={self.spaceship_name}>'
+        return f'FakeModel<portal_gun={self.portal_gun}, spaceship={self.spaceship}>'
 
     def meow(self) -> str:
-        return f'Meow! My ship is {self.spaceship_name}.'
+        return f'Meow! My ship is {self.spaceship}.'
 
 
 class ApiKeyCredential:
