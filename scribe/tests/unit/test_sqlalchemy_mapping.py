@@ -1,15 +1,16 @@
-from copy import copy
+"""
+Consider this test module as the place to experiment with a sqlalchemy orm, encapsulated in tests.
+"""
+
 from datetime import datetime
 
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from src.domain.models import ApiKeyCredential
-from src.domain.services import encode_api_key_credential
-from src.adapters.codecs import FakeCodec
 from src.adapters.orm_models import map_sqlalchemy_models
 from src.di_container import Container
+from src.domain.models import ApiKeyCredential
 
 
 @pytest.fixture(scope='module')
@@ -19,18 +20,6 @@ def setup_orm_session():
     map_sqlalchemy_models()
     container.registry().metadata.create_all(engine)
     yield Session(engine)
-
-
-def test_encode_api_key_credential_service():
-    api_key_credential = ApiKeyCredential('fake-api', 'fake-key')
-    api_key_credential_copy = copy(api_key_credential)
-    codec = FakeCodec('fake-key')
-
-    encode_api_key_credential(api_key_credential, codec)
-
-    # only api key is modified by codec encoding
-    assert api_key_credential.api_key != api_key_credential_copy.api_key
-    assert api_key_credential.name == api_key_credential_copy.name
 
 
 def test_api_key_orm_mapping(setup_orm_session):
@@ -56,16 +45,14 @@ def test_api_key_orm_mapping(setup_orm_session):
         assert new_openai.api_key == open_ai.api_key
 
 
-def test_api_key_encode_service_and_orm_mapping(setup_orm_session):
+def test_api_key_encode_update_and_orm_mapping(setup_orm_session):
     init_api_key = '12345'
     with setup_orm_session as session:
         credential = ApiKeyCredential(
             'fake-cred',
             init_api_key
         )
-
-        # encode api key in the credential object
-        encode_api_key_credential(credential, FakeCodec('fake-key'))
+        credential.api_key = 'ecnoded-key'
 
         session.add(credential)
 
