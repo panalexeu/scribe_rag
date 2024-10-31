@@ -40,7 +40,7 @@ def test_fake_model_orm_mapping(fake_session):
         session.get(FakeModel, 1)
         session.get(FakeModel, 2)
 
-        # ApiKeyCredential objects are successfully retrieved from the db
+        # FakeModel objects are successfully retrieved from the db
         # with the new mapped field
         assert fake1.id == 1
         assert fake2.id == 2
@@ -63,7 +63,7 @@ def test_fake_model_update(fake_session):
         # the name is the same
         assert fake.spaceship == init_name
 
-        # updating the name updates it in session
+        # updating the name updates it in the session
         fake.spaceship = 'cosmos-3'
         session.get(FakeModel, 1)
 
@@ -71,17 +71,32 @@ def test_fake_model_update(fake_session):
 
 
 def test_add_sqlalchemy_repository_method(fake_session):
-    fake1 = FakeModel(
-        True,
-        'fallen-angel'
-    )
-
-    repo = SqlAlchemyRepository[FakeModel](fake_session)
-    repo.add(fake1)
-
     with fake_session as session:
-        fake1 = session.merge(fake1)
-        fake2 = session.get(FakeModel, 1)
+        fake1 = FakeModel(
+            True,
+            'fallen-angel'
+        )
 
-        assert fake2 == fake1
-        assert fake2 is fake1
+        repo = SqlAlchemyRepository[FakeModel](session, FakeModel)
+        repo.add(fake1)
+
+        session.get(FakeModel, 1)
+
+        # model was successfully added since it has autoincremented id attribute
+        assert fake1.id == 1
+
+
+def test_read_sqlalchemy_repository_method(fake_session):
+    with fake_session as session:
+        fake = FakeModel(
+            False,
+            'terrifier'
+        )
+        session.add(fake)
+
+        repo = SqlAlchemyRepository[FakeModel](session, FakeModel)
+        read_fake = repo.read(1)
+
+        # assert that fake and read fake are the same instances with ids
+        assert fake.id == 1
+        assert read_fake is fake

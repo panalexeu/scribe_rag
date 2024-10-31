@@ -1,7 +1,8 @@
 from abc import ABC
+from typing import Type
 
-from sqlalchemy.orm import Session
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 
 class AbstractRepository[T](ABC):
@@ -46,37 +47,34 @@ class AbstractRepository[T](ABC):
 
 class SqlAlchemyRepository[T](AbstractRepository):
 
-    def __init__(self, session: Session):
+    def __init__(
+            self,
+            session: Session,
+            type_T: Type[T]
+    ):
         self.session = session
+        self.type_T = type_T
 
     def add(self, item: T) -> None:
-        with self.session as session:
-            session.add(item)
-            session.commit()
+        self.session.add(item)
 
     def read(self, id_: int) -> T:
-        with self.session as session:
-            return session.get(T, id_)
+        statement = select(self.type_T).where(self.type_T.id == id_)
+        return self.session.execute(statement).scalar()
 
     def read_all(self, offset: int | None, limit: int | None, **kwargs) -> list[T]:
-        with self.session as session:
-            statement = select(T).offset(offset).limit(limit).filter_by(**kwargs)
-            return session.execute(statement).all()
+        statement = select(self.type_T).offset(offset).limit(limit).filter_by(**kwargs)
+        return self.session.execute(statement).scalars()
 
     def update(self, id_: int, **kwargs) -> None:
-        with self.session as session:
-            obj_ = session.get(T, id_)
-            obj_dict = obj_.__dict__
+        obj_ = self.session.get(T, id_)
+        obj_dict = obj_.__dict__
 
-            # resolving attributes to be updated in obj_ based on the provided **kwargs
-            for key, item in kwargs.items():
-                if obj_dict.get(key):
-                    obj_dict[key] = item
-
-            session.commit()
+        # resolving attributes to be updated in obj_ based on the provided **kwargs
+        for key, item in kwargs.items():
+            if obj_dict.get(key):
+                obj_dict[key] = item
 
     def delete(self, id_: int) -> None:
-        with self.session as session:
-            obj_ = session.get(T, id_)
-            session.delete(obj_)
-            session.commit()
+        obj_ = self.session.get(T, id_)
+        self.session.delete(obj_)
