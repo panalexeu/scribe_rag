@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Type
+from typing import Type, Sequence
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -15,10 +15,10 @@ class AbstractRepository[T](ABC):
 
     def read_all(
             self,
-            offset: int | None,
-            limit: int | None,
+            offset: int | None = None,
+            limit: int | None = None,
             **kwargs
-    ) -> list[T]:
+    ) -> Sequence[T]:
         """
         Reads all values from the database for the provided type T.
 
@@ -62,19 +62,24 @@ class SqlAlchemyRepository[T](AbstractRepository):
         statement = select(self.type_T).where(self.type_T.id == id_)
         return self.session.execute(statement).scalar()
 
-    def read_all(self, offset: int | None, limit: int | None, **kwargs) -> list[T]:
+    def read_all(
+            self,
+            offset: int | None = None,
+            limit: int | None = None,
+            **kwargs
+    ) -> Sequence[T]:
         statement = select(self.type_T).offset(offset).limit(limit).filter_by(**kwargs)
-        return self.session.execute(statement).scalars()
+        return self.session.execute(statement).scalars().all()
 
     def update(self, id_: int, **kwargs) -> None:
-        obj_ = self.session.get(T, id_)
+        obj_ = self.session.get(self.type_T, id_)
         obj_dict = obj_.__dict__
 
         # resolving attributes to be updated in obj_ based on the provided **kwargs
         for key, item in kwargs.items():
-            if obj_dict.get(key):
+            if obj_dict.get(key) is not None:
                 obj_dict[key] = item
 
     def delete(self, id_: int) -> None:
-        obj_ = self.session.get(T, id_)
+        obj_ = self.session.get(self.type_T, id_)
         self.session.delete(obj_)
