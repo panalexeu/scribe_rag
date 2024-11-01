@@ -17,11 +17,8 @@ class ApiKeyCredAddHandler:
     @inject
     def __init__(
             self,
-            repository: AbstractRepository[ApiKeyCredential] = Provide['api_key_cred_repo'],
-            codec: AbstractCodec = Provide['codec']
     ):
-        self.repository = repository
-        self.codec = codec
+        ...
 
     def handle(self, request: ApiKeyAddCommand):
         api_key_cred = ApiKeyCredential(**request.__dict__)

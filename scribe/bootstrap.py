@@ -7,10 +7,15 @@ from src.adapters.orm_models import map_sqlalchemy_models
 
 
 def bootstrap():
+    """
+    Sets up scribe directory, logs, key file, maps orm models and starts api.
+    """
+
     container = Container()
     container.mediatr().send(ScribeDirSetupQuery())
 
-    logging.config.dictConfig(container.log_config())
+    log_config = container.log_config()
+    logging.config.dictConfig(log_config)
     logging.info('Scribe bootstrap complete.')
 
     map_sqlalchemy_models()

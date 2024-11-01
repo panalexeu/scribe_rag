@@ -15,7 +15,6 @@ class Container(DeclarativeContainer):
             'src.handlers'
         ],
         modules=[
-            'src.system.logging',
             'src.api.start_api',
             'src.adapters.orm_models'
         ]
