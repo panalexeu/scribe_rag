@@ -60,9 +60,9 @@ class Container(DeclarativeContainer):
         scribe_key_file()
     )
     gen_key = Callable(
-        FernetCodec.gen_key()
+        FernetCodec.gen_key
     )
-    codec = Singleton(
+    codec = Factory(
         FernetCodec,
         key=read_scribe_key()
     )
@@ -74,7 +74,8 @@ class Container(DeclarativeContainer):
     )
 
     # sqlalchemy orm related dependencies
-    engine = create_engine(
+    engine = Singleton(
+        create_engine,
         url='sqlite:///:memory:',
         echo=True
     )

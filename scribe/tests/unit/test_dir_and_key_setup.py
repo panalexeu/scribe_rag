@@ -9,7 +9,6 @@ from src.system.dir import (
     read_scribe_key,
     __clean_scribe_dir,
     __write_scribe_key,
-    __validate_key,
     __clean_log_dir,
     __is_valid_log_file
 )
@@ -24,7 +23,7 @@ def set_fake_home():
 def fake_setup(set_fake_home):
     os.mkdir('./fake_dir')
     scribe_dir = get_scribe_dir_path('.fake')
-    yield scribe_dir, os.path.join(scribe_dir, 'fake.key'), os.path.join(scribe_dir, 'fakes')
+    yield scribe_dir, os.path.join(scribe_dir, 'fake.key'), os.path.join(scribe_dir, 'fakes'), 'fake-key'
     shutil.rmtree('./fake_dir', ignore_errors=True)
 
 
@@ -33,7 +32,7 @@ def test_scribe_dir_path_returns(set_fake_home):
 
 
 def test_scribe_dir_sets_up(fake_setup):
-    fake_dir, fake_key_file, fake_log_dir = fake_setup
+    fake_dir, fake_key_file, fake_log_dir, _ = fake_setup
     setup_scribe_dir(*fake_setup)
 
     assert os.path.exists(fake_dir)
@@ -42,7 +41,7 @@ def test_scribe_dir_sets_up(fake_setup):
 
 
 def test_scribe_dir_is_cleaned_from_unnecessary_files(fake_setup):
-    fake_dir, fake_key_file, fake_log_dir = fake_setup
+    fake_dir, fake_key_file, fake_log_dir, _ = fake_setup
     setup_scribe_dir(*fake_setup)
 
     # spam files
@@ -94,13 +93,13 @@ def test_is_valid_log_file(fake_setup):
     with open(os.path.join(fake_dir, 'test.log.300'), 'w') as file:
         file.write('test')
 
-    # only two log files are relevant
+    # only three log files are relevant
     valid_files = [__is_valid_log_file(file) for file in os.scandir(fake_dir)]
     assert sum(valid_files) == 3
 
 
 def test_scribe_logs_dir_is_cleaned_from_unnecessary_files(fake_setup):
-    _, _, fake_log_dir = fake_setup
+    _, _, fake_log_dir, _ = fake_setup
     setup_scribe_dir(*fake_setup)
 
     # spam files
@@ -143,7 +142,7 @@ def test_scribe_logs_dir_is_cleaned_from_unnecessary_files(fake_setup):
 
 
 def test_scribe_log_dir_is_recreated(fake_setup):
-    fake_dir, _, fake_log_dir = fake_setup
+    fake_dir, _, fake_log_dir, _ = fake_setup
     setup_scribe_dir(*fake_setup)
 
     # log dir is removed
@@ -156,7 +155,7 @@ def test_scribe_log_dir_is_recreated(fake_setup):
 
 
 def test_scribe_dir_recreates_deleted_key_file(fake_setup):
-    fake_dir, fake_key_file, fake_log_dir = fake_setup
+    fake_dir, fake_key_file, fake_log_dir, _ = fake_setup
     setup_scribe_dir(*fake_setup)
 
     # key deleted
@@ -168,28 +167,8 @@ def test_scribe_dir_recreates_deleted_key_file(fake_setup):
     assert os.path.exists(fake_key_file)
 
 
-def test_scribe_dir_rewrites_changed_invalid_key(fake_setup):
-    fake_dir, fake_key_file, fake_log_dir = fake_setup
-
-    # initial key
-    setup_scribe_dir(*fake_setup)
-    read_scribe_key(fake_key_file)
-
-    # key rewritten
-    with open(fake_key_file, 'w') as file:
-        file.write('bla, bla')
-
-    with pytest.raises(ValueError):
-        read_scribe_key(fake_key_file)
-
-    # key recreated
-    setup_scribe_dir(*fake_setup)
-    # key is valid
-    read_scribe_key(fake_key_file)
-
-
 def test_scribe_dir_sets_up_multiple_times(fake_setup):
-    fake_dir, fake_key_file, fake_log_dir = fake_setup
+    fake_dir, fake_key_file, fake_log_dir, _ = fake_setup
 
     setup_scribe_dir(*fake_setup)
 
@@ -244,7 +223,7 @@ def test_scribe_dir_sets_up_multiple_times(fake_setup):
 
 
 def test_keys_are_the_same_after_multiple_set_ups(fake_setup):
-    fake_dir, fake_key_file, fake_log_dir = fake_setup
+    fake_dir, fake_key_file, fake_log_dir, _ = fake_setup
 
     setup_scribe_dir(*fake_setup)
     key = read_scribe_key(fake_key_file)
@@ -264,30 +243,14 @@ def test_keys_are_the_same_after_multiple_set_ups(fake_setup):
 
 
 def test_read_and_write_scribe_key(fake_setup):
-    fake_dir, fake_key_file, fake_log_dir = fake_setup
-    setup_scribe_dir(*fake_setup)
+    fake_dir, fake_key_file, fake_log_dir, fake_key = fake_setup
 
-    key = __write_scribe_key(fake_key_file)
+    os.mkdir(fake_dir)
 
+    # key file has been written
+    __write_scribe_key(fake_key_file, fake_key)
     assert os.path.exists(fake_key_file)
 
+    # key file is successfully retrieved
     read_key = read_scribe_key(fake_key_file)
-
-    assert read_key == key
-
-
-def test_validate_key():
-    with pytest.raises(ValueError):
-        __validate_key('привіт')
-
-    with pytest.raises(ValueError):
-        __validate_key('ASDasdADmklasd123{}1@')
-
-    with pytest.raises(ValueError):
-        __validate_key("""
-            adsds
-             sad
-            123 * ?
-        """)
-
-    __validate_key('LvHrHVBQN1iyTpJHHqCGx1t9SWdG-dyWT3qjnlj99iQ=')
+    assert read_key == fake_key
