@@ -8,6 +8,7 @@ from faker import Faker
 from sqlalchemy.orm import clear_mappers
 
 from src.adapters.orm_models import map_sqlalchemy_models
+from src.adapters.uow import SqlAlchemyUoW
 from src.adapters.repository import SqlAlchemyRepository
 from src.di_container import Container
 from src.domain.models import FakeModel
@@ -207,3 +208,48 @@ def test_delete_sqlalchemy_repo_method(fake_session, faker):
 
         # assert that fake is indeed deleted
         assert session.get(FakeModel, 1) is None
+
+
+def test_sqlalchemy_uow_exit_rollbacks(fake_session):
+    faker = Faker()
+
+    sqlalchemy_uow = SqlAlchemyUoW(
+        SqlAlchemyRepository[FakeModel],
+        fake_session
+    )
+
+    with sqlalchemy_uow as uow:
+        # adding a model but not commiting it
+        fake = FakeModel(
+            True,
+            faker.military_ship()
+        )
+        uow.repository.add(fake)
+
+    with sqlalchemy_uow as uow:
+        # the model is not in the session and is not retrieved
+        read_fake = uow.repository.read(1)
+        assert read_fake is None
+
+
+def test_sqlalchemy_uow_commit(fake_session):
+    sqlalchemy_uow = SqlAlchemyUoW(
+        SqlAlchemyRepository[FakeModel],
+        fake_session
+    )
+
+    with sqlalchemy_uow as uow:
+        # adding a model and commiting it
+        fake = FakeModel(
+            True,
+            'alex-11'
+        )
+        uow.repository.add(fake)
+        uow.commit()
+
+    with sqlalchemy_uow as uow:
+        # the model is successfully retrieved
+        read_fake = uow.repository.read(1)
+
+        assert read_fake is fake
+        assert read_fake.id == fake.id == 1
