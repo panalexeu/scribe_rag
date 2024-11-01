@@ -49,7 +49,7 @@ class FernetCodec(AbstractCodec):
     @classmethod
     def gen_key(cls) -> str:
         """
-        Generates base64-encoded (base64.urlsafe_b64encode) 32-byte generated key (os.urandom).
+        Provides base64-encoded (base64.urlsafe_b64encode) 32-byte generated key (os.urandom).
 
         :returns: str - A generated base64-encoded 32-byte key.
         """

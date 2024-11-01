@@ -34,43 +34,37 @@ class Container(DeclarativeContainer):
     )
     scribe_key_file = Callable(
         os.path.join,
-        scribe_dir(),
+        scribe_dir,
         'scribe.key'
     )
     log_dir = Callable(
         os.path.join,
-        scribe_dir(),
+        scribe_dir,
         'logs'
     )
     log_config = Callable(
         read_log_config,
-        log_dir=log_dir(),
+        log_dir=log_dir,
         config_path='./log_config.yaml',
         log_file_name='scribe.log'
     )
     start_api = Callable(
         start_api,
-        log_config=log_config(),
+        log_config=log_config,
         reload=True
     )
 
     # key related dependencies
     read_scribe_key = Callable(
         read_scribe_key,
-        scribe_key_file()
+        scribe_key_file
     )
     gen_key = Callable(
         FernetCodec.gen_key
     )
     codec = Factory(
         FernetCodec,
-        key=read_scribe_key()
-    )
-
-    # services dependencies
-    encode_api_key_service = Factory(
-        EncodeApiKeyCredentialService,
-        codec()
+        key=read_scribe_key
     )
 
     # sqlalchemy orm related dependencies
@@ -85,4 +79,10 @@ class Container(DeclarativeContainer):
     session = Singleton(
         Session,
         engine
+    )
+
+    # services dependencies
+    encode_api_key_service = Factory(
+        EncodeApiKeyCredentialService,
+        codec
     )
