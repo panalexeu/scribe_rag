@@ -1,11 +1,18 @@
 from abc import ABC
 from typing import Type
 
-from .repository import SqlAlchemyRepository
+import overrides
+
+from .repository import SqlAlchemyRepository, AbstractRepository
 from sqlalchemy.orm import Session
 
 
 class AbstractUoW(ABC):
+    """
+    An abstract base class for the Unit of Work pattern, requiring implementers to provide a repository instance for
+    managing transactional operations.
+    """
+    repository: AbstractRepository
 
     def commit(self):
         raise NotImplementedError
@@ -28,6 +35,7 @@ class SqlAlchemyUoW(AbstractUoW):
     Rollbacks in case of exceptions or exit. Commits should be explicit.
     """
 
+    @overrides.override
     def __init__(
             self,
             repository: Type[SqlAlchemyRepository],

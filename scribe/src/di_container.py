@@ -13,6 +13,7 @@ from src.domain.models import ApiKeyCredential
 from src.system.dir import get_scribe_dir_path, read_scribe_key
 from src.system.logging import read_log_config
 from src.adapters.repository import SqlAlchemyRepository
+from src.adapters.uow import SqlAlchemyUoW
 
 
 class Container(DeclarativeContainer):
@@ -56,13 +57,13 @@ class Container(DeclarativeContainer):
         reload=True
     )
 
-    # key related dependencies
+    # scribe key related dependencies
+    gen_key = Callable(
+        FernetCodec.gen_key
+    )
     read_scribe_key = Callable(
         read_scribe_key,
         scribe_key_file
-    )
-    gen_key = Callable(
-        FernetCodec.gen_key
     )
     codec = Factory(
         FernetCodec,
@@ -90,9 +91,8 @@ class Container(DeclarativeContainer):
         expire_on_commit=True  # clears data when the session is commited
     )
 
-    # repositories
-    api_key_repository = Factory(
-        SqlAlchemyRepository[ApiKeyCredential],
-        session=session,
-        type_T=ApiKeyCredential
+    api_key_uow = Factory(
+        SqlAlchemyUoW,
+        repository=SqlAlchemyRepository[ApiKeyCredential],
+        session=session
     )

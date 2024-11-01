@@ -6,6 +6,7 @@ from src.adapters.repository import AbstractRepository
 from src.di_container import Container
 from src.domain.models import ApiKeyCredential
 from src.domain.services import EncodeApiKeyCredentialService
+from src.adapters.uow import AbstractUoW
 
 
 class ApiKeyAddCommand(GenericQuery[ApiKeyCredential]):
@@ -19,18 +20,16 @@ class ApiKeyCredAddHandler:
     @inject
     def __init__(
             self,
-            session: Session = Provide[Container.session],
-            encode_api_key_service: EncodeApiKeyCredentialService = Provide[Container.encode_api_key_service],
-            repository: AbstractRepository = Provide[Container.api_key_repository]
+            api_key_uow: AbstractUoW = Provide[Container.api_key_uow],
+            encode_api_key_service: EncodeApiKeyCredentialService = Provide[Container.encode_api_key_service]
     ):
-        self.session = session
+        self.api_key_uow = api_key_uow
         self.encode_api_key_service = encode_api_key_service
-        self.repository = repository
 
     def handle(self, request: ApiKeyAddCommand):
-        with self.session as session:
-            api_key_cred = ApiKeyCredential(**request.__dict__)
-            self.encode_api_key_service.encode(api_key_cred)
-            self.repository.add(api_key_cred)
+        with self.api_key_uow as uow:
+            api_key_obj = ApiKeyCredential(**request.__dict__)
+            self.encode_api_key_service.encode(api_key_obj)
+            uow.repository.add(api_key_obj)
 
-            session.commit()
+            uow.commit()
