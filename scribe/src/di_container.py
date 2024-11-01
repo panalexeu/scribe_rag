@@ -82,9 +82,12 @@ class Container(DeclarativeContainer):
     registry = Singleton(
         registry
     )
-    session = Singleton(
+    # creating on every request a new session (Factory) is better, since we are making for sure, that there is no
+    # objects from any previous interactions in the session
+    session = Factory(
         Session,
-        engine
+        bind=engine,
+        expire_on_commit=True  # clears data when the session is commited
     )
 
     # repositories
