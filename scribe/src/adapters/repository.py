@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Type, Sequence
+from typing import get_args, Sequence
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -49,17 +49,18 @@ class SqlAlchemyRepository[T](AbstractRepository):
 
     def __init__(
             self,
-            session: Session,
-            type_T: Type[T]
+            session: Session
     ):
         self.session = session
-        self.type_T = type_T
 
     def add(self, item: T) -> None:
         self.session.add(item)
 
     def read(self, id_: int) -> T:
-        statement = select(self.type_T).where(self.type_T.id == id_)
+        type_T = get_args(self.__orig_class__)[0]  # this is the only way to access original type with typing, this
+        # attribute is set after the object initialization, hence it is not accessible in the constructor and only
+        # accessible in methods
+        statement = select(type_T).where(type_T.id == id_)
         return self.session.execute(statement).scalar()
 
     def read_all(
@@ -68,11 +69,13 @@ class SqlAlchemyRepository[T](AbstractRepository):
             limit: int | None = None,
             **kwargs
     ) -> Sequence[T]:
-        statement = select(self.type_T).offset(offset).limit(limit).filter_by(**kwargs)
+        type_T = get_args(self.__orig_class__)[0]  # type of generic T
+        statement = select(type_T).offset(offset).limit(limit).filter_by(**kwargs)
         return self.session.execute(statement).scalars().all()
 
     def update(self, id_: int, **kwargs) -> None:
-        obj_ = self.session.get(self.type_T, id_)
+        type_T = get_args(self.__orig_class__)[0]
+        obj_ = self.session.get(type_T, id_)
         obj_dict = obj_.__dict__
 
         # resolving attributes to be updated in obj_ based on the provided **kwargs
@@ -81,5 +84,6 @@ class SqlAlchemyRepository[T](AbstractRepository):
                 obj_dict[key] = item
 
     def delete(self, id_: int) -> None:
-        obj_ = self.session.get(self.type_T, id_)
+        type_T = get_args(self.__orig_class__)[0]
+        obj_ = self.session.get(type_T, id_)
         self.session.delete(obj_)

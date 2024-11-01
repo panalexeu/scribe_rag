@@ -4,15 +4,13 @@ Consider this test module as the place to experiment with a sqlalchemy orm relat
 from datetime import datetime
 
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
-from sqlalchemy.orm import clear_mappers
 from faker import Faker
+from sqlalchemy.orm import clear_mappers
 
 from src.adapters.orm_models import map_sqlalchemy_models
+from src.adapters.repository import SqlAlchemyRepository
 from src.di_container import Container
 from src.domain.models import FakeModel
-from src.adapters.repository import SqlAlchemyRepository
 
 
 @pytest.fixture(scope='module')
@@ -82,7 +80,7 @@ def test_add_sqlalchemy_repository_method(fake_session):
             'fallen-angel'
         )
 
-        repo = SqlAlchemyRepository[FakeModel](session, FakeModel)
+        repo = SqlAlchemyRepository[FakeModel](session)
         repo.add(fake1)
 
         session.get(FakeModel, 1)
@@ -99,7 +97,7 @@ def test_read_sqlalchemy_repository_method(fake_session):
         )
         session.add(fake)
 
-        repo = SqlAlchemyRepository[FakeModel](session, FakeModel)
+        repo = SqlAlchemyRepository[FakeModel](session)
         read_fake = repo.read(1)
 
         # assert that fake and read fake are the same instances with ids
@@ -117,7 +115,7 @@ def test_read_all_sqlalchemy_repository_method(fake_session):
 
         session.add_all(fakes)
 
-        repo = SqlAlchemyRepository[FakeModel](session, FakeModel)
+        repo = SqlAlchemyRepository[FakeModel](session)
         read_fakes = repo.read_all()
 
         for fake1, fake2 in zip(fakes, read_fakes):
@@ -130,7 +128,7 @@ def test_read_all_sqlalchemy_repository_with_limit_and_offset(fake_session, fake
 
         session.add_all(fakes)
 
-        repo = SqlAlchemyRepository[FakeModel](session, FakeModel)
+        repo = SqlAlchemyRepository[FakeModel](session)
         page1 = repo.read_all(0, 10)
         page2 = repo.read_all(10, 10)
 
@@ -155,7 +153,7 @@ def test_update_sqlalchemy_repository_method(fake_session, faker):
         session.add(fake)
 
         # updating the fake object
-        repo = SqlAlchemyRepository[FakeModel](session, FakeModel)
+        repo = SqlAlchemyRepository[FakeModel](session)
         repo.update(1, portal_gun=True, spaceship='alex-11')
 
         # retrieving it
@@ -177,7 +175,7 @@ def test_update_sqlalchemy_repo_does_not_updates_not_existing_attributes(fake_se
         session.add(fake)
 
         # updating the fake object with irrelevant 'age' attribute
-        repo = SqlAlchemyRepository(session, FakeModel)
+        repo = SqlAlchemyRepository[FakeModel](session)
         repo.update(1, age=0, spaceship='jhon-11')
 
         # retrieving it
@@ -202,7 +200,7 @@ def test_delete_sqlalchemy_repo_method(fake_session, faker):
         session.add(fake)
         session.get(FakeModel, 1)
 
-        repo = SqlAlchemyRepository(session, FakeModel)
+        repo = SqlAlchemyRepository[FakeModel](session)
         repo.delete(1)
         # flushing the changes
         session.flush()
