@@ -2,11 +2,10 @@ from dependency_injector.wiring import inject, Provide
 from mediatr import Mediator, GenericQuery
 from sqlalchemy.orm import Session
 
+from src.adapters.repository import AbstractRepository
+from src.di_container import Container
 from src.domain.models import ApiKeyCredential
 from src.domain.services import EncodeApiKeyCredentialService
-from src.adapters.repository import SqlAlchemyRepository
-from src.di_container import Container
-from src.adapters.repository import AbstractRepository
 
 
 class ApiKeyAddCommand(GenericQuery[ApiKeyCredential]):
