@@ -1,17 +1,20 @@
 from dependency_injector.wiring import inject, Provide
 from mediatr import Mediator, GenericQuery
-from sqlalchemy.orm import Session
 
-from src.adapters.repository import AbstractRepository
+from src.adapters.uow import AbstractUoW
 from src.di_container import Container
 from src.domain.models import ApiKeyCredential
 from src.domain.services import EncodeApiKeyCredentialService
-from src.adapters.uow import AbstractUoW
 
 
 class ApiKeyAddCommand(GenericQuery[ApiKeyCredential]):
-    name: str
-    api_key: str
+    def __init__(
+            self,
+            name: str,
+            api_key: str
+    ):
+        self.name = name
+        self.api_key = api_key
 
 
 @Mediator.handler
