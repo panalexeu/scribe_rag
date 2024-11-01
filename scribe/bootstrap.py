@@ -20,10 +20,11 @@ def bootstrap():
 
     # setting sqlalchemy mapping and creating tables
     registry = container.registry()
-    engine = container.engine()
+    engine = container.engine
     map_sqlalchemy_models(registry)
     registry.metadata.create_all(engine)
 
+    # starting fast-api
     container.start_api()
 
 

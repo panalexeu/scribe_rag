@@ -1,16 +1,16 @@
 import os
 
-from mediatr import Mediator
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
 from dependency_injector.providers import Singleton, Callable, Factory
-from sqlalchemy.orm import registry, Session
+from mediatr import Mediator
 from sqlalchemy import create_engine
+from sqlalchemy.orm import registry, Session
 
-from src.system.dir import get_scribe_dir_path
-from src.system.logging import read_log_config
-from src.domain.services import EncodeApiKeyCredentialService
 from src.adapters.codecs import FernetCodec
 from src.api.start_api import start_api
+from src.domain.services import EncodeApiKeyCredentialService
+from src.system.dir import get_scribe_dir_path, read_scribe_key
+from src.system.logging import read_log_config
 
 
 class Container(DeclarativeContainer):
@@ -23,6 +23,11 @@ class Container(DeclarativeContainer):
         ]
     )
 
+    mediatr = Singleton(
+        Mediator
+    )
+
+    # scribe dir setup related dependencies
     scribe_dir = Callable(
         get_scribe_dir_path,
         dir_name='.scribe'
@@ -43,33 +48,40 @@ class Container(DeclarativeContainer):
         config_path='./log_config.yaml',
         log_file_name='scribe.log'
     )
-    engine = Callable(
-        create_engine,
-        url='sqlite:///:memory:',
-        echo=True
-    )
     start_api = Callable(
         start_api,
         log_config=log_config(),
         reload=True
     )
 
-    mediatr = Singleton(
-        Mediator
+    # key related dependencies
+    read_scribe_key = Callable(
+        read_scribe_key,
+        scribe_key_file()
+    )
+    gen_key = Callable(
+        FernetCodec.gen_key()
+    )
+    codec = Singleton(
+        FernetCodec,
+        key=read_scribe_key()
+    )
+
+    # services dependencies
+    encode_api_key_service = Factory(
+        EncodeApiKeyCredentialService,
+        codec()
+    )
+
+    # sqlalchemy orm related dependencies
+    engine = create_engine(
+        url='sqlite:///:memory:',
+        echo=True
     )
     registry = Singleton(
         registry
     )
     session = Singleton(
-        Session
-    )
-
-    api_key_codec = Singleton(
-        FernetCodec,
-
-    )
-
-    encode_api_key_service = Factory(
-        EncodeApiKeyCredentialService,
-
+        Session,
+        engine
     )

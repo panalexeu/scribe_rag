@@ -14,6 +14,10 @@ class AbstractCodec(ABC):
     def decode(self, encoded_data: str) -> str:
         raise NotImplementedError
 
+    @classmethod
+    def gen_key(cls) -> str:
+        raise NotImplementedError
+
 
 class FakeCodec(AbstractCodec):
 
@@ -22,6 +26,10 @@ class FakeCodec(AbstractCodec):
 
     def decode(self, encoded_data: str) -> str:
         return 'decoded_data'
+
+    @classmethod
+    def gen_key(cls) -> str:
+        return 'fake-key'
 
 
 class FernetCodec(AbstractCodec):
@@ -37,3 +45,15 @@ class FernetCodec(AbstractCodec):
         str_decode = byte_decoded_content.decode()
 
         return str_decode
+
+    @classmethod
+    def gen_key(cls) -> str:
+        """
+        Generates base64-encoded (base64.urlsafe_b64encode) 32-byte generated key (os.urandom).
+
+        :returns: str - A generated base64-encoded 32-byte key.
+        """
+        byte_key = Fernet.generate_key()
+        str_key = byte_key.decode()
+
+        return str_key
