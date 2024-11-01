@@ -19,7 +19,7 @@ from src.adapters.repository import SqlAlchemyRepository
 def fake_session():
     container = Container()
     engine = create_engine('sqlite:///:memory:', echo=True)
-    map_sqlalchemy_models()
+    map_sqlalchemy_models(container.registry())
     container.registry().metadata.create_all(engine)
     yield Session(engine)
     clear_mappers()

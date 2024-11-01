@@ -17,8 +17,7 @@ from src.domain.models import (
 )
 
 
-@inject
-def map_sqlalchemy_models(registry_: registry = Provide['registry']):
+def map_sqlalchemy_models(registry_: registry):
     """
     Maps sqlalchemy models with the domain models.
     """

@@ -17,9 +17,16 @@ class ApiKeyCredAddHandler:
     @inject
     def __init__(
             self,
+            session=...,
+            repository=...,
+            api_key_credential_encode_service=...
     ):
-        ...
+        self.session = session
+        self.repository = repository
+        self.api_key_credential_encode_service = api_key_credential_encode_service
 
     def handle(self, request: ApiKeyAddCommand):
-        api_key_cred = ApiKeyCredential(**request.__dict__)
-        self.repository.add(api_key_cred)
+        with self.session as session:
+            api_key_cred = ApiKeyCredential(**request.__dict__)
+            self.api_key_credential_encode_service()
+            self.repository.add(api_key_cred)
