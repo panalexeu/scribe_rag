@@ -9,8 +9,10 @@ from sqlalchemy.orm import registry, Session
 from src.adapters.codecs import FernetCodec
 from src.api.start_api import start_api
 from src.domain.services import EncodeApiKeyCredentialService
+from src.domain.models import ApiKeyCredential
 from src.system.dir import get_scribe_dir_path, read_scribe_key
 from src.system.logging import read_log_config
+from src.adapters.repository import SqlAlchemyRepository
 
 
 class Container(DeclarativeContainer):
@@ -66,6 +68,10 @@ class Container(DeclarativeContainer):
         FernetCodec,
         key=read_scribe_key
     )
+    encode_api_key_service = Factory(
+        EncodeApiKeyCredentialService,
+        codec
+    )
 
     # sqlalchemy orm related dependencies
     engine = Singleton(
@@ -81,8 +87,9 @@ class Container(DeclarativeContainer):
         engine
     )
 
-    # services dependencies
-    encode_api_key_service = Factory(
-        EncodeApiKeyCredentialService,
-        codec
+    # repositories
+    api_key_repository = Factory(
+        SqlAlchemyRepository[ApiKeyCredential],
+        session=session,
+        type_T=ApiKeyCredential
     )
