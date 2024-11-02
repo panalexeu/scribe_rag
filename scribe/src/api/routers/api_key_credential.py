@@ -5,7 +5,8 @@ from mediatr import Mediator
 
 from src.di_container import Container
 from src.handlers.api_key_credential import (
-    ApiKeyAddCommand
+    ApiKeyAddCommand,
+    ApiKeyReadQuery
 )
 
 router = APIRouter(
@@ -26,6 +27,16 @@ def api_key_add(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     command = ApiKeyAddCommand(**item.model_dump())
-    res = mediatr.send(command)
+    mediatr.send(command)
 
-    return res
+
+@router.get('/{id_}')
+@inject
+def api_key_read(
+        id_: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = ApiKeyReadQuery(id_)
+    return mediatr.send(query)
+
+

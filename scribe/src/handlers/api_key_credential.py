@@ -7,7 +7,7 @@ from src.domain.models import ApiKeyCredential
 from src.domain.services import EncodeApiKeyCredentialService
 
 
-class ApiKeyAddCommand(GenericQuery[ApiKeyCredential]):
+class ApiKeyAddCommand(GenericQuery[None]):
     def __init__(
             self,
             name: str,
@@ -15,6 +15,11 @@ class ApiKeyAddCommand(GenericQuery[ApiKeyCredential]):
     ):
         self.name = name
         self.api_key = api_key
+
+
+class ApiKeyReadQuery(GenericQuery[ApiKeyCredential]):
+    def __init__(self, id_: int):
+        self.id_ = id_
 
 
 @Mediator.handler
@@ -36,3 +41,17 @@ class ApiKeyCredAddHandler:
             uow.repository.add(api_key_obj)
 
             uow.commit()
+
+
+@Mediator.handler
+class ApiKeyReadHandler:
+    @inject
+    def __init__(
+            self,
+            api_key_uow: AbstractUoW = Provide[Container.api_key_uow]
+    ):
+        self.api_key_uow = api_key_uow
+
+    def handle(self, request: ApiKeyReadQuery):
+        with self.api_key_uow as uow:
+            return uow.repository.read(request.id_)
