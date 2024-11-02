@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from dependency_injector.wiring import Provide, inject
 from sqlalchemy import (
     Table,
     Column,
