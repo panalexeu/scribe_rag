@@ -8,6 +8,7 @@ from src.handlers.api_key_credential import (
     ApiKeyAddCommand,
     ApiKeyReadQuery
 )
+from .models import ResponseModel
 
 router = APIRouter(
     tags=['Api Key Credential'],
@@ -37,6 +38,6 @@ def api_key_read(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = ApiKeyReadQuery(id_)
-    return mediatr.send(query)
+    res = mediatr.send(query)
 
-
+    return ResponseModel(res)

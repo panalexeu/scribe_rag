@@ -5,7 +5,7 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    Date,
+    DateTime,
     Boolean
 )
 from sqlalchemy.orm import registry
@@ -26,7 +26,7 @@ def map_sqlalchemy_models(registry_: registry):
         Column("id", Integer, primary_key=True),
         Column("portal_gun", Boolean),
         Column("spaceship", String),
-        Column("datetime", Date, default=datetime.now())
+        Column("datetime", DateTime, default=datetime.now())
     )
 
     api_key_credential_table = Table(
@@ -35,7 +35,7 @@ def map_sqlalchemy_models(registry_: registry):
         Column("id", Integer, primary_key=True),
         Column("api_key", String),
         Column("name", String),
-        Column("datetime", Date, default=datetime.now())
+        Column("datetime", DateTime, default=datetime.now())
     )
 
     registry_.map_imperatively(ApiKeyCredential, api_key_credential_table)
