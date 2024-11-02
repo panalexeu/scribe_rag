@@ -1,7 +1,7 @@
 APP_PATH=./src/api/app.py
 
 all:
-	python3 bootstrap.py
+	fastapi dev src/api/app.py
 
 test:
 	pytest
