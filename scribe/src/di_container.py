@@ -5,6 +5,7 @@ from dependency_injector.providers import Singleton, Callable, Factory
 from mediatr import Mediator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import registry, Session
+from sqlalchemy.pool import StaticPool
 
 from src.adapters.codecs import FernetCodec
 from src.api.start_api import start_api
@@ -19,7 +20,8 @@ from src.adapters.uow import SqlAlchemyUoW
 class Container(DeclarativeContainer):
     wiring_config = WiringConfiguration(
         packages=[
-            'src.handlers'
+            'src.handlers',
+            'src.api.routers'
         ],
         modules=[
             'src.api.start_api'
@@ -75,13 +77,17 @@ class Container(DeclarativeContainer):
     )
 
     # sqlalchemy orm related dependencies
+    registry = Singleton(
+        registry
+    )
+    # Use StaticPool to share a single connection across threads, enabling multithreaded access
+    # to a :memory: database in SQLAlchemy with check_same_thread=False.
     engine = Singleton(
         create_engine,
         url='sqlite:///:memory:',
-        echo=True
-    )
-    registry = Singleton(
-        registry
+        echo=True,
+        poolclass=StaticPool,
+        connect_args={'check_same_thread': False}
     )
     # creating on every request a new session (Factory) is better, since we are making for sure, that there is no
     # objects from any previous interactions in the session

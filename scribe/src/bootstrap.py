@@ -7,9 +7,8 @@ from src.adapters.orm_models import map_sqlalchemy_models
 
 def bootstrap():
     """
-    Sets up scribe directory, logs, key file, maps orm models and starts api.
+    Sets up scribe directory, logs, key file, maps orm models.
     """
-
     container = Container()
     container.mediatr().send(ScribeDirSetupQuery())
 
@@ -19,14 +18,5 @@ def bootstrap():
     logging.info('Scribe bootstrap complete.')
 
     # setting sqlalchemy mapping and creating tables
-    registry = container.registry()
-    engine = container.engine()
-    map_sqlalchemy_models(registry)
-    registry.metadata.create_all(engine)
-
-    # starting fast-api
-    container.start_api()
-
-
-if __name__ == '__main__':
-    bootstrap()
+    map_sqlalchemy_models(container.registry())
+    container.registry().metadata.create_all(container.engine())
