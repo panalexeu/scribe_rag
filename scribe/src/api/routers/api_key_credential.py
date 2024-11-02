@@ -8,7 +8,6 @@ from src.handlers.api_key_credential import (
     ApiKeyAddCommand
 )
 
-
 router = APIRouter(
     tags=['Api Key Credential'],
     prefix='/api-key'
@@ -28,5 +27,5 @@ def api_key_add(
 ):
     command = ApiKeyAddCommand(**item.model_dump())
     res = mediatr.send(command)
-    print(res)
-    return 'yey'
+
+    return res

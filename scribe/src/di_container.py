@@ -8,7 +8,6 @@ from sqlalchemy.orm import registry, Session
 from sqlalchemy.pool import StaticPool
 
 from src.adapters.codecs import FernetCodec
-from src.api.start_api import start_api
 from src.domain.services import EncodeApiKeyCredentialService
 from src.domain.models import ApiKeyCredential
 from src.system.dir import get_scribe_dir_path, read_scribe_key
@@ -22,9 +21,6 @@ class Container(DeclarativeContainer):
         packages=[
             'src.handlers',
             'src.api.routers'
-        ],
-        modules=[
-            'src.api.start_api'
         ]
     )
 
@@ -52,11 +48,6 @@ class Container(DeclarativeContainer):
         log_dir=log_dir,
         config_path='./log_config.yaml',
         log_file_name='scribe.log'
-    )
-    start_api = Callable(
-        start_api,
-        log_config=log_config,
-        reload=True
     )
 
     # scribe key related dependencies
