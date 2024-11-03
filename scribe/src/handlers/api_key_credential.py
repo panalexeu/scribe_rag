@@ -129,7 +129,7 @@ class ApiKeyDeleteHandler:
     ):
         self.api_key_uow = api_key_uow
 
-    def handle(self, request: ApiKeyDeleteCommand):
+    def handle(self, request: ApiKeyDeleteCommand) -> None:
         with self.api_key_uow as uow:
             uow.repository.delete(request.id_)
             uow.commit()
