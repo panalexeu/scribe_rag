@@ -113,3 +113,23 @@ class ApiKeyUpdateHandler:
         with self.api_key_uow as uow:
             uow.repository.update(**request.__dict__)
             uow.commit()
+
+
+class ApiKeyDeleteCommand(GenericQuery[None]):
+    def __init__(self, id_: int):
+        self.id_ = id_
+
+
+@Mediator.handler
+class ApiKeyDeleteHandler:
+    @inject
+    def __init__(
+            self,
+            api_key_uow: AbstractUoW = Provide[Container.api_key_uow]
+    ):
+        self.api_key_uow = api_key_uow
+
+    def handle(self, request: ApiKeyDeleteCommand):
+        with self.api_key_uow as uow:
+            uow.repository.delete(request.id_)
+            uow.commit()

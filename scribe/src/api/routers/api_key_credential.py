@@ -8,7 +8,8 @@ from src.handlers.api_key_credential import (
     ApiKeyAddCommand,
     ApiKeyReadQuery,
     ApiKeyReadAllQuery,
-    ApiKeyUpdateCommand
+    ApiKeyUpdateCommand,
+    ApiKeyDeleteCommand
 )
 from .models import ResponseModel
 
@@ -72,3 +73,12 @@ def api_key_put(
     command = ApiKeyUpdateCommand(id_, item.name)
     mediatr.send(command)
 
+
+@router.delete('/{id_}')
+@inject
+def api_key_delete(
+        id_: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = ApiKeyDeleteCommand(id_)
+    mediatr.send(command)
