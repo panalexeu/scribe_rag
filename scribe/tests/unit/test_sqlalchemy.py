@@ -47,7 +47,7 @@ def test_fake_model_orm_mapping(fake_session):
         session.get(FakeModel, 2)
 
         # FakeModel objects are successfully retrieved from the db
-        # with the new mapped field
+        # with the new mapped fields (id, datetime)
         assert fake1.id == 1
         assert fake2.id == 2
         assert isinstance(fake1.datetime, datetime)
@@ -197,6 +197,29 @@ def test_update_sqlalchemy_repo_does_not_updates_not_existing_attributes(fake_se
         assert fake.portal_gun is True
         with pytest.raises(AttributeError):
             fake.age
+
+
+def test_update_sqlalchemy_repo_method_does_nothing_when_attributes_are_none(fake_session, faker):
+    with fake_session as session:
+        fake = FakeModel(
+            True,
+            faker.military_ship()
+        )
+
+        session.add(fake)
+        session.flush()
+
+        # updating the fake object with None attributes
+        repo = SqlAlchemyRepository[FakeModel](session)
+        repo.update(1, spaceship=None, portal_gun=False)
+
+        # retrieving the updated object
+        session.get(FakeModel, 1)
+
+        # spaceship is not None, portal gun is changed
+        assert fake.id == 1
+        assert fake.spaceship is not None
+        assert fake.portal_gun == False
 
 
 def test_delete_sqlalchemy_repo_method(fake_session, faker):
