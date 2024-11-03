@@ -7,7 +7,8 @@ from src.di_container import Container
 from src.handlers.api_key_credential import (
     ApiKeyAddCommand,
     ApiKeyReadQuery,
-    ApiKeyReadAllQuery
+    ApiKeyReadAllQuery,
+    ApiKeyUpdateCommand
 )
 from .models import ResponseModel
 
@@ -55,3 +56,19 @@ def api_key_read_all(
     res = mediatr.send(query)
 
     return [ResponseModel(item) for item in res]
+
+
+class ApiKeyPutModel(BaseModel):
+    name: str | None = None
+
+
+@router.put('/{id_}')
+@inject
+def api_key_put(
+        id_: int,
+        item: ApiKeyPutModel,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = ApiKeyUpdateCommand(id_, item.name)
+    mediatr.send(command)
+

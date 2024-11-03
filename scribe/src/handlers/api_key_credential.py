@@ -20,7 +20,7 @@ class ApiKeyAddCommand(GenericQuery[None]):
 
 
 @Mediator.handler
-class ApiKeyCredAddHandler:
+class ApiKeyAddHandler:
 
     @inject
     def __init__(
@@ -87,3 +87,29 @@ class ApiKeyReadAllHandler:
                 limit=request.limit,
                 **request.kwargs
             )
+
+
+class ApiKeyUpdateCommand(GenericQuery[None]):
+    def __init__(
+            self,
+            id_: int,
+            name: str | None = None
+    ):
+        self.id_ = id_
+        self.name = name
+
+
+@Mediator.handler
+class ApiKeyUpdateHandler:
+
+    @inject
+    def __init__(
+            self,
+            api_key_uow: AbstractUoW = Provide[Container.api_key_uow],
+    ):
+        self.api_key_uow = api_key_uow
+
+    def handle(self, request: ApiKeyUpdateCommand) -> None:
+        with self.api_key_uow as uow:
+            uow.repository.update(**request.__dict__)
+            uow.commit()

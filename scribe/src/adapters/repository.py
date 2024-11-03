@@ -81,7 +81,7 @@ class SqlAlchemyRepository[T](AbstractRepository):
         # resolving attributes to be updated in obj_ based on the provided **kwargs
         for key, item in kwargs.items():
             if obj_dict.get(key) is not None and item is not None:
-                obj_dict[key] = item
+                setattr(obj_, key, item)
 
     def delete(self, id_: int) -> None:
         type_T = get_args(self.__orig_class__)[0]
