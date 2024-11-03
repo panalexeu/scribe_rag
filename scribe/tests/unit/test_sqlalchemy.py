@@ -20,7 +20,6 @@ def fake_session():
     map_sqlalchemy_models(container.registry())
     container.registry().metadata.create_all(container.engine())
     yield container.session()
-    clear_mappers()
 
 
 @pytest.fixture(scope='module')
