@@ -85,7 +85,8 @@ class Container(DeclarativeContainer):
     session = Factory(
         Session,
         bind=engine,
-        expire_on_commit=True  # clears data when the session is commited
+        expire_on_commit=True,  # clears data when the session is commited
+        autoflush=False
     )
 
     api_key_uow = Factory(

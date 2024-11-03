@@ -41,6 +41,8 @@ def test_fake_model_orm_mapping(fake_session):
 
         session.add_all([fake1, fake2])
 
+        session.flush()
+
         session.get(FakeModel, 1)
         session.get(FakeModel, 2)
 
@@ -62,6 +64,7 @@ def test_fake_model_update(fake_session):
 
         # adding model and retrieving it
         session.add(fake)
+        session.flush()
         session.get(FakeModel, 1)
 
         # the name is the same
@@ -84,6 +87,7 @@ def test_add_sqlalchemy_repository_method(fake_session):
         repo = SqlAlchemyRepository[FakeModel](session)
         repo.add(fake1)
 
+        session.flush()
         session.get(FakeModel, 1)
 
         # model was successfully added since it has autoincremented id attribute
@@ -97,6 +101,7 @@ def test_read_sqlalchemy_repository_method(fake_session):
             'terrifier'
         )
         session.add(fake)
+        session.flush()
 
         repo = SqlAlchemyRepository[FakeModel](session)
         read_fake = repo.read(1)
@@ -115,6 +120,7 @@ def test_read_all_sqlalchemy_repository_method(fake_session):
         ]
 
         session.add_all(fakes)
+        session.flush()
 
         repo = SqlAlchemyRepository[FakeModel](session)
         read_fakes = repo.read_all()
@@ -128,6 +134,7 @@ def test_read_all_sqlalchemy_repository_with_limit_and_offset(fake_session, fake
         fakes = [FakeModel(True, faker.military_ship()) for _ in range(20)]
 
         session.add_all(fakes)
+        session.flush()
 
         repo = SqlAlchemyRepository[FakeModel](session)
         page1 = repo.read_all(0, 10)
@@ -152,6 +159,7 @@ def test_update_sqlalchemy_repository_method(fake_session, faker):
         )
 
         session.add(fake)
+        session.flush()
 
         # updating the fake object
         repo = SqlAlchemyRepository[FakeModel](session)
@@ -174,6 +182,7 @@ def test_update_sqlalchemy_repo_does_not_updates_not_existing_attributes(fake_se
         )
 
         session.add(fake)
+        session.flush()
 
         # updating the fake object with irrelevant 'age' attribute
         repo = SqlAlchemyRepository[FakeModel](session)
@@ -199,12 +208,12 @@ def test_delete_sqlalchemy_repo_method(fake_session, faker):
 
         # adding object to the sesssion
         session.add(fake)
+        session.flush()
         session.get(FakeModel, 1)
 
         repo = SqlAlchemyRepository[FakeModel](session)
         repo.delete(1)
-        # flushing the changes
-        session.flush()
+        session.flush()  # flushing the changes
 
         # assert that fake is indeed deleted
         assert session.get(FakeModel, 1) is None
