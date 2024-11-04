@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from dependency_injector.wiring import inject, Provide
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from mediatr import Mediator
 from pydantic import BaseModel
 
@@ -39,7 +39,8 @@ router = APIRouter(
 
 @router.post(
     '/',
-    response_model=ApiKeyResponseModel
+    response_model=ApiKeyResponseModel,
+    status_code=status.HTTP_201_CREATED
 )
 @inject
 def api_key_add(
@@ -52,7 +53,7 @@ def api_key_add(
 
 @router.get(
     '/{id_}',
-    response_model=ApiKeyResponseModel
+    response_model=ApiKeyResponseModel,
 )
 @inject
 def api_key_read(
@@ -91,7 +92,10 @@ def api_key_put(
     return mediatr.send(command)
 
 
-@router.delete('/{id_}')
+@router.delete(
+    '/{id_}',
+    status_code=status.HTTP_204_NO_CONTENT
+)
 @inject
 def api_key_delete(
         id_: int,
