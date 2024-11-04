@@ -1,22 +1,7 @@
-import pytest
-from fastapi.testclient import TestClient
-
-from src.api.app import app
-from src.bootstrap import bootstrap
-
-
-@pytest.fixture(scope='session')
-def client():
-    client = TestClient(app)
-    bootstrap()  # <-- bootstrap here, because TestClient doesn't capture defined lifespan
-    yield client
-
-
-def test_root(client):
-    res = client.get('/')
-    json = res.json()
-
-    assert json.get('detail') == 'beep boop beep'
+"""
+Tests in this module must be executed sequentially from start to finish.
+"""
+from .conftest import client
 
 
 def test_api_key_post(client):
@@ -30,3 +15,47 @@ def test_api_key_post(client):
     assert json.get('name') == 'fake-ai'
     assert json.get('datetime') is not None
     assert json.get('api_key') != '12345'
+
+
+def test_api_key_read(client):
+    res = client.get(url='/api-key/1')
+    json = res.json()
+
+    assert json.get('id') == 1
+    assert json.get('name') == 'fake-ai'
+    assert json.get('datetime') is not None
+    assert json.get('api_key') != '12345'
+
+
+def test_api_key_read_all(client):
+    res = client.get(
+        url='/api-key/',
+        params={'limit': 1, 'offset': 0}
+    )
+    json = res.json()
+    api_key = json[0]
+
+    assert len(json) == 1
+    assert api_key.get('id') == 1
+    assert api_key.get('name') == 'fake-ai'
+    assert api_key.get('datetime') is not None
+    assert api_key.get('api_key') != '12345'
+
+
+def test_api_key_put(client):
+    res = client.put(
+        url='/api-key/1',
+        json={'name': 'cohere'}
+    )
+    json = res.json()
+
+    assert json.get('id') == 1
+    assert json.get('name') == 'cohere'
+    assert json.get('datetime') is not None
+    assert json.get('api_key') != '12345'
+
+
+def test_api_key_delete(client):
+    res = client.delete(url='/api-key/1')
+
+    assert res.status_code == 204
