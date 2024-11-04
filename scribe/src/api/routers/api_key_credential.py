@@ -14,6 +14,11 @@ from src.handlers.api_key_credential import (
     ApiKeyDeleteCommand
 )
 
+router = APIRouter(
+    tags=['Api Key Credential'],
+    prefix='/api-key'
+)
+
 
 class ApiKeyResponseModel(BaseModel):
     id: int
@@ -22,19 +27,13 @@ class ApiKeyResponseModel(BaseModel):
     datetime: datetime
 
 
-class ApiKeyAddModel(BaseModel):
+class ApiKeyPostModel(BaseModel):
     name: str
     api_key: str
 
 
 class ApiKeyPutModel(BaseModel):
     name: str | None = None
-
-
-router = APIRouter(
-    tags=['Api Key Credential'],
-    prefix='/api-key'
-)
 
 
 @router.post(
@@ -44,7 +43,7 @@ router = APIRouter(
 )
 @inject
 def api_key_add(
-        item: ApiKeyAddModel,
+        item: ApiKeyPostModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     command = ApiKeyAddCommand(**item.model_dump())

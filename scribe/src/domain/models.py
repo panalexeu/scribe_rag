@@ -19,3 +19,9 @@ class ApiKeyCredential:
 
     def __repr__(self) -> str:
         return f'ApiKeyCredential<name={self.name}, api_key={self.api_key}>'
+
+
+class SystemPrompt:
+    def __init__(self, name: str, content: str):
+        self.name = name
+        self.content = content

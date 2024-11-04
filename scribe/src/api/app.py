@@ -12,7 +12,8 @@ from fastapi.exceptions import HTTPException
 from src.bootstrap import bootstrap
 from src.adapters.repository import ItemNotFoundError
 from .routers import (
-    api_key_credential
+    api_key_credential,
+    system_prompt
 )
 
 
@@ -23,9 +24,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(
-    api_key_credential.router
-)
+app.include_router(api_key_credential.router)
+app.include_router(system_prompt.router)
 
 
 @app.get('/')

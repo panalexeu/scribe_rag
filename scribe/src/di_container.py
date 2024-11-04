@@ -9,11 +9,14 @@ from sqlalchemy.pool import StaticPool
 
 from src.adapters.codecs import FernetCodec
 from src.domain.services import EncodeApiKeyCredentialService
-from src.domain.models import ApiKeyCredential
 from src.system.dir import get_scribe_dir_path, read_scribe_key
 from src.system.logging import read_log_config
 from src.adapters.repository import SqlAlchemyRepository
 from src.adapters.uow import SqlAlchemyUoW
+from src.domain.models import (
+    ApiKeyCredential,
+    SystemPrompt
+)
 
 
 class Container(DeclarativeContainer):
@@ -89,8 +92,14 @@ class Container(DeclarativeContainer):
         expire_on_commit=False
     )
 
+    # uow's
     api_key_uow = Factory(
         SqlAlchemyUoW,
         repository=SqlAlchemyRepository[ApiKeyCredential],
+        session=session
+    )
+    system_prompt_uow = Factory(
+        SqlAlchemyUoW,
+        repository=SqlAlchemyRepository[SystemPrompt],
         session=session
     )

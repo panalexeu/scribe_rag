@@ -12,7 +12,8 @@ from sqlalchemy.orm import registry
 
 from src.domain.models import (
     ApiKeyCredential,
-    FakeModel
+    FakeModel,
+    SystemPrompt
 )
 
 
@@ -38,5 +39,15 @@ def map_sqlalchemy_models(registry_: registry):
         Column("datetime", DateTime, default=datetime.now)
     )
 
+    system_prompt_table = Table(
+        'system_prompt',
+        registry_.metadata,
+        Column('id', Integer, primary_key=True),
+        Column('name', String),
+        Column('content', String),
+        Column('datetime', DateTime, default=datetime.now)
+    )
+
     registry_.map_imperatively(ApiKeyCredential, api_key_credential_table)
     registry_.map_imperatively(FakeModel, fake_table)
+    registry_.map_imperatively(SystemPrompt, system_prompt_table)
