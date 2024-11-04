@@ -84,13 +84,11 @@ def test_add_sqlalchemy_repository_method(fake_session):
         )
 
         repo = SqlAlchemyRepository[FakeModel](session)
-        repo.add(fake1)
-
-        session.flush()
-        session.get(FakeModel, 1)
+        added_fake1 = repo.add(fake1)
 
         # model was successfully added since it has autoincremented id attribute
-        assert fake1.id == 1
+        assert added_fake1 is fake1
+        assert added_fake1.id == fake1.id == 1
 
 
 def test_read_sqlalchemy_repository_method(fake_session):
@@ -162,12 +160,10 @@ def test_update_sqlalchemy_repository_method(fake_session, faker):
 
         # updating the fake object
         repo = SqlAlchemyRepository[FakeModel](session)
-        repo.update(1, portal_gun=True, spaceship='alex-11')
-
-        # retrieving it
-        session.get(FakeModel, 1)
+        upd_fake = repo.update(1, portal_gun=True, spaceship='alex-11')
 
         # asserting that fake object was updated
+        assert fake is upd_fake
         assert fake.spaceship == 'alex-11'
         assert fake.portal_gun is True
         assert fake.id == 1
@@ -185,12 +181,10 @@ def test_update_sqlalchemy_repo_does_not_updates_not_existing_attributes(fake_se
 
         # updating the fake object with irrelevant 'age' attribute
         repo = SqlAlchemyRepository[FakeModel](session)
-        repo.update(1, age=0, spaceship='jhon-11')
-
-        # retrieving it
-        session.get(FakeModel, 1)
+        upd_fake = repo.update(1, age=0, spaceship='jhon-11')
 
         # asserting that age does not exist and only spaceship is changed
+        assert fake is upd_fake
         assert fake.id == 1
         assert fake.spaceship == 'jhon-11'
         assert fake.portal_gun is True
@@ -210,12 +204,10 @@ def test_update_sqlalchemy_repo_method_does_nothing_when_attributes_are_none(fak
 
         # updating the fake object with None attributes
         repo = SqlAlchemyRepository[FakeModel](session)
-        repo.update(1, spaceship=None, portal_gun=False)
-
-        # retrieving the updated object
-        session.get(FakeModel, 1)
+        upd_fake = repo.update(1, spaceship=None, portal_gun=False)
 
         # spaceship is not None, portal gun is changed
+        assert fake is upd_fake
         assert fake.id == 1
         assert fake.spaceship is not None
         assert fake.portal_gun == False

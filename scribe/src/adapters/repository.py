@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 class AbstractRepository[T](ABC):
 
-    def add(self, item: T) -> None:
+    def add(self, item: T) -> T:
         raise NotImplementedError
 
     def read(self, id_: int) -> T:
@@ -32,7 +32,7 @@ class AbstractRepository[T](ABC):
             self,
             id_: int,
             **kwargs
-    ) -> None:
+    ) -> T:
         """
         Updates an existing record in the database identified by the given id.
 
@@ -53,8 +53,11 @@ class SqlAlchemyRepository[T](AbstractRepository):
     ):
         self.session = session
 
-    def add(self, item: T) -> None:
+    def add(self, item: T) -> T:
         self.session.add(item)
+        self.session.flush()
+
+        return item
 
     def read(self, id_: int) -> T:
         type_T = get_args(self.__orig_class__)[0]  # this is the only way to access original type with typing, this
@@ -73,15 +76,19 @@ class SqlAlchemyRepository[T](AbstractRepository):
         statement = select(type_T).offset(offset).limit(limit).filter_by(**kwargs)
         return self.session.execute(statement).scalars().all()
 
-    def update(self, id_: int, **kwargs) -> None:
+    def update(self, id_: int, **kwargs) -> T:
         type_T = get_args(self.__orig_class__)[0]
-        obj_ = self.session.get(type_T, id_)
-        obj_dict = obj_.__dict__
+        item = self.session.get(type_T, id_)
+        item_dict = item.__dict__
 
         # resolving attributes to be updated in obj_ based on the provided **kwargs
-        for key, item in kwargs.items():
-            if obj_dict.get(key) is not None and item is not None:
-                setattr(obj_, key, item)
+        for key, value in kwargs.items():
+            if item_dict.get(key) is not None and value is not None:
+                setattr(item, key, value)
+
+        self.session.flush()
+
+        return item
 
     def delete(self, id_: int) -> None:
         type_T = get_args(self.__orig_class__)[0]
