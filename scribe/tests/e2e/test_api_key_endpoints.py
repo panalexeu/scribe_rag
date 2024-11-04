@@ -15,6 +15,7 @@ def test_api_key_post(client):
     assert json.get('name') == 'fake-ai'
     assert json.get('datetime') is not None
     assert json.get('api_key') != '12345'
+    assert res.status_code == 201
 
 
 def test_api_key_read(client):
@@ -25,6 +26,7 @@ def test_api_key_read(client):
     assert json.get('name') == 'fake-ai'
     assert json.get('datetime') is not None
     assert json.get('api_key') != '12345'
+    assert res.status_code == 200
 
 
 def test_api_key_read_all(client):
@@ -40,6 +42,7 @@ def test_api_key_read_all(client):
     assert api_key.get('name') == 'fake-ai'
     assert api_key.get('datetime') is not None
     assert api_key.get('api_key') != '12345'
+    assert res.status_code == 200
 
 
 def test_api_key_put(client):
@@ -53,6 +56,7 @@ def test_api_key_put(client):
     assert json.get('name') == 'cohere'
     assert json.get('datetime') is not None
     assert json.get('api_key') != '12345'
+    assert res.status_code == 200
 
 
 def test_api_key_delete(client):
