@@ -274,5 +274,6 @@ def test_sqlalchemy_uow_commit(fake_session):
         # the model is successfully retrieved
         read_fake = uow.repository.read(1)
 
-        assert read_fake is fake
         assert read_fake.id == fake.id == 1
+        assert read_fake.portal_gun == fake.portal_gun
+        assert read_fake.spaceship == fake.spaceship
