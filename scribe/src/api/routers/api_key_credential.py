@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from dependency_injector.wiring import inject, Provide
@@ -12,10 +14,19 @@ from src.handlers.api_key_credential import (
     ApiKeyDeleteCommand
 )
 
+from src.domain.models import ApiKeyCredential
+
 router = APIRouter(
     tags=['Api Key Credential'],
     prefix='/api-key'
 )
+
+
+class ApiKeyResponseModel(BaseModel):
+    id: int
+    name: str
+    api_key: str
+    datetime: datetime
 
 
 class ApiKeyAddModel(BaseModel):
@@ -23,7 +34,14 @@ class ApiKeyAddModel(BaseModel):
     api_key: str
 
 
-@router.post('/')
+class ApiKeyPutModel(BaseModel):
+    name: str | None = None
+
+
+@router.post(
+    '/',
+    response_model=ApiKeyResponseModel
+)
 @inject
 def api_key_add(
         item: ApiKeyAddModel,
@@ -33,7 +51,10 @@ def api_key_add(
     return mediatr.send(command)
 
 
-@router.get('/{id_}')
+@router.get(
+    '/{id_}',
+    response_model=ApiKeyResponseModel
+)
 @inject
 def api_key_read(
         id_: int,
@@ -43,7 +64,10 @@ def api_key_read(
     return mediatr.send(query)
 
 
-@router.get('/')
+@router.get(
+    '/',
+    response_model=list[ApiKeyResponseModel]
+)
 @inject
 def api_key_read_all(
         limit: int,
@@ -54,11 +78,10 @@ def api_key_read_all(
     return mediatr.send(query)
 
 
-class ApiKeyPutModel(BaseModel):
-    name: str | None = None
-
-
-@router.put('/{id_}')
+@router.put(
+    '/{id_}',
+    response_model=ApiKeyResponseModel
+)
 @inject
 def api_key_put(
         id_: int,
