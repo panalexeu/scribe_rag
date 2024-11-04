@@ -11,7 +11,6 @@ from src.handlers.api_key_credential import (
     ApiKeyUpdateCommand,
     ApiKeyDeleteCommand
 )
-from .models import ResponseModel
 
 router = APIRouter(
     tags=['Api Key Credential'],
@@ -31,7 +30,7 @@ def api_key_add(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     command = ApiKeyAddCommand(**item.model_dump())
-    mediatr.send(command)
+    return mediatr.send(command)
 
 
 @router.get('/{id_}')
@@ -41,9 +40,7 @@ def api_key_read(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = ApiKeyReadQuery(id_)
-    res = mediatr.send(query)
-
-    return ResponseModel(res)
+    return mediatr.send(query)
 
 
 @router.get('/')
@@ -54,9 +51,7 @@ def api_key_read_all(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = ApiKeyReadAllQuery(limit, offset)
-    res = mediatr.send(query)
-
-    return [ResponseModel(item) for item in res]
+    return mediatr.send(query)
 
 
 class ApiKeyPutModel(BaseModel):
@@ -71,7 +66,7 @@ def api_key_put(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     command = ApiKeyUpdateCommand(id_, item.name)
-    mediatr.send(command)
+    return mediatr.send(command)
 
 
 @router.delete('/{id_}')

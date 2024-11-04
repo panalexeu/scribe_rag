@@ -9,7 +9,7 @@ from src.domain.models import ApiKeyCredential
 from src.domain.services import EncodeApiKeyCredentialService
 
 
-class ApiKeyAddCommand(GenericQuery[None]):
+class ApiKeyAddCommand(GenericQuery[ApiKeyCredential]):
     def __init__(
             self,
             name: str,
@@ -31,13 +31,14 @@ class ApiKeyAddHandler:
         self.api_key_uow = api_key_uow
         self.encode_api_key_service = encode_api_key_service
 
-    def handle(self, request: ApiKeyAddCommand) -> None:
+    def handle(self, request: ApiKeyAddCommand) -> ApiKeyCredential:
         with self.api_key_uow as uow:
             api_key_obj = ApiKeyCredential(**request.__dict__)
             self.encode_api_key_service.encode(api_key_obj)
             uow.repository.add(api_key_obj)
-
             uow.commit()
+
+            return api_key_obj
 
 
 class ApiKeyReadQuery(GenericQuery[ApiKeyCredential]):
@@ -89,7 +90,7 @@ class ApiKeyReadAllHandler:
             )
 
 
-class ApiKeyUpdateCommand(GenericQuery[None]):
+class ApiKeyUpdateCommand(GenericQuery[ApiKeyCredential]):
     def __init__(
             self,
             id_: int,
@@ -109,10 +110,12 @@ class ApiKeyUpdateHandler:
     ):
         self.api_key_uow = api_key_uow
 
-    def handle(self, request: ApiKeyUpdateCommand) -> None:
+    def handle(self, request: ApiKeyUpdateCommand) -> ApiKeyCredential:
         with self.api_key_uow as uow:
-            uow.repository.update(**request.__dict__)
+            item = uow.repository.update(**request.__dict__)
             uow.commit()
+
+            return item
 
 
 class ApiKeyDeleteCommand(GenericQuery[None]):

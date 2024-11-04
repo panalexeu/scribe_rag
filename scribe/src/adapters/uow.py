@@ -54,4 +54,4 @@ class SqlAlchemyUoW(AbstractUoW):
         return self
 
     def __exit__(self, *args):
-        self.rollback()
+        self.session.close()

@@ -60,10 +60,9 @@ class SqlAlchemyRepository[T](AbstractRepository):
         return item
 
     def read(self, id_: int) -> T:
-        type_T = get_args(self.__orig_class__)[0]  # this is the only way to access original type with typing, this
-        # attribute is set after the object initialization, hence it is not accessible in the constructor and only
-        # accessible in methods
+        type_T = get_args(self.__orig_class__)[0]  # this is the only way to access original type with typing
         statement = select(type_T).where(type_T.id == id_)
+
         return self.session.execute(statement).scalar()
 
     def read_all(
@@ -72,7 +71,7 @@ class SqlAlchemyRepository[T](AbstractRepository):
             limit: int | None = None,
             **kwargs
     ) -> Sequence[T]:
-        type_T = get_args(self.__orig_class__)[0]  # type of generic T
+        type_T = get_args(self.__orig_class__)[0]
         statement = select(type_T).offset(offset).limit(limit).filter_by(**kwargs)
         return self.session.execute(statement).scalars().all()
 
