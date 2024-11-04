@@ -9,7 +9,9 @@ from src.di_container import Container
 from src.handlers.system_prompt import (
     SystemPromptAddCommand,
     SystemPromptReadQuery,
-    SystemPromptReadAllQuery
+    SystemPromptReadAllQuery,
+    SystemPromptUpdateCommand,
+    SystemPromptDeleteCommand
 )
 
 router = APIRouter(
@@ -74,3 +76,30 @@ def sys_prompt_read_all(
 ):
     query = SystemPromptReadAllQuery(limit, offset)
     return mediatr.send(query)
+
+
+@router.put(
+    path='/{id_}',
+    response_model=SystemPromptResponseModel
+)
+@inject
+def sys_prompt_update(
+        id_: int,
+        item: SystemPromptPutModel,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = SystemPromptUpdateCommand(id_, **item.model_dump())
+    return mediatr.send(command)
+
+
+@router.delete(
+    path='/{id_}',
+    status_code=status.HTTP_204_NO_CONTENT
+)
+@inject
+def sys_prompt_delete(
+        id_: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = SystemPromptDeleteCommand(id_)
+    mediatr.send(command)

@@ -60,7 +60,7 @@ class ApiKeyReadHandler:
             return uow.repository.read(request.id_)
 
 
-class ApiKeyReadAllQuery(GenericQuery[list[ApiKeyCredential]]):
+class ApiKeyReadAllQuery(GenericQuery[Sequence[ApiKeyCredential]]):
     def __init__(
             self,
             limit: int,
@@ -112,10 +112,10 @@ class ApiKeyUpdateHandler:
 
     def handle(self, request: ApiKeyUpdateCommand) -> ApiKeyCredential:
         with self.api_key_uow as uow:
-            item = uow.repository.update(**request.__dict__)
+            upd_item = uow.repository.update(**request.__dict__)
             uow.commit()
 
-            return item
+            return upd_item
 
 
 class ApiKeyDeleteCommand(GenericQuery[None]):
