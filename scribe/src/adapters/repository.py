@@ -47,7 +47,7 @@ class AbstractRepository[T](ABC):
 
 class ItemNotFoundError(LookupError):
     def __init__(self, id_: int):
-        super().__init__(f'Item with the id: "{id_}" is not found.')
+        super().__init__(f"Item with the id '{id_}' was not found.")
 
 
 class SqlAlchemyRepository[T](AbstractRepository):
