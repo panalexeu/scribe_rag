@@ -45,6 +45,11 @@ class AbstractRepository[T](ABC):
         raise NotImplementedError
 
 
+class ItemNotFoundError(LookupError):
+    def __init__(self, id_: int):
+        super().__init__(f'Item with the id: "{id_}" is not found.')
+
+
 class SqlAlchemyRepository[T](AbstractRepository):
 
     def __init__(
@@ -60,10 +65,17 @@ class SqlAlchemyRepository[T](AbstractRepository):
         return item
 
     def read(self, id_: int) -> T:
+        """
+        :raises ItemNotFoundError: if a nonexistent **id_** is provided.
+        """
         type_T = get_args(self.__orig_class__)[0]  # this is the only way to access original type with typing
         statement = select(type_T).where(type_T.id == id_)
 
-        return self.session.execute(statement).scalar()
+        res = self.session.execute(statement).scalar()
+        if res is None:
+            raise ItemNotFoundError(id_)
+
+        return res
 
     def read_all(
             self,
@@ -76,8 +88,15 @@ class SqlAlchemyRepository[T](AbstractRepository):
         return self.session.execute(statement).scalars().all()
 
     def update(self, id_: int, **kwargs) -> T:
+        """
+        :raises ItemNotFoundError: if a nonexistent **id_** is provided.
+        """
         type_T = get_args(self.__orig_class__)[0]
+
         item = self.session.get(type_T, id_)
+        if item is None:
+            raise ItemNotFoundError(id_)
+
         item_dict = item.__dict__
 
         # resolving attributes to be updated in obj_ based on the provided **kwargs
@@ -90,6 +109,13 @@ class SqlAlchemyRepository[T](AbstractRepository):
         return item
 
     def delete(self, id_: int) -> None:
+        """
+        :raises ItemNotFoundError: if a nonexistent **id_** is provided.
+        """
         type_T = get_args(self.__orig_class__)[0]
-        obj_ = self.session.get(type_T, id_)
-        self.session.delete(obj_)
+
+        item = self.session.get(type_T, id_)
+        if item is None:
+            raise ItemNotFoundError(id_)
+
+        self.session.delete(item)

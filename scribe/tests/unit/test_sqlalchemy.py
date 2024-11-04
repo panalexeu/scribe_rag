@@ -9,7 +9,7 @@ from sqlalchemy.orm import clear_mappers
 
 from src.adapters.orm_models import map_sqlalchemy_models
 from src.adapters.uow import SqlAlchemyUoW
-from src.adapters.repository import SqlAlchemyRepository
+from src.adapters.repository import SqlAlchemyRepository, ItemNotFoundError
 from src.di_container import Container
 from src.domain.models import FakeModel
 
@@ -233,7 +233,31 @@ def test_delete_sqlalchemy_repo_method(fake_session, faker):
         assert session.get(FakeModel, 1) is None
 
 
-def test_sqlalchemy_uow_exit_rollbacks(fake_session):
+def test_sqlalchemy_repo_read_raises_exception_if_a_nonexistent_id_is_provided(fake_session, faker):
+    with fake_session as session:
+        repo = SqlAlchemyRepository[FakeModel](session)
+
+        with pytest.raises(ItemNotFoundError):
+            repo.read(1)
+
+
+def test_sqlalchemy_repo_update_raises_exception_if_a_nonexistent_id_is_provided(fake_session, faker):
+    with fake_session as session:
+        repo = SqlAlchemyRepository[FakeModel](session)
+
+        with pytest.raises(ItemNotFoundError):
+            repo.update(1, kwarg='quack!')
+
+
+def test_sqlalchemy_repo_delete_raises_exception_if_a_nonexistent_id_is_provided(fake_session, faker):
+    with fake_session as session:
+        repo = SqlAlchemyRepository[FakeModel](session)
+
+        with pytest.raises(ItemNotFoundError):
+            repo.delete(1)
+
+
+def test_sqlalchemy_uow_exit_closes_the_session(fake_session):
     faker = Faker()
 
     sqlalchemy_uow = SqlAlchemyUoW(
@@ -251,8 +275,8 @@ def test_sqlalchemy_uow_exit_rollbacks(fake_session):
 
     with sqlalchemy_uow as uow:
         # the model is not in the session and is not retrieved
-        read_fake = uow.repository.read(1)
-        assert read_fake is None
+        with pytest.raises(ItemNotFoundError):
+            uow.repository.read(1)
 
 
 def test_sqlalchemy_uow_commit(fake_session):
