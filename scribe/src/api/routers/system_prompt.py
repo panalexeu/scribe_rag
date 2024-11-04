@@ -7,7 +7,8 @@ from pydantic import BaseModel
 
 from src.di_container import Container
 from src.handlers.system_prompt import (
-    SystemPromptAddCommand
+    SystemPromptAddCommand,
+    SystemPromptReadQuery
 )
 
 router = APIRouter(
@@ -45,3 +46,16 @@ def sys_prompt_add(
 ):
     command = SystemPromptAddCommand(**item.model_dump())
     return mediatr.send(command)
+
+
+@router.get(
+    path='/{id_}',
+    response_model=SystemPromptResponseModel
+)
+@inject
+def sys_prompt_read(
+        id_: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = SystemPromptReadQuery(id_)
+    return mediatr.send(query)
