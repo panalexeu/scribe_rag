@@ -47,3 +47,28 @@ class SystemPromptReadHandler:
     def handle(self, request: SystemPromptReadQuery) -> SystemPrompt:
         with self.system_prompt_uow as uow:
             return uow.repository.read(request.id_)
+
+
+class SystemPromptReadAllQuery(GenericQuery[list[SystemPrompt]]):
+    def __init__(self, limit: int, offset: int, **kwargs):
+        self.limit = limit
+        self.offset = offset
+        self.kwargs = kwargs
+
+
+@Mediator.handler
+class SystemPromptReadAllHandler:
+    @inject
+    def __init__(
+            self,
+            system_prompt_uow: AbstractUoW = Provide[Container.system_prompt_uow]
+    ):
+        self.system_prompt_uow = system_prompt_uow
+
+    def handle(self, request: SystemPromptReadAllQuery):
+        with self.system_prompt_uow as uow:
+            return uow.repository.read_all(
+                offset=request.offset,
+                limit=request.limit,
+                **request.kwargs
+            )
