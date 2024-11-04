@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel
 from dependency_injector.wiring import inject, Provide
+from fastapi import APIRouter, Depends
 from mediatr import Mediator
+from pydantic import BaseModel
 
 from src.di_container import Container
 from src.handlers.api_key_credential import (
@@ -12,13 +12,6 @@ from src.handlers.api_key_credential import (
     ApiKeyReadAllQuery,
     ApiKeyUpdateCommand,
     ApiKeyDeleteCommand
-)
-
-from src.domain.models import ApiKeyCredential
-
-router = APIRouter(
-    tags=['Api Key Credential'],
-    prefix='/api-key'
 )
 
 
@@ -36,6 +29,12 @@ class ApiKeyAddModel(BaseModel):
 
 class ApiKeyPutModel(BaseModel):
     name: str | None = None
+
+
+router = APIRouter(
+    tags=['Api Key Credential'],
+    prefix='/api-key'
+)
 
 
 @router.post(
