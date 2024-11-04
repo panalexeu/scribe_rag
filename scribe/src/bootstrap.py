@@ -1,4 +1,5 @@
 import logging
+from logging import config
 
 from src.di_container import Container
 from src.handlers.scribe_dir_setup import ScribeDirSetupQuery
@@ -14,7 +15,7 @@ def bootstrap():
 
     # configure logging
     log_config = container.log_config()
-    logging.config.dictConfig(log_config)
+    config.dictConfig(log_config)
     logging.info('Scribe bootstrap complete.')
 
     # setting sqlalchemy mapping and creating tables
