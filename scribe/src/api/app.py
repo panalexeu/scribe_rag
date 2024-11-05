@@ -13,7 +13,8 @@ from src.bootstrap import bootstrap
 from src.adapters.repository import ItemNotFoundError
 from .routers import (
     api_key_credential,
-    system_prompt
+    system_prompt,
+    collection
 )
 
 
@@ -26,6 +27,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(api_key_credential.router)
 app.include_router(system_prompt.router)
+app.include_router(collection.router)
 
 
 @app.get('/')
