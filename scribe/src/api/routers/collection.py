@@ -1,6 +1,9 @@
+import io
 from mediatr import Mediator
 from fastapi import APIRouter, Depends, UploadFile
 from dependency_injector.wiring import Provide, inject
+from langchain_unstructured import UnstructuredLoader
+from langchain_core.documents import Document
 
 from src.di_container import Container
 
@@ -18,12 +21,13 @@ async def collection_add_file(
         collection_name: str,
         file: UploadFile,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
-):
-    content = await file.read()
-    content_str = content.decode()
-    return {
-        'filename': file.filename,
-        'filesize': file.size,
-        'content-type': file.content_type,
-        'content': content_str
-    }
+) -> list[Document]:
+    bytes_ = await file.read()
+    wrapped_bytes = io.BytesIO(bytes_)  # wraps bytes in IO object
+    loader = UnstructuredLoader(
+        file=wrapped_bytes,
+        metadata_filename=file.filename,
+    )
+    documents = await loader.aload()
+
+    return documents
