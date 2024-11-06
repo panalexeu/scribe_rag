@@ -9,7 +9,10 @@ from sqlalchemy.pool import StaticPool
 from langchain_unstructured.document_loaders import UnstructuredLoader
 
 from src.adapters.codecs import FernetCodec
-from src.domain.services import EncodeApiKeyCredentialService
+from src.domain.services import (
+    EncodeApiKeyCredentialService,
+    LoadDocumentService
+)
 from src.system.dir import get_scribe_dir_path, read_scribe_key
 from src.system.logging import read_log_config
 from src.adapters.repository import SqlAlchemyRepository
@@ -66,10 +69,6 @@ class Container(DeclarativeContainer):
         FernetCodec,
         key=read_scribe_key
     )
-    encode_api_key_service = Factory(
-        EncodeApiKeyCredentialService,
-        codec
-    )
 
     # sqlalchemy orm related dependencies
     registry = Singleton(
@@ -105,5 +104,12 @@ class Container(DeclarativeContainer):
         session=session
     )
 
-    # document loaders
-    document_loader = Object(UnstructuredLoader)
+    # services
+    load_document_service = Singleton(
+        LoadDocumentService,
+        doc_loader=UnstructuredLoader
+    )
+    encode_api_key_service = Factory(
+        EncodeApiKeyCredentialService,
+        codec=codec
+    )
