@@ -20,7 +20,7 @@ class EncodeApiKeyCredentialService:
         api_key_cred.api_key = self.codec.encode(api_key_cred.api_key)
 
 
-class LoadDocumentFactoryService:
+class LoadDocumentService:
     """
     Service that wraps around langchain_core.document_loaders.base.BaseLoader
     to load documents asynchronously.

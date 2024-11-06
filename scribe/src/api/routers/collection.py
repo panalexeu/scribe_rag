@@ -21,8 +21,8 @@ async def collection_add_file(
         files: list[UploadFile],
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ) -> list[Document]:
+    # TODO make the loop truly async
     command = DocumentLoadCommand({file.filename: await file.read() for file in files})
     result = await mediatr.send_async(command)
 
     return result
-
