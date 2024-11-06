@@ -16,7 +16,10 @@ from src.system.dir import (
 
 @pytest.fixture(scope='function')
 def set_fake_home():
+    home = os.environ['HOME']
     os.environ['HOME'] = './fake_dir'
+    yield
+    os.environ['HOME'] = home
 
 
 @pytest.fixture(scope='function')
