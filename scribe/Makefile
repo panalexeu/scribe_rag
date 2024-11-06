@@ -6,3 +6,6 @@ test_unit:
 
 test_e2e:
 	pytest tests/e2e
+
+test_async:
+	pytest tests/async
