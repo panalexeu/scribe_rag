@@ -1,11 +1,12 @@
 import os
 
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
-from dependency_injector.providers import Singleton, Callable, Factory
+from dependency_injector.providers import Singleton, Callable, Factory, Object
 from mediatr import Mediator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import registry, Session
 from sqlalchemy.pool import StaticPool
+from langchain_unstructured.document_loaders import UnstructuredLoader
 
 from src.adapters.codecs import FernetCodec
 from src.domain.services import EncodeApiKeyCredentialService
@@ -103,3 +104,6 @@ class Container(DeclarativeContainer):
         repository=SqlAlchemyRepository[SystemPrompt],
         session=session
     )
+
+    # document loaders
+    document_loader = Object(UnstructuredLoader)

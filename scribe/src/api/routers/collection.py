@@ -1,11 +1,10 @@
-import io
-from mediatr import Mediator
-from fastapi import APIRouter, Depends, UploadFile
 from dependency_injector.wiring import Provide, inject
-from langchain_unstructured import UnstructuredLoader
+from fastapi import APIRouter, Depends, UploadFile, status
 from langchain_core.documents import Document
+from mediatr import Mediator
 
 from src.di_container import Container
+from src.handlers.document_loader import DocumentLoadCommand
 
 router = APIRouter(
     prefix='/collection',
@@ -15,19 +14,15 @@ router = APIRouter(
 
 @router.post(
     path='/{collection_name}',
+    status_code=status.HTTP_201_CREATED
 )
 @inject
 async def collection_add_file(
-        collection_name: str,
-        file: UploadFile,
+        files: list[UploadFile],
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ) -> list[Document]:
-    bytes_ = await file.read()
-    wrapped_bytes = io.BytesIO(bytes_)  # wraps bytes in IO object
-    loader = UnstructuredLoader(
-        file=wrapped_bytes,
-        metadata_filename=file.filename,
-    )
-    documents = await loader.aload()
+    command = DocumentLoadCommand({file.filename: await file.read() for file in files})
+    result = await mediatr.send_async(command)
 
-    return documents
+    return result
+
