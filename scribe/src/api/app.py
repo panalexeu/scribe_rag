@@ -11,6 +11,7 @@ from fastapi.exceptions import HTTPException
 
 from src.bootstrap import bootstrap
 from src.adapters.repository import ItemNotFoundError
+from src.domain.services import UnsupportedFileFormatError
 from .routers import (
     api_key_credential,
     system_prompt,
@@ -48,5 +49,13 @@ async def handle_req_validation_err(req: Request, exc: RequestValidationError):
 async def handle_item_not_found_error(req, exc: ItemNotFoundError):
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
+        detail=exc.__str__()
+    )
+
+
+@app.exception_handler(UnsupportedFileFormatError)
+async def handle_unsupported_file_format_error(req, exc: UnsupportedFileFormatError):
+    raise HTTPException(
+        status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         detail=exc.__str__()
     )

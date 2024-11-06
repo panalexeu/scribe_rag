@@ -20,6 +20,15 @@ class EncodeApiKeyCredentialService:
         api_key_cred.api_key = self.codec.encode(api_key_cred.api_key)
 
 
+class UnsupportedFileFormatError(RuntimeError):
+    supported_formats = ['.odt', '.md', 'text files']
+
+    def __init__(self):
+        super().__init__(
+            f'Unsupported file formate provided. Currently supported are: {', '.join(self.supported_formats)}.'
+        )
+
+
 class LoadDocumentService:
     """
     Service that wraps around langchain_core.document_loaders.base.BaseLoader
@@ -33,6 +42,10 @@ class LoadDocumentService:
 
     # TODO make the loop truly async
     async def load_async(self, files: dict[str, bytes]) -> list[Document]:
+        """
+        :raises UnsupportedFileFormatError:
+        """
+
         all_docs = []
         for filename, bytes_ in files.items():
             wrapped_bytes = io.BytesIO(bytes_)  # <-- BytesIO wrapping around bytes
@@ -40,7 +53,12 @@ class LoadDocumentService:
                 file=wrapped_bytes,  # type: ignore
                 metadata_filename=filename  # type: ignore
             )
-            docs = await document_loader.aload()
+
+            try:
+                docs = await document_loader.aload()
+            except ImportError:
+                raise UnsupportedFileFormatError
+
             all_docs.extend(docs)
 
         return all_docs
