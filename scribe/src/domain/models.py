@@ -27,7 +27,11 @@ class SystemPrompt:
         self.content = content
 
 
-class DocumentProcessingConfig:
+class UnstructuredDocProcessingConfig:
+    """
+    Configuration options for processing and chunking Unstructured documents.
+    """
+
     def __init__(
             self,
     ):
