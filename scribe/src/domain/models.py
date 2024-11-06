@@ -27,5 +27,8 @@ class SystemPrompt:
         self.content = content
 
 
-class DocumentProcessingSettings:
-    pass
+class DocumentProcessingConfig:
+    def __init__(
+            self,
+    ):
+        pass
