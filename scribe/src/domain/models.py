@@ -1,3 +1,9 @@
+from src.enums import (
+    UnstructuredPostprocessors,
+    ChunkingStrategy
+)
+
+
 class FakeModel:
 
     def __init__(self, portal_gun: bool, spaceship: str):
@@ -34,5 +40,8 @@ class UnstructuredDocProcessingConfig:
 
     def __init__(
             self,
+            postprocessors: list[UnstructuredPostprocessors] | None,
+            chunking_strategy: ChunkingStrategy
     ):
-        pass
+        self.postprocessors = postprocessors
+        self.chunking_strategy = chunking_strategy
