@@ -1,11 +1,12 @@
-from pydantic import BaseModel
-from mediatr import Mediator, GenericQuery
-from dependency_injector.wiring import inject, Provide
+from typing import Sequence
 
-from src.domain.models import DocProcessingConfig
-from src.enums import Postprocessors, ChunkingStrategy
+from dependency_injector.wiring import inject, Provide
+from mediatr import Mediator, GenericQuery
+
 from src.adapters.uow import AbstractUoW
 from src.di_container import Container
+from src.domain.models import DocProcessingConfig
+from src.enums import Postprocessors, ChunkingStrategy
 
 
 class DocProcCnfAddCommand(GenericQuery[DocProcessingConfig]):
@@ -64,3 +65,28 @@ class DocProcCnfReadHandler:
     def handle(self, request: DocProcCnfReadQuery) -> DocProcessingConfig:
         with self.doc_proc_cnf_uow as uow:
             return uow.repository.read(request.id_)
+
+
+class DocProcCnfReadAllQuery(GenericQuery[Sequence[DocProcessingConfig]]):
+    def __init__(self, limit: int, offset: int, **kwargs):
+        self.limit = limit
+        self.offset = offset
+        self.kwargs = kwargs
+
+
+@Mediator.handler
+class DocProcCnfReadAllHandler:
+    @inject
+    def __init__(
+            self,
+            doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow]
+    ):
+        self.doc_proc_cnf_uow = doc_proc_cnf_uow
+
+    def handle(self, request: DocProcCnfReadAllQuery) -> Sequence[DocProcessingConfig]:
+        with self.doc_proc_cnf_uow as uow:
+            return uow.repository.read_all(
+                limit=request.limit,
+                offset=request.offset,
+                **request.kwargs
+            )

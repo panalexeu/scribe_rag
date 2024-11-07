@@ -1,6 +1,5 @@
 import datetime
 
-from rich import print
 from mediatr import Mediator
 from fastapi import APIRouter, status, Depends
 from pydantic import BaseModel
@@ -13,7 +12,8 @@ from src.enums import (
 )
 from src.handlers.doc_processing_cnf import (
     DocProcCnfAddCommand,
-    DocProcCnfReadQuery
+    DocProcCnfReadQuery,
+    DocProcCnfReadAllQuery
 )
 
 router = APIRouter(
@@ -75,4 +75,18 @@ def read_doc_proc_cnf(
         mediatr: Mediator = Depends(Provide[Container.mediatr]),
 ):
     query = DocProcCnfReadQuery(id_)
+    return mediatr.send(query)
+
+
+@router.get(
+    path='/',
+    response_model=list[ReadDocProcCnfResponseModel]
+)
+@inject
+def read_all_doc_proc_cnf(
+        limit: int,
+        offset: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr]),
+):
+    query = DocProcCnfReadAllQuery(limit=limit, offset=offset)
     return mediatr.send(query)
