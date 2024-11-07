@@ -9,7 +9,8 @@ from src.di_container import Container
 from src.handlers.vector_store import (
     VectorStoreAddCommand,
     VectorStoreReadQuery,
-    VectorStoreReadAllQuery
+    VectorStoreReadAllQuery,
+    VectorStoreUpdateCommand
 )
 
 from src.api.routers import (
@@ -43,6 +44,14 @@ class VecStoreAddModel(BaseModel):
     system_prompt_id: int
     api_key_credential_id: int
     doc_proc_cnf_id: int
+
+
+class VectorStorePutModel(BaseModel):
+    name: str | None = None
+    desc: str | None = None
+    system_prompt_id: int | None = None
+    api_key_credential_id: int | None = None
+    doc_proc_cnf_id: int | None = None
 
 
 @router.post(
@@ -84,3 +93,17 @@ def vec_store_read_all(
 ):
     query = VectorStoreReadAllQuery(limit=limit, offset=offset)
     return mediatr.send(query)
+
+
+@router.put(
+    '/{id_}',
+    response_model=VecStoreResponseModel
+)
+@inject
+def vec_store_update(
+        id_: int,
+        item: VectorStorePutModel,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = VectorStoreUpdateCommand(id_, **item.model_dump())
+    return mediatr.send(command)

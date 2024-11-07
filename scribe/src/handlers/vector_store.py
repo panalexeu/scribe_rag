@@ -61,7 +61,7 @@ class VectorStoreReadHandler:
             return uow.repository.read(request.id_)
 
 
-class VectorStoreReadAllQuery(GenericQuery[Sequence]):
+class VectorStoreReadAllQuery(GenericQuery[Sequence[VectorStore]]):
     def __init__(
             self,
             limit: int,
@@ -82,10 +82,34 @@ class VectorStoreReadAllHandler:
     ):
         self.vector_store_uow = vector_store_uow
 
-    def handle(self, request: VectorStoreReadAllQuery):
+    def handle(self, request: VectorStoreReadAllQuery) -> Sequence[VectorStore]:
         with self.vector_store_uow as uow:
-            return self.vector_store_uow.repository.read_all(
+            return uow.repository.read_all(
                 offset=request.offset,
                 limit=request.limit,
                 **request.kwargs
             )
+
+
+class VectorStoreUpdateCommand(GenericQuery[VectorStore]):
+    def __init__(self, id_: int, **kwargs):
+        self.id_ = id_
+        self.kwargs = kwargs
+
+
+@Mediator.handler
+class VectorStoreUpdateHandler:
+    @inject
+    def __init__(
+            self,
+            vector_store_uow: AbstractUoW = Provide[Container.vector_store_uow]
+    ):
+        self.vector_store_uow = vector_store_uow
+
+    def handle(self, request: VectorStoreUpdateCommand) -> VectorStore:
+        with self.vector_store_uow as uow:
+            upd_item = uow.repository.update(request.id_, **request.kwargs)
+            uow.commit()
+
+            return upd_item
+        

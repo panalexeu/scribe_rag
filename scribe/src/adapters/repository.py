@@ -179,4 +179,6 @@ class SqlAlchemyRelationRepository[T](SqlAlchemyRepository):
 
         self.session.flush()
 
-        return item
+        statement = select(type_T).where(type_T.id == id_).options(joinedload('*'))
+
+        return self.session.execute(statement).scalar()
