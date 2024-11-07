@@ -36,8 +36,8 @@ def map_sqlalchemy_models(registry_: registry):
         "api_key_credential",
         registry_.metadata,
         Column("id", Integer, primary_key=True),
-        Column("api_key", String),
-        Column("name", String),
+        Column("api_key", String, nullable=False),
+        Column("name", String, nullable=False),
         Column("datetime", DateTime, default=datetime.now)
     )
 
@@ -45,8 +45,8 @@ def map_sqlalchemy_models(registry_: registry):
         'system_prompt',
         registry_.metadata,
         Column('id', Integer, primary_key=True),
-        Column('name', String),
-        Column('content', String),
+        Column('name', String, nullable=False),
+        Column('content', String, nullable=False),
         Column('datetime', DateTime, default=datetime.now)
     )
 
@@ -54,8 +54,8 @@ def map_sqlalchemy_models(registry_: registry):
         'doc_processing_config',
         registry_.metadata,
         Column('id', Integer, primary_key=True),
-        Column('name', String),
-        Column('json_config', JSON),
+        Column('name', String, nullable=False),
+        Column('json_config', JSON, nullable=False),
         Column('datetime', DateTime, default=datetime.now)
     )
 
