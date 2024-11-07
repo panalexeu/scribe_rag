@@ -6,14 +6,16 @@ from sqlalchemy import (
     Integer,
     String,
     DateTime,
-    Boolean
+    Boolean,
+    JSON
 )
 from sqlalchemy.orm import registry
 
 from src.domain.models import (
     ApiKeyCredential,
     FakeModel,
-    SystemPrompt
+    SystemPrompt,
+    DocProcessingConfig
 )
 
 
@@ -48,6 +50,16 @@ def map_sqlalchemy_models(registry_: registry):
         Column('datetime', DateTime, default=datetime.now)
     )
 
+    doc_processing_config_table = Table(
+        'doc_processing_config',
+        registry_.metadata,
+        Column('id', Integer, primary_key=True),
+        Column('name', String),
+        Column('json_config', JSON),
+        Column('datetime', DateTime, default=datetime.now)
+    )
+
     registry_.map_imperatively(ApiKeyCredential, api_key_credential_table)
     registry_.map_imperatively(FakeModel, fake_table)
     registry_.map_imperatively(SystemPrompt, system_prompt_table)
+    registry_.map_imperatively(DocProcessingConfig, doc_processing_config_table)
