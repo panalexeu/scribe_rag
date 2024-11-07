@@ -90,3 +90,46 @@ class DocProcCnfReadAllHandler:
                 offset=request.offset,
                 **request.kwargs
             )
+
+
+class DocProcCnfUpdateCommand(GenericQuery[DocProcessingConfig]):
+    def __init__(self, id_: int, **kwargs):
+        self.id_ = id_
+        self.kwargs = kwargs
+
+
+@Mediator.handler
+class DocProcCnfUpdateHandler:
+    @inject
+    def __init__(
+            self,
+            doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow]
+    ):
+        self.doc_proc_cnf_uow = doc_proc_cnf_uow
+
+    def handle(self, request: DocProcCnfUpdateCommand) -> DocProcessingConfig:
+        with self.doc_proc_cnf_uow as uow:
+            upd_item = uow.repository.update(**request.__dict__)
+            uow.commit()
+
+            return upd_item
+
+
+class DocProcCnfDeleteCommand(GenericQuery[None]):
+    def __init__(self, id_: int):
+        self.id_ = id_
+
+
+@Mediator.handler
+class DocProcCnfDeleteHandler:
+    @inject
+    def __init__(
+            self,
+            doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow]
+    ):
+        self.doc_proc_cnf_uow = doc_proc_cnf_uow
+
+    def handle(self, request: DocProcCnfDeleteCommand) -> None:
+        with self.doc_proc_cnf_uow as uow:
+            uow.repository.delete(request.id_)
+            uow.commit()

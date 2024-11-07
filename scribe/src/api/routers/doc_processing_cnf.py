@@ -13,7 +13,9 @@ from src.enums import (
 from src.handlers.doc_processing_cnf import (
     DocProcCnfAddCommand,
     DocProcCnfReadQuery,
-    DocProcCnfReadAllQuery
+    DocProcCnfReadAllQuery,
+    DocProcCnfUpdateCommand,
+    DocProcCnfDeleteCommand
 )
 
 router = APIRouter(
@@ -49,6 +51,16 @@ class DocProcCnfPostModel(BaseModel):
     new_after_n_chars: int | None
     overlap: int | None
     overlap_all: bool | None
+
+
+class DocProcCnfPutModel(BaseModel):
+    name: str | None = None
+    postprocessors: list[Postprocessors] | None = None
+    chunking_strategy: ChunkingStrategy | None = None
+    max_characters: int | None = None
+    new_after_n_chars: int | None = None
+    overlap: int | None = None
+    overlap_all: bool | None = None
 
 
 @router.post(
@@ -90,3 +102,30 @@ def read_all_doc_proc_cnf(
 ):
     query = DocProcCnfReadAllQuery(limit=limit, offset=offset)
     return mediatr.send(query)
+
+
+@router.put(
+    path='/{id_}',
+    response_model=ReadDocProcCnfResponseModel
+)
+@inject
+def update_doc_proc_cnf(
+        id_: int,
+        upd_item: DocProcCnfPutModel,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = DocProcCnfUpdateCommand(id_, **upd_item.model_dump())
+    return mediatr.send(command)
+
+
+@router.delete(
+    path='/{id_}',
+    status_code=status.HTTP_204_NO_CONTENT
+)
+@inject
+def delete_doc_proc_cnf(
+        id_: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = DocProcCnfDeleteCommand(id_)
+    mediatr.send(command)
