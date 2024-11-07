@@ -27,7 +27,7 @@ class VectorStoreAddHandler:
     @inject
     def __init__(
             self,
-            vector_store_uow: SqlAlchemyUoW = Provide[Container.vector_store_uow]
+            vector_store_uow: AbstractUoW = Provide[Container.vector_store_uow]
     ):
         self.vector_store_uow = vector_store_uow
 
@@ -38,3 +38,22 @@ class VectorStoreAddHandler:
             uow.commit()
 
             return vector_store_obj
+
+
+class VectorStoreReadQuery(GenericQuery[VectorStore]):
+    def __init__(self, id_: int):
+        self.id_ = id_
+
+
+@Mediator.handler
+class VectorStoreReadHandler:
+    @inject
+    def __init__(
+            self,
+            vector_store_uow: AbstractUoW = Provide[Container.vector_store_uow]
+    ):
+        self.vector_store_uow = vector_store_uow
+
+    def handle(self, request: VectorStoreReadQuery) -> VectorStore:
+        with self.vector_store_uow as uow:
+            return uow.repository.read(request.id_)

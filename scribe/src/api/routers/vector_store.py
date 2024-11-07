@@ -7,7 +7,8 @@ from dependency_injector.wiring import inject, Provide
 
 from src.di_container import Container
 from src.handlers.vector_store import (
-    VectorStoreAddCommand
+    VectorStoreAddCommand,
+    VectorStoreReadQuery
 )
 
 from src.api.routers import (
@@ -55,3 +56,16 @@ def vec_store_add(
 ):
     command = VectorStoreAddCommand(**item.model_dump())
     return mediatr.send(command)
+
+
+@router.get(
+    '/{id_}',
+    response_model=VecStoreResponseModel
+)
+@inject
+def vec_store_read(
+        id_: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = VectorStoreReadQuery(id_)
+    return mediatr.send(query)

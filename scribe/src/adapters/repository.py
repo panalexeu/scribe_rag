@@ -140,7 +140,7 @@ class SqlAlchemyRelationRepository[T](SqlAlchemyRepository):
         :raises ItemNotFoundError: if a nonexistent **id_** is provided.
         """
         type_T = get_args(self.__orig_class__)[0]
-        statement = select(type_T).where(type_T.id == id_)
+        statement = select(type_T).where(type_T.id == id_).options(joinedload('*'))
 
         res = self.session.execute(statement).scalar()
         if res is None:
