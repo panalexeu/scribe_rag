@@ -93,3 +93,19 @@ class DocProcessingConfig:
             dict_['chunking_strategy'] = strategy.value
 
         return json.dumps(dict_)
+
+
+class VectorStoreCollection:
+    def __init__(
+            self,
+            name: str,
+            system_prompt: SystemPrompt,
+            api_key_credential: ApiKeyCredential,
+            doc_proc_cnf: DocProcessingConfig
+    ):
+        self.name = name
+        self.system_prompt = system_prompt
+        self.api_key_credential = api_key_credential
+        self.doc_proc_cnf = doc_proc_cnf
+
+
