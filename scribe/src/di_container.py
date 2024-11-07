@@ -1,7 +1,7 @@
 import os
 
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
-from dependency_injector.providers import Singleton, Callable, Factory, Object
+from dependency_injector.providers import Singleton, Callable, Factory
 from mediatr import Mediator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import registry, Session
@@ -15,12 +15,16 @@ from src.domain.services import (
 )
 from src.system.dir import get_scribe_dir_path, read_scribe_key
 from src.system.logging import read_log_config
-from src.adapters.repository import SqlAlchemyRepository
+from src.adapters.repository import (
+    SqlAlchemyRepository,
+    SqlAlchemyRelationRepository
+)
 from src.adapters.uow import SqlAlchemyUoW
 from src.domain.models import (
     ApiKeyCredential,
     SystemPrompt,
-    DocProcessingConfig
+    DocProcessingConfig,
+    VectorStore
 )
 
 
@@ -107,6 +111,11 @@ class Container(DeclarativeContainer):
     doc_proc_cnf_uow = Factory(
         SqlAlchemyUoW,
         repository=SqlAlchemyRepository[DocProcessingConfig],
+        session=session
+    )
+    vector_store_uow = Factory(
+        SqlAlchemyUoW,
+        repository=SqlAlchemyRelationRepository[VectorStore],
         session=session
     )
 

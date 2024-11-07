@@ -20,7 +20,7 @@ from src.domain.models import (
     FakeModel,
     SystemPrompt,
     DocProcessingConfig,
-    VectorStoreCollection
+    VectorStore
 )
 
 
@@ -64,15 +64,16 @@ def map_sqlalchemy_models(registry_: registry):
         Column('datetime', DateTime, default=datetime.now)
     )
 
-    vector_store_collection_table = Table(
-        'vector_store_collection',
+    vector_store_table = Table(
+        'vector_store',
         registry_.metadata,
         Column('id', Integer, primary_key=True),
         Column('name', String, nullable=False),
         Column('desc', String, nullable=False),
         Column('system_prompt_id', Integer, ForeignKey('system_prompt.id'), nullable=False),
         Column('api_key_credential_id', Integer, ForeignKey('api_key_credential.id'), nullable=False),
-        Column('doc_proc_cnf_id', Integer, ForeignKey('doc_processing_config.id'), nullable=True)
+        Column('doc_proc_cnf_id', Integer, ForeignKey('doc_processing_config.id'), nullable=True),
+        Column('datetime', DateTime, default=datetime.now)
     )
 
     registry_.map_imperatively(ApiKeyCredential, api_key_credential_table)
@@ -80,8 +81,8 @@ def map_sqlalchemy_models(registry_: registry):
     registry_.map_imperatively(SystemPrompt, system_prompt_table)
     registry_.map_imperatively(DocProcessingConfig, doc_processing_config_table)
     registry_.map_imperatively(
-        VectorStoreCollection,
-        vector_store_collection_table,
+        VectorStore,
+        vector_store_table,
         properties={
             'system_prompt': relationship(SystemPrompt, uselist=False),
             'api_key_credential': relationship(ApiKeyCredential, uselist=False),

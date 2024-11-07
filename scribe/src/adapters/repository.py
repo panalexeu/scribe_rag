@@ -1,8 +1,9 @@
 from abc import ABC
 from typing import get_args, Sequence
 
+import overrides
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 
 class AbstractRepository[T](ABC):
@@ -119,3 +120,63 @@ class SqlAlchemyRepository[T](AbstractRepository):
             raise ItemNotFoundError(id_)
 
         self.session.delete(item)
+
+
+class SqlAlchemyRelationRepository[T](SqlAlchemyRepository):
+
+    @overrides.override
+    def add(self, item: T) -> T:
+        type_T = get_args(self.__orig_class__)[0]  # this is the only way to access original type with typing
+        self.session.add(item)
+        self.session.flush()
+
+        statement = select(type_T).where().options(joinedload('*'))
+
+        return self.session.execute(statement).scalar()
+
+    @overrides.override
+    def read(self, id_: int) -> T:
+        """
+        :raises ItemNotFoundError: if a nonexistent **id_** is provided.
+        """
+        type_T = get_args(self.__orig_class__)[0]
+        statement = select(type_T).where(type_T.id == id_)
+
+        res = self.session.execute(statement).scalar()
+        if res is None:
+            raise ItemNotFoundError(id_)
+
+        return res
+
+    @overrides.override
+    def read_all(
+            self,
+            offset: int | None = None,
+            limit: int | None = None,
+            **kwargs
+    ) -> Sequence[T]:
+        type_T = get_args(self.__orig_class__)[0]
+        statement = select(type_T).offset(offset).limit(limit).filter_by(**kwargs)
+        return self.session.execute(statement).scalars().all()
+
+    @overrides.override
+    def update(self, id_: int, **kwargs) -> T:
+        """
+        :raises ItemNotFoundError: if a nonexistent **id_** is provided.
+        """
+        type_T = get_args(self.__orig_class__)[0]
+
+        item = self.session.get(type_T, id_)
+        if item is None:
+            raise ItemNotFoundError(id_)
+
+        item_dict = item.__dict__
+
+        # resolving attributes to be updated in obj_ based on the provided **kwargs
+        for key, value in kwargs.items():
+            if item_dict.get(key) is not None and value is not None:
+                setattr(item, key, value)
+
+        self.session.flush()
+
+        return item

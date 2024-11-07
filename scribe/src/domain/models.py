@@ -95,19 +95,17 @@ class DocProcessingConfig:
         return json.dumps(dict_)
 
 
-class VectorStoreCollection:
+class VectorStore:
     def __init__(
             self,
             name: str,
             desc: str,
-            system_prompt: SystemPrompt,
-            api_key_credential: ApiKeyCredential,
-            doc_proc_cnf: DocProcessingConfig
+            system_prompt_id: int,
+            api_key_credential_id: int,
+            doc_proc_cnf_id: int
     ):
         self.name = name
         self.desc = desc
-        self.system_prompt = system_prompt
-        self.api_key_credential = api_key_credential
-        self.doc_proc_cnf = doc_proc_cnf
-
-
+        self.system_prompt_id = system_prompt_id
+        self.api_key_credential_id = api_key_credential_id
+        self.doc_proc_cnf_id = doc_proc_cnf_id

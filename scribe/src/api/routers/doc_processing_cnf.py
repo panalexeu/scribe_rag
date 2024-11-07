@@ -19,7 +19,7 @@ from src.handlers.doc_processing_cnf import (
 )
 
 router = APIRouter(
-    prefix='/doc-process-cnf',
+    prefix='/doc-proc-cnf',
     tags=['Doc Processing Config']
 )
 

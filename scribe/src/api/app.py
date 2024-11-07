@@ -16,7 +16,8 @@ from .routers import (
     api_key_credential,
     system_prompt,
     collection,
-    doc_processing_cnf
+    doc_processing_cnf,
+    vector_store
 )
 
 
@@ -31,6 +32,7 @@ app.include_router(api_key_credential.router)
 app.include_router(system_prompt.router)
 app.include_router(collection.router)
 app.include_router(doc_processing_cnf.router)
+app.include_router(vector_store.router)
 
 
 @app.get('/')
