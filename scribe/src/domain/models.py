@@ -2,7 +2,7 @@ import copy
 import json
 
 from src.enums import (
-    UnstructuredPostprocessors,
+    Postprocessors,
     ChunkingStrategy
 )
 
@@ -44,21 +44,28 @@ class DocProcessingConfig:
     def __init__(
             self,
             name: str,
-            postprocessors: list[UnstructuredPostprocessors] | None,
+            postprocessors: list[Postprocessors] | None,
             chunking_strategy: ChunkingStrategy | None,
-            max_characters: int | None = 500,
-            new_after_n_chars: int | None = 500,
-            overlap: int | None = 0,
-            overlap_all: bool | None = False
+            max_characters: int | None,
+            new_after_n_chars: int | None,
+            overlap: int | None,
+            overlap_all: bool | None
 
     ):
         self.name = name
         self.postprocessors = postprocessors
         self.chunking_strategy = chunking_strategy
-        self.max_characters = max_characters
-        self.new_after_n_chars = new_after_n_chars
-        self.overlap = overlap
-        self.overlap_all = overlap_all
+
+        if self.chunking_strategy is None:
+            self.max_characters = None
+            self.new_after_n_chars = None
+            self.overlap = None
+            self.overlap_all = None
+        else:
+            self.max_characters = 500 if max_characters is None else max_characters
+            self.new_after_n_chars = self.max_characters if new_after_n_chars is None else new_after_n_chars
+            self.overlap = 0 if overlap is None else overlap
+            self.overlap_all = False if overlap_all is None else overlap_all
 
     @property
     def json_config(self) -> str:

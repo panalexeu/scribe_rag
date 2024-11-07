@@ -7,7 +7,8 @@ from src.domain.models import (
     ApiKeyCredential,
     DocProcessingConfig
 )
-from src.enums import ChunkingStrategy, UnstructuredPostprocessors
+from src.enums import ChunkingStrategy, Postprocessors
+
 
 def test_encode_api_key_credential_service():
     api_key_credential = ApiKeyCredential('fake-api', 'fake-key')
@@ -23,11 +24,15 @@ def test_encode_api_key_credential_service():
     assert api_key_credential.name == api_key_credential_copy.name
 
 
-def test_doc_processing_json_config_forms():
+def test_doc_proc_cnf_forms_json_config():
     config = DocProcessingConfig(
         'fake',
-        [UnstructuredPostprocessors.CLEAN, UnstructuredPostprocessors.CLEAN_BULLETS],
+        [Postprocessors.CLEAN, Postprocessors.CLEAN_BULLETS],
         ChunkingStrategy.BASIC,
+        None,
+        None,
+        None,
+        None
     )
 
     # json is successfully created
@@ -35,3 +40,36 @@ def test_doc_processing_json_config_forms():
     assert isinstance(dict_, dict)
     assert dict_['postprocessors'] == ['clean', 'clean_bullets']
     assert dict_['chunking_strategy'] == 'basic'
+
+
+def test_doc_proc_cnf_sets_up_chunking_params_as_None_if_no_chunking_strategy_provided():
+    config = DocProcessingConfig(
+        'fake',
+        [Postprocessors.CLEAN, Postprocessors.CLEAN_BULLETS],
+        None,
+        10,
+        123,
+        12,
+        True
+    )
+
+    assert config.max_characters is None
+    assert config.new_after_n_chars is None
+    assert config.overlap is None
+    assert config.overlap_all is None
+
+
+def test_doc_proc_cnf_sets_up_default_values_if_chunking_strategy_provided_but_chunking_params_is_None():
+    config = DocProcessingConfig(
+        'fake',
+        [Postprocessors.CLEAN, Postprocessors.CLEAN_BULLETS],
+        ChunkingStrategy.BASIC,
+        None,
+        None,
+        None,
+        None
+    )
+
+    assert config.max_characters == config.new_after_n_chars == 500
+    assert config.overlap == 0
+    assert config.overlap_all is False

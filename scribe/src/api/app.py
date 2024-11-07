@@ -15,7 +15,8 @@ from src.domain.services import UnsupportedFileFormatError
 from .routers import (
     api_key_credential,
     system_prompt,
-    collection
+    collection,
+    doc_processing_cnf
 )
 
 
@@ -29,6 +30,7 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(api_key_credential.router)
 app.include_router(system_prompt.router)
 app.include_router(collection.router)
+app.include_router(doc_processing_cnf.router)
 
 
 @app.get('/')

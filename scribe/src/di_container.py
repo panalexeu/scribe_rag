@@ -19,7 +19,8 @@ from src.adapters.repository import SqlAlchemyRepository
 from src.adapters.uow import SqlAlchemyUoW
 from src.domain.models import (
     ApiKeyCredential,
-    SystemPrompt
+    SystemPrompt,
+    DocProcessingConfig
 )
 
 
@@ -101,6 +102,11 @@ class Container(DeclarativeContainer):
     system_prompt_uow = Factory(
         SqlAlchemyUoW,
         repository=SqlAlchemyRepository[SystemPrompt],
+        session=session
+    )
+    doc_proc_cnf_uow = Factory(
+        SqlAlchemyUoW,
+        repository=SqlAlchemyRepository[DocProcessingConfig],
         session=session
     )
 
