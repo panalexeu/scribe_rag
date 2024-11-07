@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from mediatr import Mediator, GenericQuery
 from dependency_injector.wiring import inject, Provide
 
@@ -57,3 +59,33 @@ class VectorStoreReadHandler:
     def handle(self, request: VectorStoreReadQuery) -> VectorStore:
         with self.vector_store_uow as uow:
             return uow.repository.read(request.id_)
+
+
+class VectorStoreReadAllQuery(GenericQuery[Sequence]):
+    def __init__(
+            self,
+            limit: int,
+            offset: int,
+            **kwargs
+    ):
+        self.limit = limit
+        self.offset = offset
+        self.kwargs = kwargs
+
+
+@Mediator.handler
+class VectorStoreReadAllHandler:
+    @inject
+    def __init__(
+            self,
+            vector_store_uow: AbstractUoW = Provide[Container.vector_store_uow]
+    ):
+        self.vector_store_uow = vector_store_uow
+
+    def handle(self, request: VectorStoreReadAllQuery):
+        with self.vector_store_uow as uow:
+            return self.vector_store_uow.repository.read_all(
+                offset=request.offset,
+                limit=request.limit,
+                **request.kwargs
+            )

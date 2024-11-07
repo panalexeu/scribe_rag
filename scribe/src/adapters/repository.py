@@ -156,7 +156,7 @@ class SqlAlchemyRelationRepository[T](SqlAlchemyRepository):
             **kwargs
     ) -> Sequence[T]:
         type_T = get_args(self.__orig_class__)[0]
-        statement = select(type_T).offset(offset).limit(limit).filter_by(**kwargs)
+        statement = select(type_T).offset(offset).limit(limit).filter_by(**kwargs).options(joinedload('*'))
         return self.session.execute(statement).scalars().all()
 
     @overrides.override

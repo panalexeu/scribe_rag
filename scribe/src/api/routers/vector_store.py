@@ -8,7 +8,8 @@ from dependency_injector.wiring import inject, Provide
 from src.di_container import Container
 from src.handlers.vector_store import (
     VectorStoreAddCommand,
-    VectorStoreReadQuery
+    VectorStoreReadQuery,
+    VectorStoreReadAllQuery
 )
 
 from src.api.routers import (
@@ -68,4 +69,18 @@ def vec_store_read(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = VectorStoreReadQuery(id_)
+    return mediatr.send(query)
+
+
+@router.get(
+    '/',
+    response_model=list[VecStoreResponseModel]
+)
+@inject
+def vec_store_read_all(
+        limit: int,
+        offset: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = VectorStoreReadAllQuery(limit=limit, offset=offset)
     return mediatr.send(query)
