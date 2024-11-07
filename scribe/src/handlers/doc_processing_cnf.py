@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from mediatr import Mediator, GenericQuery
 from dependency_injector.wiring import inject, Provide
 
@@ -40,7 +41,26 @@ class DocProcCnfAddHandler:
     def handle(self, request: DocProcCnfAddCommand) -> DocProcessingConfig:
         with self.doc_proc_cnf_uow as uow:
             doc_porc_cnf_obj = DocProcessingConfig(**request.__dict__)
-            uow.add(doc_porc_cnf_obj)
+            uow.repository.add(doc_porc_cnf_obj)
             uow.commit()
 
             return doc_porc_cnf_obj
+
+
+class DocProcCnfReadQuery(GenericQuery[DocProcessingConfig]):
+    def __init__(self, id_: int):
+        self.id_ = id_
+
+
+@Mediator.handler
+class DocProcCnfReadHandler:
+    @inject
+    def __init__(
+            self,
+            doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow]
+    ):
+        self.doc_proc_cnf_uow = doc_proc_cnf_uow
+
+    def handle(self, request: DocProcCnfReadQuery) -> DocProcessingConfig:
+        with self.doc_proc_cnf_uow as uow:
+            return uow.repository.read(request.id_)

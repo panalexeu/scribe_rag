@@ -35,7 +35,7 @@ def test_doc_proc_cnf_forms_json_config():
         None
     )
 
-    # json is successfully created
+    # json config is successfully formed
     dict_ = json.loads(config.json_config)
     assert isinstance(dict_, dict)
     assert dict_['postprocessors'] == ['clean', 'clean_bullets']

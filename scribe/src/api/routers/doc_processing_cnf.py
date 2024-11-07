@@ -1,5 +1,6 @@
 import datetime
 
+from rich import print
 from mediatr import Mediator
 from fastapi import APIRouter, status, Depends
 from pydantic import BaseModel
@@ -11,7 +12,8 @@ from src.enums import (
     ChunkingStrategy
 )
 from src.handlers.doc_processing_cnf import (
-    DocProcCnfAddCommand
+    DocProcCnfAddCommand,
+    DocProcCnfReadQuery
 )
 
 router = APIRouter(
@@ -32,6 +34,13 @@ class DocProcCnfResponseModel(BaseModel):
     datetime: datetime.datetime
 
 
+class ReadDocProcCnfResponseModel(BaseModel):
+    id: int
+    name: str
+    json_config: str
+    datetime: datetime.datetime
+
+
 class DocProcCnfPostModel(BaseModel):
     name: str
     postprocessors: list[Postprocessors] | None
@@ -48,8 +57,22 @@ class DocProcCnfPostModel(BaseModel):
     status_code=status.HTTP_201_CREATED
 )
 @inject
-def add_doc_processing_config(
+def add_doc_proc_cnf(
         item: DocProcCnfPostModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     command = DocProcCnfAddCommand(**item.model_dump())
+    return mediatr.send(command)
+
+
+@router.get(
+    path='/{id_}',
+    response_model=ReadDocProcCnfResponseModel
+)
+@inject
+def read_doc_proc_cnf(
+        id_: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr]),
+):
+    query = DocProcCnfReadQuery(id_)
+    return mediatr.send(query)

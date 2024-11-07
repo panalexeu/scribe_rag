@@ -67,10 +67,21 @@ class DocProcessingConfig:
             self.overlap = 0 if overlap is None else overlap
             self.overlap_all = False if overlap_all is None else overlap_all
 
-    @property
-    def json_config(self) -> str:
-        dict_ = copy.copy(self.__dict__)
-        dict_.pop('name')
+        self.json_config = self.__form_json_config()
+
+    def __form_json_config(self) -> str:
+        """
+        Forms json string out of attributes passed attributes.
+        """
+
+        dict_ = {key: self.__dict__[key] for key in [
+            'postprocessors',
+            'chunking_strategy',
+            'max_characters',
+            'new_after_n_chars',
+            'overlap',
+            'overlap_all',
+        ]}
 
         # extracting values from enums
         postproc = dict_.get('postprocessors')
