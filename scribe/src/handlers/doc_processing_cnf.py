@@ -109,7 +109,7 @@ class DocProcCnfUpdateHandler:
 
     def handle(self, request: DocProcCnfUpdateCommand) -> DocProcessingConfig:
         with self.doc_proc_cnf_uow as uow:
-            upd_item = uow.repository.update(**request.__dict__)
+            upd_item = uow.repository.update(request.id_, **request.kwargs)
             uow.commit()
 
             return upd_item

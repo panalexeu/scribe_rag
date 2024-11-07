@@ -55,12 +55,6 @@ class DocProcCnfPostModel(BaseModel):
 
 class DocProcCnfPutModel(BaseModel):
     name: str | None = None
-    postprocessors: list[Postprocessors] | None = None
-    chunking_strategy: ChunkingStrategy | None = None
-    max_characters: int | None = None
-    new_after_n_chars: int | None = None
-    overlap: int | None = None
-    overlap_all: bool | None = None
 
 
 @router.post(
