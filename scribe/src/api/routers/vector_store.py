@@ -10,7 +10,8 @@ from src.handlers.vector_store import (
     VectorStoreAddCommand,
     VectorStoreReadQuery,
     VectorStoreReadAllQuery,
-    VectorStoreUpdateCommand
+    VectorStoreUpdateCommand,
+    VectorStoreDeleteCommand
 )
 
 from src.api.routers import (
@@ -107,3 +108,16 @@ def vec_store_update(
 ):
     command = VectorStoreUpdateCommand(id_, **item.model_dump())
     return mediatr.send(command)
+
+
+@router.delete(
+    '/{id_}',
+    status_code=status.HTTP_204_NO_CONTENT
+)
+@inject
+def vec_store_delete(
+        id_: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = VectorStoreDeleteCommand(id_)
+    mediatr.send(command)

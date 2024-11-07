@@ -112,4 +112,23 @@ class VectorStoreUpdateHandler:
             uow.commit()
 
             return upd_item
-        
+
+
+class VectorStoreDeleteCommand(GenericQuery[None]):
+    def __init__(self, id_: int):
+        self.id_ = id_
+
+
+@Mediator.handler
+class VectorStoreDeleteHandler:
+    @inject
+    def __init__(
+            self,
+            vector_store_uow: AbstractUoW = Provide[Container.vector_store_uow]
+    ):
+        self.vector_store_uow = vector_store_uow
+
+    def handle(self, request: VectorStoreDeleteCommand) -> None:
+        with self.vector_store_uow as uow:
+            uow.repository.delete(request.id_)
+            uow.commit()
