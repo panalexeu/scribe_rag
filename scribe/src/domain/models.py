@@ -99,11 +99,13 @@ class VectorStoreCollection:
     def __init__(
             self,
             name: str,
+            desc: str,
             system_prompt: SystemPrompt,
             api_key_credential: ApiKeyCredential,
             doc_proc_cnf: DocProcessingConfig
     ):
         self.name = name
+        self.desc = desc
         self.system_prompt = system_prompt
         self.api_key_credential = api_key_credential
         self.doc_proc_cnf = doc_proc_cnf
