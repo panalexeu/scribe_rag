@@ -46,6 +46,9 @@ class AbstractRepository[T](ABC):
     def delete(self, id_: int) -> None:
         raise NotImplementedError
 
+    def count(self) -> int:
+        raise NotImplementedError
+
 
 class ItemNotFoundError(LookupError):
     def __init__(self, id_: int):
@@ -124,7 +127,7 @@ class SqlAlchemyRepository[T](AbstractRepository):
 
     def count(self) -> int:
         """
-        Counts rows in a T table.
+        Counts rows in a type_T table.
         """
         type_T = get_args(self.__orig_class__)[0]
         statement = select(func.count()).select_from(type_T)

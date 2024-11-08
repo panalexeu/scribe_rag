@@ -11,7 +11,8 @@ from src.handlers.api_key_credential import (
     ApiKeyReadQuery,
     ApiKeyReadAllQuery,
     ApiKeyUpdateCommand,
-    ApiKeyDeleteCommand
+    ApiKeyDeleteCommand,
+    ApiKeyCountQuery
 )
 
 router = APIRouter(
@@ -48,6 +49,15 @@ def api_key_add(
 ):
     command = ApiKeyAddCommand(**item.model_dump())
     return mediatr.send(command)
+
+
+@router.get(
+    '/count'
+)
+@inject
+def api_key_count(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+    query = ApiKeyCountQuery()
+    return mediatr.send(query)
 
 
 @router.get(
