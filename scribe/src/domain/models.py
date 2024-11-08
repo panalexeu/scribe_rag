@@ -53,7 +53,9 @@ class DocProcessingConfig:
 
     ):
         self.name = name
-        self.postprocessors = json.dumps(list(map(lambda x: x.value, postprocessors))) if postprocessors is not None else None
+        self.postprocessors = json.dumps(
+            list(map(lambda x: x.value, postprocessors))
+        ) if postprocessors is not None else None
         self.chunking_strategy = chunking_strategy
 
         if self.chunking_strategy is None:
