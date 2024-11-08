@@ -116,7 +116,7 @@ class ChatModel:
     def __init__(
             self,
             model_name: ChatModelName,
-            api_key_credential_id: id,
+            api_key_credential_id: int,
             temperature: float | None,
             top_p: float | None,
             base_url: str | None,

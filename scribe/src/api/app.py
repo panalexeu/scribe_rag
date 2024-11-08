@@ -5,19 +5,19 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from fastapi.exceptions import HTTPException
 
-from src.bootstrap import bootstrap
 from src.adapters.repository import ItemNotFoundError
+from src.bootstrap import bootstrap
 from src.domain.services import UnsupportedFileFormatError
 from .routers import (
     api_key_credential,
     system_prompt,
-    collection,
     doc_processing_cnf,
-    base_chat
+    base_chat,
+    chat_model
 )
 
 
@@ -32,6 +32,7 @@ app.include_router(api_key_credential.router)
 app.include_router(system_prompt.router)
 app.include_router(doc_processing_cnf.router)
 app.include_router(base_chat.router)
+app.include_router(chat_model.router)
 
 
 @app.get('/')

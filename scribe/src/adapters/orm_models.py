@@ -8,7 +8,9 @@ from sqlalchemy import (
     DateTime,
     Boolean,
     JSON,
-    ForeignKey
+    ForeignKey,
+    Enum,
+    Float
 )
 from sqlalchemy.orm import (
     registry,
@@ -20,7 +22,11 @@ from src.domain.models import (
     FakeModel,
     SystemPrompt,
     DocProcessingConfig,
-    BaseChat
+    BaseChat,
+    ChatModel
+)
+from src.enums import (
+    ChatModelName
 )
 
 
@@ -76,6 +82,20 @@ def map_sqlalchemy_models(registry_: registry):
         Column('datetime', DateTime, default=datetime.now)
     )
 
+    chat_model_table = Table(
+        'chat_model',
+        registry_.metadata,
+        Column('id', Integer, primary_key=True),
+        Column('model_name', Enum(ChatModelName), nullable=False),
+        Column('api_key_credential_id', Integer, ForeignKey('api_key_credential.id'), nullable=False),
+        Column('temperature', Float, nullable=True),
+        Column('top_p', Float, nullable=True),
+        Column('base_url', String, nullable=True),
+        Column('max_tokens', Integer, nullable=True),
+        Column('max_retries', Integer, nullable=True),
+        Column('stop_sequences', JSON, nullable=True)
+    )
+
     registry_.map_imperatively(ApiKeyCredential, api_key_credential_table)
     registry_.map_imperatively(FakeModel, fake_table)
     registry_.map_imperatively(SystemPrompt, system_prompt_table)
@@ -87,5 +107,12 @@ def map_sqlalchemy_models(registry_: registry):
             'system_prompt': relationship(SystemPrompt, uselist=False),
             'api_key_credential': relationship(ApiKeyCredential, uselist=False),
             'doc_proc_cnf': relationship(DocProcessingConfig, uselist=False)
+        }
+    )
+    registry_.map_imperatively(
+        ChatModel,
+        chat_model_table,
+        properties={
+            'api_key_credential': relationship(ApiKeyCredential, uselist=False)
         }
     )

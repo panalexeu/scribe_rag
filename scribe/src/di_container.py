@@ -24,7 +24,8 @@ from src.domain.models import (
     ApiKeyCredential,
     SystemPrompt,
     DocProcessingConfig,
-    BaseChat
+    BaseChat,
+    ChatModel
 )
 
 
@@ -116,6 +117,11 @@ class Container(DeclarativeContainer):
     base_chat_uow = Factory(
         SqlAlchemyUoW,
         repository=SqlAlchemyRelationRepository[BaseChat],
+        session=session
+    )
+    chat_model_uow = Factory(
+        SqlAlchemyUoW,
+        repository=SqlAlchemyRelationRepository[ChatModel],
         session=session
     )
 
