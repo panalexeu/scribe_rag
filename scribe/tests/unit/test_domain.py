@@ -1,8 +1,6 @@
 import json
 from copy import copy
 
-import pytest
-
 from src.adapters.codecs import FakeCodec
 from src.domain.services import EncodeApiKeyCredentialService
 from src.domain.models import (
@@ -66,7 +64,7 @@ def test_doc_proc_cnf_sets_up_chunking_params_as_None_if_no_chunking_strategy_pr
     assert config.overlap_all is None
 
 
-def test_doc_proc_cnf_sets_up_default_values_if_chunking_strategy_provided_but_chunking_params_is_None():
+def test_doc_proc_cnf_sets_up_default_values_if_chunking_strategy_provided_but_chunking_params_is_none():
     config = DocProcessingConfig(
         'fake',
         [Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS],

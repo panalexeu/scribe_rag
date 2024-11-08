@@ -5,7 +5,6 @@ from src.enums import (
     ChunkingStrategy,
     ChatModelName
 )
-from src.adapters.serializable import Serializable
 
 
 class FakeModel:

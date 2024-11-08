@@ -5,7 +5,6 @@ from datetime import datetime
 
 import pytest
 from faker import Faker
-from sqlalchemy.orm import clear_mappers
 
 from src.adapters.orm_models import map_sqlalchemy_models
 from src.adapters.uow import SqlAlchemyUoW
