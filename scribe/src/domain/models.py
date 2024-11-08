@@ -134,7 +134,7 @@ class ChatModel(Serializable):
         self.max_retries = max_retries
         self.stop_sequences = stop_sequences
 
-    def __serialize(self) -> str:
+    def serialize(self) -> str:
         dict_ = {key: self.__dict__[key] for key in [
             'temperature',
             'top_p',
