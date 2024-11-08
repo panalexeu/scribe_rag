@@ -5,7 +5,7 @@ from src.enums import (
     ChunkingStrategy,
     ChatModelName
 )
-from .base import Serializable
+from src.adapters.serializable import Serializable
 
 
 class FakeModel:
@@ -125,7 +125,7 @@ class ChatModel(Serializable):
             max_retries: int | None,
             stop_sequences: list[str] | None
     ):
-        self.model_name = model_name.value
+        self.model_name = model_name
         self.api_key_credential_id = api_key_credential_id
         self.temperature = temperature
         self.top_p = top_p
@@ -134,14 +134,5 @@ class ChatModel(Serializable):
         self.max_retries = max_retries
         self.stop_sequences = stop_sequences
 
-    def serialize(self) -> str:
-        dict_ = {key: self.__dict__[key] for key in [
-            'temperature',
-            'top_p',
-            'base_url',
-            'max_tokens',
-            'max_retries',
-            'stop_sequences'
-        ]}
-
-        return json.dumps(dict_)
+        self.json_str = self.serialize(['temperature', 'top_p', 'base_url',
+                                        'max_tokens', 'max_retries', 'stop_sequences'])
