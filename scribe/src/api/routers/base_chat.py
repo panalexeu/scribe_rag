@@ -17,7 +17,7 @@ from src.handlers.base_chat import (
 
 from src.api.routers import (
     system_prompt,
-    api_key_credential,
+    chat_model,
     doc_processing_cnf
 )
 
@@ -33,8 +33,8 @@ class BaseChatResponseModel(BaseModel):
     desc: str
     system_prompt_id: int
     system_prompt: system_prompt.SystemPromptResponseModel | None
-    api_key_credential_id: int
-    api_key_credential: api_key_credential.ApiKeyResponseModel | None
+    chat_model_id: int
+    chat_model: chat_model.ChatModelResponseModel | None
     doc_proc_cnf_id: int
     doc_proc_cnf: doc_processing_cnf.DocProcCnfResponseModel | None
     datetime: datetime
@@ -44,7 +44,7 @@ class BaseChatAddModel(BaseModel):
     name: str
     desc: str
     system_prompt_id: int
-    api_key_credential_id: int
+    chat_model_id: int
     doc_proc_cnf_id: int
 
 
@@ -52,7 +52,7 @@ class BaseChatPutModel(BaseModel):
     name: str | None = None
     desc: str | None = None
     system_prompt_id: int | None = None
-    api_key_credential_id: int | None = None
+    chat_model_id: int | None = None
     doc_proc_cnf_id: int | None = None
 
 
@@ -88,7 +88,7 @@ def read_base_chat(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    query = BaseChatReadQuery(id_)
+    query = BaseChatReadQuery(id_=id_)
     return mediatr.send(query)
 
 
@@ -98,8 +98,8 @@ def read_base_chat(
 )
 @inject
 def read_all_base_chat(
-        limit: int,
-        offset: int,
+        limit: int | None = None,
+        offset: int | None = None,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = BaseChatReadAllQuery(limit=limit, offset=offset)
@@ -129,5 +129,5 @@ def delete_base_chat(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    command = BaseChatDeleteCommand(id_)
+    command = BaseChatDeleteCommand(id_=id_)
     mediatr.send(command)

@@ -76,13 +76,13 @@ class BaseChat:
             name: str,
             desc: str,
             system_prompt_id: int,
-            api_key_credential_id: int,
+            chat_model_id: int,
             doc_proc_cnf_id: int
     ):
         self.name = name
         self.desc = desc
         self.system_prompt_id = system_prompt_id
-        self.api_key_credential_id = api_key_credential_id
+        self.chat_model_id = chat_model_id
         self.doc_proc_cnf_id = doc_proc_cnf_id
 
 

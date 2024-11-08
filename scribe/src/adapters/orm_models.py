@@ -83,7 +83,7 @@ def map_sqlalchemy_models(registry_: registry):
         Column('name', String, nullable=False),
         Column('desc', String, nullable=False),
         Column('system_prompt_id', Integer, ForeignKey('system_prompt.id'), nullable=False),
-        Column('api_key_credential_id', Integer, ForeignKey('api_key_credential.id'), nullable=False),
+        Column('chat_model_id', Integer, ForeignKey('chat_model.id'), nullable=False),
         Column('doc_proc_cnf_id', Integer, ForeignKey('doc_processing_config.id'), nullable=True),
         Column('datetime', DateTime, default=datetime.now)
     )
@@ -108,18 +108,18 @@ def map_sqlalchemy_models(registry_: registry):
     registry_.map_imperatively(SystemPrompt, system_prompt_table)
     registry_.map_imperatively(DocProcessingConfig, doc_processing_config_table)
     registry_.map_imperatively(
-        BaseChat,
-        base_chat_table,
-        properties={
-            'system_prompt': relationship(SystemPrompt, uselist=False),
-            'api_key_credential': relationship(ApiKeyCredential, uselist=False),
-            'doc_proc_cnf': relationship(DocProcessingConfig, uselist=False)
-        }
-    )
-    registry_.map_imperatively(
         ChatModel,
         chat_model_table,
         properties={
             'api_key_credential': relationship(ApiKeyCredential, uselist=False)
+        }
+    )
+    registry_.map_imperatively(
+        BaseChat,
+        base_chat_table,
+        properties={
+            'system_prompt': relationship(SystemPrompt, uselist=False),
+            'chat_model': relationship(ChatModel, uselist=False),
+            'doc_proc_cnf': relationship(DocProcessingConfig, uselist=False)
         }
     )

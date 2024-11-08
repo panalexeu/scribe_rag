@@ -1,5 +1,6 @@
 from typing import Sequence
 
+from pydantic import BaseModel
 from dependency_injector.wiring import inject, Provide
 from mediatr import Mediator, GenericQuery
 
@@ -8,20 +9,12 @@ from src.di_container import Container
 from src.domain.models import BaseChat
 
 
-class BaseChatAddCommand(GenericQuery[BaseChat]):
-    def __init__(
-            self,
-            name: str,
-            desc: str,
-            system_prompt_id: int,
-            api_key_credential_id: int,
-            doc_proc_cnf_id: int,
-    ):
-        self.name = name
-        self.desc = desc
-        self.system_prompt_id = system_prompt_id
-        self.api_key_credential_id = api_key_credential_id
-        self.doc_proc_cnf_id = doc_proc_cnf_id
+class BaseChatAddCommand(BaseModel, GenericQuery[BaseChat]):
+    name: str
+    desc: str
+    system_prompt_id: int
+    chat_model_id: int
+    doc_proc_cnf_id: int
 
 
 @Mediator.handler
@@ -42,9 +35,8 @@ class BaseChatAddHandler:
             return base_chat_obj
 
 
-class BaseChatReadQuery(GenericQuery[BaseChat]):
-    def __init__(self, id_: int):
-        self.id_ = id_
+class BaseChatReadQuery(BaseModel, GenericQuery[BaseChat]):
+    id_: int
 
 
 @Mediator.handler
@@ -64,8 +56,8 @@ class BaseChatReadHandler:
 class BaseChatReadAllQuery(GenericQuery[Sequence[BaseChat]]):
     def __init__(
             self,
-            limit: int,
-            offset: int,
+            limit: int | None,
+            offset: int | None,
             **kwargs
     ):
         self.limit = limit
@@ -114,9 +106,8 @@ class BaseChatUpdateHandler:
             return upd_item
 
 
-class BaseChatDeleteCommand(GenericQuery[None]):
-    def __init__(self, id_: int):
-        self.id_ = id_
+class BaseChatDeleteCommand(BaseModel, GenericQuery[None]):
+    id_: int
 
 
 @Mediator.handler
