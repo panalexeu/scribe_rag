@@ -74,3 +74,10 @@ def test_sys_prompt_delete(client):
     res = client.delete('/sys-prompt/1')
 
     assert res.status_code == 204
+
+
+def test_sys_prompt_counts(client):
+    res = client.get('/sys-prompt/count')
+
+    assert res.json() == 0
+    assert res.status_code == 200

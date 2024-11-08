@@ -63,3 +63,10 @@ def test_api_key_delete(client):
     res = client.delete(url='/api-key/1')
 
     assert res.status_code == 204
+
+
+def test_api_key_counts(client):
+    res = client.get('/api-key/count')
+
+    assert res.json() == 0
+    assert res.status_code == 200
