@@ -36,7 +36,7 @@ class BaseChatResponseModel(BaseModel):
     api_key_credential_id: int
     api_key_credential: api_key_credential.ApiKeyResponseModel | None
     doc_proc_cnf_id: int
-    doc_proc_cnf: doc_processing_cnf.ReadDocProcCnfResponseModel | None
+    doc_proc_cnf: doc_processing_cnf.DocProcCnfResponseModel | None
     datetime: datetime
 
 

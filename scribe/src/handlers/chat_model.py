@@ -87,16 +87,10 @@ class ChatModelReadAllHandler:
             )
 
 
-class ChatModelUpdateCommand(BaseModel, GenericQuery[ChatModel]):
-    id_: int
-    name: ChatModelName | None
-    api_key_credential_id: int | None
-    temperature: float | None
-    top_p: float | None
-    base_url: str | None
-    max_tokens: int | None
-    max_retries: int | None
-    stop_sequences: str | None
+class ChatModelUpdateCommand(GenericQuery[ChatModel]):
+    def __init__(self, id_: int, **kwargs):
+        self.id_ = id_
+        self.kwargs = kwargs
 
 
 @Mediator.handler
@@ -110,7 +104,7 @@ class ChatModelUpdateHandler:
 
     def handle(self, request: ChatModelUpdateCommand) -> ChatModel:
         with self.chat_model_uow as uow:
-            upd_chat_model = uow.repository.update(**request.model_dump())
+            upd_chat_model = uow.repository.update(request.id_, **request.kwargs)
             uow.commit()
 
             return upd_chat_model

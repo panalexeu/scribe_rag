@@ -28,34 +28,33 @@ router = APIRouter(
 class DocProcCnfResponseModel(BaseModel):
     id: int
     name: str
-    postprocessors: list[Postprocessor] | None
+    postprocessors: str | None
     chunking_strategy: ChunkingStrategy | None
     max_characters: int | None
     new_after_n_chars: int | None
     overlap: int | None
     overlap_all: bool | None
-    datetime: datetime.datetime
-
-
-class ReadDocProcCnfResponseModel(BaseModel):
-    id: int
-    name: str
-    json_config: str
     datetime: datetime.datetime
 
 
 class DocProcCnfPostModel(BaseModel):
     name: str
-    postprocessors: list[Postprocessor] | None
-    chunking_strategy: ChunkingStrategy | None
-    max_characters: int | None
-    new_after_n_chars: int | None
-    overlap: int | None
-    overlap_all: bool | None
+    postprocessors: list[Postprocessor] | None = None
+    chunking_strategy: ChunkingStrategy | None = None
+    max_characters: int | None = None
+    new_after_n_chars: int | None = None
+    overlap: int | None = None
+    overlap_all: bool | None = None
 
 
 class DocProcCnfPutModel(BaseModel):
     name: str | None = None
+    postprocessors: list[Postprocessor] | None = None
+    chunking_strategy: ChunkingStrategy | None = None
+    max_characters: int | None = None
+    new_after_n_chars: int | None = None
+    overlap: int | None = None
+    overlap_all: bool | None = None
 
 
 @router.post(
@@ -83,20 +82,20 @@ def count_doc_proc_cnf(mediatr: Mediator = Depends(Provide[Container.mediatr])) 
 
 @router.get(
     path='/{id_}',
-    response_model=ReadDocProcCnfResponseModel
+    response_model=DocProcCnfResponseModel
 )
 @inject
 def read_doc_proc_cnf(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr]),
 ):
-    query = DocProcCnfReadQuery(id_)
+    query = DocProcCnfReadQuery(id_=id_)
     return mediatr.send(query)
 
 
 @router.get(
     path='/',
-    response_model=list[ReadDocProcCnfResponseModel]
+    response_model=list[DocProcCnfResponseModel]
 )
 @inject
 def read_all_doc_proc_cnf(
@@ -110,7 +109,7 @@ def read_all_doc_proc_cnf(
 
 @router.put(
     path='/{id_}',
-    response_model=ReadDocProcCnfResponseModel
+    response_model=DocProcCnfResponseModel
 )
 @inject
 def update_doc_proc_cnf(
@@ -131,5 +130,5 @@ def delete_doc_proc_cnf(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    command = DocProcCnfDeleteCommand(id_)
+    command = DocProcCnfDeleteCommand(id_=id_)
     mediatr.send(command)

@@ -2,6 +2,7 @@ from typing import Sequence
 
 from dependency_injector.wiring import inject, Provide
 from mediatr import Mediator, GenericQuery
+from pydantic import BaseModel
 
 from src.adapters.uow import AbstractUoW
 from src.di_container import Container
@@ -9,25 +10,14 @@ from src.domain.models import DocProcessingConfig
 from src.enums import Postprocessor, ChunkingStrategy
 
 
-class DocProcCnfAddCommand(GenericQuery[DocProcessingConfig]):
-    def __init__(
-            self,
-            name: str,
-            postprocessors: list[Postprocessor] | None,
-            chunking_strategy: ChunkingStrategy | None,
-            max_characters: int | None,
-            new_after_n_chars: int | None,
-            overlap: int | None,
-            overlap_all: bool | None
-
-    ):
-        self.name = name
-        self.postprocessors = postprocessors
-        self.chunking_strategy = chunking_strategy
-        self.max_characters = max_characters
-        self.new_after_n_chars = new_after_n_chars
-        self.overlap = overlap
-        self.overlap_all = overlap_all
+class DocProcCnfAddCommand(BaseModel, GenericQuery[DocProcessingConfig]):
+    name: str
+    postprocessors: list[Postprocessor] | None
+    chunking_strategy: ChunkingStrategy | None
+    max_characters: int | None
+    new_after_n_chars: int | None
+    overlap: int | None
+    overlap_all: bool | None
 
 
 @Mediator.handler
@@ -41,16 +31,15 @@ class DocProcCnfAddHandler:
 
     def handle(self, request: DocProcCnfAddCommand) -> DocProcessingConfig:
         with self.doc_proc_cnf_uow as uow:
-            doc_porc_cnf_obj = DocProcessingConfig(**request.__dict__)
+            doc_porc_cnf_obj = DocProcessingConfig(**request.model_dump())
             uow.repository.add(doc_porc_cnf_obj)
             uow.commit()
 
             return doc_porc_cnf_obj
 
 
-class DocProcCnfReadQuery(GenericQuery[DocProcessingConfig]):
-    def __init__(self, id_: int):
-        self.id_ = id_
+class DocProcCnfReadQuery(BaseModel, GenericQuery[DocProcessingConfig]):
+    id_: int
 
 
 @Mediator.handler
@@ -115,9 +104,8 @@ class DocProcCnfUpdateHandler:
             return upd_item
 
 
-class DocProcCnfDeleteCommand(GenericQuery[None]):
-    def __init__(self, id_: int):
-        self.id_ = id_
+class DocProcCnfDeleteCommand(BaseModel, GenericQuery[None]):
+    id_: int
 
 
 @Mediator.handler
