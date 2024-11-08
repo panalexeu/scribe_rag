@@ -11,7 +11,8 @@ from src.handlers.system_prompt import (
     SystemPromptReadQuery,
     SystemPromptReadAllQuery,
     SystemPromptUpdateCommand,
-    SystemPromptDeleteCommand
+    SystemPromptDeleteCommand,
+    SystemPromptCountQuery
 )
 
 router = APIRouter(
@@ -49,6 +50,15 @@ def add_sys_prompt(
 ):
     command = SystemPromptAddCommand(**item.model_dump())
     return mediatr.send(command)
+
+
+@router.get(
+    '/count'
+)
+@inject
+def count_sys_prompt(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+    query = SystemPromptCountQuery()
+    return mediatr.send(query)
 
 
 @router.get(

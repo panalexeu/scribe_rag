@@ -11,7 +11,8 @@ from src.handlers.vector_store import (
     VectorStoreReadQuery,
     VectorStoreReadAllQuery,
     VectorStoreUpdateCommand,
-    VectorStoreDeleteCommand
+    VectorStoreDeleteCommand,
+    VectorStoreCountQuery
 )
 
 from src.api.routers import (
@@ -67,6 +68,15 @@ def add_vec_store(
 ):
     command = VectorStoreAddCommand(**item.model_dump())
     return mediatr.send(command)
+
+
+@router.get(
+    '/count'
+)
+@inject
+def count_vec_store(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+    query = VectorStoreCountQuery()
+    return mediatr.send(query)
 
 
 @router.get(

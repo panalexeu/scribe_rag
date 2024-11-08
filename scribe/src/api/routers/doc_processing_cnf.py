@@ -15,7 +15,8 @@ from src.handlers.doc_processing_cnf import (
     DocProcCnfReadQuery,
     DocProcCnfReadAllQuery,
     DocProcCnfUpdateCommand,
-    DocProcCnfDeleteCommand
+    DocProcCnfDeleteCommand,
+    DocProcCountQuery
 )
 
 router = APIRouter(
@@ -69,6 +70,15 @@ def add_doc_proc_cnf(
 ):
     command = DocProcCnfAddCommand(**item.model_dump())
     return mediatr.send(command)
+
+
+@router.get(
+    '/count'
+)
+@inject
+def count_doc_proc_cnf(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+    query = DocProcCountQuery()
+    return mediatr.send(query)
 
 
 @router.get(

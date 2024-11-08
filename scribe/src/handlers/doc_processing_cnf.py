@@ -133,3 +133,21 @@ class DocProcCnfDeleteHandler:
         with self.doc_proc_cnf_uow as uow:
             uow.repository.delete(request.id_)
             uow.commit()
+
+
+class DocProcCountQuery(GenericQuery[int]):
+    pass
+
+
+@Mediator.handler
+class DocProcCountHandler:
+    @inject
+    def __init__(
+            self,
+            doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow]
+    ):
+        self.doc_proc_cnf_uow = doc_proc_cnf_uow
+
+    def handle(self, request: DocProcCountQuery) -> int:
+        with self.doc_proc_cnf_uow as uow:
+            return uow.repository.count()

@@ -117,3 +117,21 @@ class SystemPromptDeleteHandler:
         with self.system_prompt_uow as uow:
             uow.repository.delete(request.id_)
             uow.commit()
+
+
+class SystemPromptCountQuery(GenericQuery[int]):
+    pass
+
+
+@Mediator.handler
+class SystemPromptCountHandler:
+    @inject
+    def __init__(
+            self,
+            system_prompt_uow: AbstractUoW = Provide[Container.system_prompt_uow]
+    ):
+        self.system_prompt_uow = system_prompt_uow
+
+    def handle(self, request: SystemPromptCountQuery) -> int:
+        with self.system_prompt_uow as uow:
+            return uow.repository.count()

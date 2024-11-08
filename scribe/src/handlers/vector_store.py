@@ -132,3 +132,21 @@ class VectorStoreDeleteHandler:
         with self.vector_store_uow as uow:
             uow.repository.delete(request.id_)
             uow.commit()
+
+
+class VectorStoreCountQuery(GenericQuery[int]):
+    pass
+
+
+@Mediator.handler
+class VectorStoreCountHandler:
+    @inject
+    def __init__(
+            self,
+            vector_store_uow: AbstractUoW = Provide[Container.vector_store_uow]
+    ):
+        self.vector_store_uow = vector_store_uow
+
+    def handle(self, request: VectorStoreCountQuery) -> int:
+        with self.vector_store_uow as uow:
+            return uow.repository.count()
