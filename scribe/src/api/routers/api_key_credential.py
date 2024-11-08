@@ -43,7 +43,7 @@ class ApiKeyPutModel(BaseModel):
     status_code=status.HTTP_201_CREATED
 )
 @inject
-def api_key_add(
+def add_api_key(
         item: ApiKeyPostModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
@@ -55,7 +55,7 @@ def api_key_add(
     '/count'
 )
 @inject
-def api_key_count(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+def count_api_key(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
     query = ApiKeyCountQuery()
     return mediatr.send(query)
 
@@ -65,7 +65,7 @@ def api_key_count(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> in
     response_model=ApiKeyResponseModel,
 )
 @inject
-def api_key_read(
+def read_api_key(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
@@ -78,7 +78,7 @@ def api_key_read(
     response_model=list[ApiKeyResponseModel]
 )
 @inject
-def api_key_read_all(
+def read_all_api_key(
         limit: int,
         offset: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
@@ -92,7 +92,7 @@ def api_key_read_all(
     response_model=ApiKeyResponseModel
 )
 @inject
-def api_key_put(
+def update_api_key(
         id_: int,
         item: ApiKeyPutModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
@@ -106,7 +106,7 @@ def api_key_put(
     status_code=status.HTTP_204_NO_CONTENT
 )
 @inject
-def api_key_delete(
+def delete_api_key(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):

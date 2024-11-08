@@ -43,7 +43,7 @@ class SystemPromptPutModel(BaseModel):
     status_code=status.HTTP_201_CREATED
 )
 @inject
-def sys_prompt_add(
+def add_sys_prompt(
         item: SystemPromptPostModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
@@ -56,7 +56,7 @@ def sys_prompt_add(
     response_model=SystemPromptResponseModel
 )
 @inject
-def sys_prompt_read(
+def read_sys_prompt(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
@@ -69,7 +69,7 @@ def sys_prompt_read(
     response_model=list[SystemPromptResponseModel]
 )
 @inject
-def sys_prompt_read_all(
+def read_all_sys_prompt(
         limit: int,
         offset: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
@@ -83,7 +83,7 @@ def sys_prompt_read_all(
     response_model=SystemPromptResponseModel
 )
 @inject
-def sys_prompt_update(
+def update_sys_prompt(
         id_: int,
         item: SystemPromptPutModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
@@ -97,7 +97,7 @@ def sys_prompt_update(
     status_code=status.HTTP_204_NO_CONTENT
 )
 @inject
-def sys_prompt_delete(
+def delete_sys_prompt(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):

@@ -61,7 +61,7 @@ class VectorStorePutModel(BaseModel):
     status_code=status.HTTP_201_CREATED
 )
 @inject
-def vec_store_add(
+def add_vec_store(
         item: VecStoreAddModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
@@ -74,7 +74,7 @@ def vec_store_add(
     response_model=VecStoreResponseModel
 )
 @inject
-def vec_store_read(
+def read_vec_store(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
@@ -87,7 +87,7 @@ def vec_store_read(
     response_model=list[VecStoreResponseModel]
 )
 @inject
-def vec_store_read_all(
+def read_all_vec_store(
         limit: int,
         offset: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
@@ -101,7 +101,7 @@ def vec_store_read_all(
     response_model=VecStoreResponseModel
 )
 @inject
-def vec_store_update(
+def update_vec_store(
         id_: int,
         item: VectorStorePutModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
@@ -115,7 +115,7 @@ def vec_store_update(
     status_code=status.HTTP_204_NO_CONTENT
 )
 @inject
-def vec_store_delete(
+def delete_vec_store(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
