@@ -20,7 +20,7 @@ from src.domain.models import (
     FakeModel,
     SystemPrompt,
     DocProcessingConfig,
-    VectorStore
+    BaseChat
 )
 
 
@@ -64,8 +64,8 @@ def map_sqlalchemy_models(registry_: registry):
         Column('datetime', DateTime, default=datetime.now)
     )
 
-    vector_store_table = Table(
-        'vector_store',
+    base_chat_table = Table(
+        'base_chat',
         registry_.metadata,
         Column('id', Integer, primary_key=True),
         Column('name', String, nullable=False),
@@ -81,8 +81,8 @@ def map_sqlalchemy_models(registry_: registry):
     registry_.map_imperatively(SystemPrompt, system_prompt_table)
     registry_.map_imperatively(DocProcessingConfig, doc_processing_config_table)
     registry_.map_imperatively(
-        VectorStore,
-        vector_store_table,
+        BaseChat,
+        base_chat_table,
         properties={
             'system_prompt': relationship(SystemPrompt, uselist=False),
             'api_key_credential': relationship(ApiKeyCredential, uselist=False),

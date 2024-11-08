@@ -6,13 +6,13 @@ from pydantic import BaseModel
 from dependency_injector.wiring import inject, Provide
 
 from src.di_container import Container
-from src.handlers.vector_store import (
-    VectorStoreAddCommand,
-    VectorStoreReadQuery,
-    VectorStoreReadAllQuery,
-    VectorStoreUpdateCommand,
-    VectorStoreDeleteCommand,
-    VectorStoreCountQuery
+from src.handlers.base_chat import (
+    BaseChatAddCommand,
+    BaseChatReadQuery,
+    BaseChatReadAllQuery,
+    BaseChatUpdateCommand,
+    BaseChatDeleteCommand,
+    BaseChatCountQuery
 )
 
 from src.api.routers import (
@@ -22,12 +22,12 @@ from src.api.routers import (
 )
 
 router = APIRouter(
-    prefix='/vec-store',
-    tags=['Vector Store']
+    prefix='/base-chat',
+    tags=['Base Chat']
 )
 
 
-class VecStoreResponseModel(BaseModel):
+class BaseChatResponseModel(BaseModel):
     id: int
     name: str
     desc: str
@@ -40,7 +40,7 @@ class VecStoreResponseModel(BaseModel):
     datetime: datetime
 
 
-class VecStoreAddModel(BaseModel):
+class BaseChatAddModel(BaseModel):
     name: str
     desc: str
     system_prompt_id: int
@@ -48,7 +48,7 @@ class VecStoreAddModel(BaseModel):
     doc_proc_cnf_id: int
 
 
-class VectorStorePutModel(BaseModel):
+class BaseChatPutModel(BaseModel):
     name: str | None = None
     desc: str | None = None
     system_prompt_id: int | None = None
@@ -58,15 +58,15 @@ class VectorStorePutModel(BaseModel):
 
 @router.post(
     '/',
-    response_model=VecStoreResponseModel,
+    response_model=BaseChatResponseModel,
     status_code=status.HTTP_201_CREATED
 )
 @inject
-def add_vec_store(
-        item: VecStoreAddModel,
+def add_base_chat(
+        item: BaseChatAddModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    command = VectorStoreAddCommand(**item.model_dump())
+    command = BaseChatAddCommand(**item.model_dump())
     return mediatr.send(command)
 
 
@@ -74,49 +74,49 @@ def add_vec_store(
     '/count'
 )
 @inject
-def count_vec_store(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
-    query = VectorStoreCountQuery()
+def count_base_chat(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+    query = BaseChatCountQuery()
     return mediatr.send(query)
 
 
 @router.get(
     '/{id_}',
-    response_model=VecStoreResponseModel
+    response_model=BaseChatResponseModel
 )
 @inject
-def read_vec_store(
+def read_base_chat(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    query = VectorStoreReadQuery(id_)
+    query = BaseChatReadQuery(id_)
     return mediatr.send(query)
 
 
 @router.get(
     '/',
-    response_model=list[VecStoreResponseModel]
+    response_model=list[BaseChatResponseModel]
 )
 @inject
-def read_all_vec_store(
+def read_all_base_chat(
         limit: int,
         offset: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    query = VectorStoreReadAllQuery(limit=limit, offset=offset)
+    query = BaseChatReadAllQuery(limit=limit, offset=offset)
     return mediatr.send(query)
 
 
 @router.put(
     '/{id_}',
-    response_model=VecStoreResponseModel
+    response_model=BaseChatResponseModel
 )
 @inject
-def update_vec_store(
+def update_base_chat(
         id_: int,
-        item: VectorStorePutModel,
+        item: BaseChatPutModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    command = VectorStoreUpdateCommand(id_, **item.model_dump())
+    command = BaseChatUpdateCommand(id_, **item.model_dump())
     return mediatr.send(command)
 
 
@@ -125,9 +125,9 @@ def update_vec_store(
     status_code=status.HTTP_204_NO_CONTENT
 )
 @inject
-def delete_vec_store(
+def delete_base_chat(
         id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    command = VectorStoreDeleteCommand(id_)
+    command = BaseChatDeleteCommand(id_)
     mediatr.send(command)

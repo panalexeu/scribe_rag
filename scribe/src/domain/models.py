@@ -95,7 +95,7 @@ class DocProcessingConfig:
         return json.dumps(dict_)
 
 
-class VectorStore:
+class BaseChat:
     def __init__(
             self,
             name: str,

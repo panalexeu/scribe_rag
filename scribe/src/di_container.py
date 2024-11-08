@@ -24,7 +24,7 @@ from src.domain.models import (
     ApiKeyCredential,
     SystemPrompt,
     DocProcessingConfig,
-    VectorStore
+    BaseChat
 )
 
 
@@ -113,9 +113,9 @@ class Container(DeclarativeContainer):
         repository=SqlAlchemyRepository[DocProcessingConfig],
         session=session
     )
-    vector_store_uow = Factory(
+    base_chat_uow = Factory(
         SqlAlchemyUoW,
-        repository=SqlAlchemyRelationRepository[VectorStore],
+        repository=SqlAlchemyRelationRepository[BaseChat],
         session=session
     )
 

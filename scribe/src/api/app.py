@@ -17,7 +17,7 @@ from .routers import (
     system_prompt,
     collection,
     doc_processing_cnf,
-    vector_store
+    base_chat
 )
 
 
@@ -31,7 +31,7 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(api_key_credential.router)
 app.include_router(system_prompt.router)
 app.include_router(doc_processing_cnf.router)
-app.include_router(vector_store.router)
+app.include_router(base_chat.router)
 
 
 @app.get('/')
