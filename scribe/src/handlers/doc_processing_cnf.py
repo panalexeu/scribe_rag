@@ -6,14 +6,14 @@ from mediatr import Mediator, GenericQuery
 from src.adapters.uow import AbstractUoW
 from src.di_container import Container
 from src.domain.models import DocProcessingConfig
-from src.enums import Postprocessors, ChunkingStrategy
+from src.enums import Postprocessor, ChunkingStrategy
 
 
 class DocProcCnfAddCommand(GenericQuery[DocProcessingConfig]):
     def __init__(
             self,
             name: str,
-            postprocessors: list[Postprocessors] | None,
+            postprocessors: list[Postprocessor] | None,
             chunking_strategy: ChunkingStrategy | None,
             max_characters: int | None,
             new_after_n_chars: int | None,

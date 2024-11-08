@@ -1,10 +1,11 @@
-import copy
 import json
 
 from src.enums import (
-    Postprocessors,
-    ChunkingStrategy
+    Postprocessor,
+    ChunkingStrategy,
+    ChatModelName
 )
+from .base import Serializable
 
 
 class FakeModel:
@@ -44,7 +45,7 @@ class DocProcessingConfig:
     def __init__(
             self,
             name: str,
-            postprocessors: list[Postprocessors] | None,
+            postprocessors: list[Postprocessor] | None,
             chunking_strategy: ChunkingStrategy | None,
             max_characters: int | None,
             new_after_n_chars: int | None,
@@ -71,7 +72,7 @@ class DocProcessingConfig:
 
     def __form_json_config(self) -> str:
         """
-        Forms json string out of attributes passed attributes.
+        Forms json string out of passed attributes.
         """
 
         dict_ = {key: self.__dict__[key] for key in [
@@ -109,3 +110,38 @@ class BaseChat:
         self.system_prompt_id = system_prompt_id
         self.api_key_credential_id = api_key_credential_id
         self.doc_proc_cnf_id = doc_proc_cnf_id
+
+
+class ChatModel(Serializable):
+
+    def __init__(
+            self,
+            model_name: ChatModelName,
+            api_key_credential_id: id,
+            temperature: float | None,
+            top_p: float | None,
+            base_url: str | None,
+            max_tokens: int | None,
+            max_retries: int | None,
+            stop_sequences: list[str] | None
+    ):
+        self.model_name = model_name.value
+        self.api_key_credential_id = api_key_credential_id
+        self.temperature = temperature
+        self.top_p = top_p
+        self.base_url = base_url
+        self.max_tokens = max_tokens
+        self.max_retries = max_retries
+        self.stop_sequences = stop_sequences
+
+    def __serialize(self) -> str:
+        dict_ = {key: self.__dict__[key] for key in [
+            'temperature',
+            'top_p',
+            'base_url',
+            'max_tokens',
+            'max_retries',
+            'stop_sequences'
+        ]}
+
+        return json.dumps(dict_)

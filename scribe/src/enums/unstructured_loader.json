@@ -1,5 +1,5 @@
 {
-  "postprocessors": {
+  "postprocessor": {
     "BYTES_STRING_TO_STRING": "bytes_string_to_string",
     "CLEAN": "clean",
     "CLEAN_BULLETS": "clean_bullets",

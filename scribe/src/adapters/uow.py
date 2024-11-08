@@ -15,16 +15,16 @@ class AbstractUoW(ABC):
     repository: AbstractRepository
 
     def commit(self):
-        raise NotImplementedError
+        pass
 
     def rollback(self):
-        raise NotImplementedError
+        pass
 
     def __enter__(self):
-        raise NotImplementedError
+        pass
 
     def __exit__(self, *args):
-        raise NotImplementedError
+        pass
 
 
 class SqlAlchemyUoW(AbstractUoW):

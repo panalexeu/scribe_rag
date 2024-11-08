@@ -7,7 +7,7 @@ from dependency_injector.wiring import inject, Provide
 
 from src.di_container import Container
 from src.enums import (
-    Postprocessors,
+    Postprocessor,
     ChunkingStrategy
 )
 from src.handlers.doc_processing_cnf import (
@@ -28,7 +28,7 @@ router = APIRouter(
 class DocProcCnfResponseModel(BaseModel):
     id: int
     name: str
-    postprocessors: list[Postprocessors] | None
+    postprocessors: list[Postprocessor] | None
     chunking_strategy: ChunkingStrategy | None
     max_characters: int | None
     new_after_n_chars: int | None
@@ -46,7 +46,7 @@ class ReadDocProcCnfResponseModel(BaseModel):
 
 class DocProcCnfPostModel(BaseModel):
     name: str
-    postprocessors: list[Postprocessors] | None
+    postprocessors: list[Postprocessor] | None
     chunking_strategy: ChunkingStrategy | None
     max_characters: int | None
     new_after_n_chars: int | None

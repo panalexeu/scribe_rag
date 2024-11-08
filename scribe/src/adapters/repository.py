@@ -10,10 +10,10 @@ from sqlalchemy import func
 class AbstractRepository[T](ABC):
 
     def add(self, item: T) -> T:
-        raise NotImplementedError
+        pass
 
     def read(self, id_: int) -> T:
-        raise NotImplementedError
+        pass
 
     def read_all(
             self,
@@ -28,7 +28,7 @@ class AbstractRepository[T](ABC):
         :param limit: Optional limit value for pagination implementation.
         :param kwargs: Optional filtering criteria, e.g., field_name=value pairs.
         """
-        raise NotImplementedError
+        pass
 
     def update(
             self,
@@ -41,13 +41,13 @@ class AbstractRepository[T](ABC):
         :param id_: The unique identifier of the record to be updated.
         :param kwargs: Optional keyword arguments representing the fields to be updated and their new values.
         """
-        raise NotImplementedError
+        pass
 
     def delete(self, id_: int) -> None:
-        raise NotImplementedError
+        pass
 
     def count(self) -> int:
-        raise NotImplementedError
+        pass
 
 
 class ItemNotFoundError(LookupError):

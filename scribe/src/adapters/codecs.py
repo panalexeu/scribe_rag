@@ -9,14 +9,14 @@ class AbstractCodec(ABC):
         self.key = key
 
     def encode(self, data: str) -> str:
-        raise NotImplementedError
+        pass
 
     def decode(self, encoded_data: str) -> str:
-        raise NotImplementedError
+        pass
 
     @classmethod
     def gen_key(cls) -> str:
-        raise NotImplementedError
+        pass
 
 
 class FakeCodec(AbstractCodec):

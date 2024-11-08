@@ -7,7 +7,7 @@ from src.domain.models import (
     ApiKeyCredential,
     DocProcessingConfig
 )
-from src.enums import ChunkingStrategy, Postprocessors
+from src.enums import ChunkingStrategy, Postprocessor
 
 
 def test_encode_api_key_credential_service():
@@ -27,7 +27,7 @@ def test_encode_api_key_credential_service():
 def test_doc_proc_cnf_forms_json_config():
     config = DocProcessingConfig(
         'fake',
-        [Postprocessors.CLEAN, Postprocessors.CLEAN_BULLETS],
+        [Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS],
         ChunkingStrategy.BASIC,
         None,
         None,
@@ -45,7 +45,7 @@ def test_doc_proc_cnf_forms_json_config():
 def test_doc_proc_cnf_sets_up_chunking_params_as_None_if_no_chunking_strategy_provided():
     config = DocProcessingConfig(
         'fake',
-        [Postprocessors.CLEAN, Postprocessors.CLEAN_BULLETS],
+        [Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS],
         None,
         10,
         123,
@@ -62,7 +62,7 @@ def test_doc_proc_cnf_sets_up_chunking_params_as_None_if_no_chunking_strategy_pr
 def test_doc_proc_cnf_sets_up_default_values_if_chunking_strategy_provided_but_chunking_params_is_None():
     config = DocProcessingConfig(
         'fake',
-        [Postprocessors.CLEAN, Postprocessors.CLEAN_BULLETS],
+        [Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS],
         ChunkingStrategy.BASIC,
         None,
         None,
