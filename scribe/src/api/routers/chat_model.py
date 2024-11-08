@@ -4,9 +4,16 @@ from dependency_injector.wiring import inject, Provide
 from pydantic import BaseModel
 
 from src.di_container import Container
-from src.handlers.chat_model import ChatModelAddCommand
 from src.enums import ChatModelName
 from .api_key_credential import ApiKeyResponseModel
+from src.handlers.chat_model import (
+    ChatModelAddCommand,
+    ChatModelReadQuery,
+    ChatModelReadAllQuery,
+    ChatModelUpdateCommand,
+    ChatModelDeleteCommand,
+    ChatModelCountQuery
+)
 
 router = APIRouter(
     prefix='/chat-model',
@@ -26,6 +33,7 @@ class ChatModelPostModel(BaseModel):
 
 
 class ChatModelResponseModel(BaseModel):
+    id: int
     model_name: ChatModelName
     api_key_credential_id: int
     api_key_credential: ApiKeyResponseModel | None
@@ -40,12 +48,12 @@ class ChatModelResponseModel(BaseModel):
 class ChatModelPutModel(BaseModel):
     model_name: ChatModelName | None = None
     api_key_credential_id: int | None = None
-    temperature: float | None
+    temperature: float | None = None
     top_p: float | None = None
     base_url: str | None = None
     max_tokens: int | None = None
     max_retries: int | None = None
-    stop_sequences: list[str] | None = None  # ?
+    stop_sequences: str | None = None
 
 
 @router.post(
@@ -62,6 +70,64 @@ def add_chat_model(
     return mediatr.send(command)
 
 
-# @router.get(
-#     path='/count',
-# )
+@router.get(
+    path='/count'
+)
+@inject
+def count_chat_model(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+    query = ChatModelCountQuery()
+    return mediatr.send(query)
+
+
+@router.get(
+    path='/{id_}',
+    response_model=ChatModelResponseModel
+)
+@inject
+def read_chat_model(
+        id_: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = ChatModelReadQuery(id_=id_)
+    return mediatr.send(query)
+
+
+@router.get(
+    path='/',
+    response_model=list[ChatModelResponseModel]
+)
+@inject
+def read_all_chat_model(
+        limit: int | None = None,
+        offset: int | None = None,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = ChatModelReadAllQuery(limit, offset)
+    return mediatr.send(query)
+
+
+@router.put(
+    path='/{id_}',
+    response_model=ChatModelResponseModel
+)
+@inject
+def update_chat_model(
+        id_: int,
+        upd_item: ChatModelPutModel,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = ChatModelUpdateCommand(id_=id_, **upd_item.model_dump())
+    return mediatr.send(command)
+
+
+@router.delete(
+    path='/{id_}',
+    status_code=status.HTTP_204_NO_CONTENT
+)
+@inject
+def delete_chat_model(
+        id_: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = ChatModelDeleteCommand(id_=id_)
+    mediatr.send(command)

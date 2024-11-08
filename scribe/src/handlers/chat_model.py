@@ -60,8 +60,8 @@ class ChatModelReadHandler:
 class ChatModelReadAllQuery(GenericQuery[Sequence[ChatModel]]):
     def __init__(
             self,
-            limit: int,
-            offset: int,
+            limit: int | None,
+            offset: int | None,
             **kwargs
     ):
         self.limit = limit
@@ -96,7 +96,7 @@ class ChatModelUpdateCommand(BaseModel, GenericQuery[ChatModel]):
     base_url: str | None
     max_tokens: int | None
     max_retries: int | None
-    stop_sequences: list[str] | None  # ?
+    stop_sequences: str | None
 
 
 @Mediator.handler
@@ -151,4 +151,3 @@ class ChatModelCountHandler:
     def handle(self, request: ChatModelCountQuery) -> int:
         with self.chat_model_uow as uow:
             return uow.repository.count()
-       
