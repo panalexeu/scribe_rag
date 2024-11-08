@@ -233,6 +233,16 @@ def test_delete_sqlalchemy_repo_method(fake_session, faker):
         assert session.get(FakeModel, 1) is None
 
 
+def test_sqlalchemy_repo_method_returns_count(fake_session, faker):
+    with fake_session as session:
+        for _ in range(3):
+            session.add(FakeModel(True, faker.military_ship()))
+
+        session.flush()
+
+        repo = SqlAlchemyRepository[FakeModel](session)
+
+        assert repo.count() == 3
 def test_sqlalchemy_repo_read_raises_exception_if_a_nonexistent_id_is_provided(fake_session, faker):
     with fake_session as session:
         repo = SqlAlchemyRepository[FakeModel](session)

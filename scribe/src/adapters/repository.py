@@ -4,6 +4,7 @@ from typing import get_args, Sequence
 import overrides
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import func
 
 
 class AbstractRepository[T](ABC):
@@ -120,6 +121,15 @@ class SqlAlchemyRepository[T](AbstractRepository):
             raise ItemNotFoundError(id_)
 
         self.session.delete(item)
+
+    def count(self) -> int:
+        """
+        Counts rows in a T table.
+        """
+        type_T = get_args(self.__orig_class__)[0]
+        statement = select(func.count()).select_from(type_T)
+
+        return self.session.execute(statement).scalar()
 
 
 class SqlAlchemyRelationRepository[T](SqlAlchemyRepository):
