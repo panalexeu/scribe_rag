@@ -57,7 +57,12 @@ class DocProcCnfReadHandler:
 
 
 class DocProcCnfReadAllQuery(GenericQuery[Sequence[DocProcessingConfig]]):
-    def __init__(self, limit: int, offset: int, **kwargs):
+    def __init__(
+            self,
+            limit: int | None,
+            offset: int | None,
+            **kwargs
+    ):
         self.limit = limit
         self.offset = offset
         self.kwargs = kwargs

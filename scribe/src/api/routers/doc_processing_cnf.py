@@ -49,7 +49,7 @@ class DocProcCnfPostModel(BaseModel):
 
 class DocProcCnfPutModel(BaseModel):
     name: str | None = None
-    postprocessors: list[Postprocessor] | None = None
+    postprocessors: str | None = None
     chunking_strategy: ChunkingStrategy | None = None
     max_characters: int | None = None
     new_after_n_chars: int | None = None
@@ -99,8 +99,8 @@ def read_doc_proc_cnf(
 )
 @inject
 def read_all_doc_proc_cnf(
-        limit: int,
-        offset: int,
+        limit: int | None = None,
+        offset: int | None = None,
         mediatr: Mediator = Depends(Provide[Container.mediatr]),
 ):
     query = DocProcCnfReadAllQuery(limit=limit, offset=offset)
