@@ -26,7 +26,8 @@ from src.domain.models import (
     ChatModel
 )
 from src.enums import (
-    ChatModelName
+    ChatModelName,
+    ChunkingStrategy
 )
 
 
@@ -66,7 +67,12 @@ def map_sqlalchemy_models(registry_: registry):
         registry_.metadata,
         Column('id', Integer, primary_key=True),
         Column('name', String, nullable=False),
-        Column('json_config', JSON, nullable=False),
+        Column('postprocessors', JSON, nullable=True),
+        Column('chunking_strategy', Enum(ChunkingStrategy), nullable=True),
+        Column('max_characters', Integer, nullable=True),
+        Column('new_after_n_chars', Integer, nullable=True),
+        Column('overlap', Integer, nullable=True),
+        Column('overlap_all', Boolean, nullable=True),
         Column('datetime', DateTime, default=datetime.now)
     )
 
@@ -86,14 +92,15 @@ def map_sqlalchemy_models(registry_: registry):
         'chat_model',
         registry_.metadata,
         Column('id', Integer, primary_key=True),
-        Column('model_name', Enum(ChatModelName), nullable=False),
+        Column('name', Enum(ChatModelName), nullable=False),
         Column('api_key_credential_id', Integer, ForeignKey('api_key_credential.id'), nullable=False),
         Column('temperature', Float, nullable=True),
         Column('top_p', Float, nullable=True),
         Column('base_url', String, nullable=True),
         Column('max_tokens', Integer, nullable=True),
         Column('max_retries', Integer, nullable=True),
-        Column('stop_sequences', JSON, nullable=True)
+        Column('stop_sequences', JSON, nullable=True),
+        Column('datetime', DateTime, default=datetime.now)
     )
 
     registry_.map_imperatively(ApiKeyCredential, api_key_credential_table)

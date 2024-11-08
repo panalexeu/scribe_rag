@@ -29,7 +29,7 @@ def test_encode_api_key_credential_service():
     assert api_key_credential.name == api_key_credential_copy.name
 
 
-def test_doc_proc_cnf_forms_json_config():
+def test_doc_proc_cnf_serializes_postprocessors():
     config = DocProcessingConfig(
         'fake',
         [Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS],
@@ -40,14 +40,10 @@ def test_doc_proc_cnf_forms_json_config():
         None
     )
 
-    # json config is successfully formed
-    dict_ = json.loads(config.json_config)
-    assert isinstance(dict_, dict)
-    assert dict_['postprocessors'] == ['clean', 'clean_bullets']
-    assert dict_['chunking_strategy'] == 'basic'
+    assert isinstance(config.postprocessors, str)
 
 
-def test_doc_proc_cnf_sets_up_chunking_params_as_None_if_no_chunking_strategy_provided():
+def test_doc_proc_cnf_sets_up_chunking_params_as_none_if_no_chunking_strategy_provided():
     config = DocProcessingConfig(
         'fake',
         [Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS],

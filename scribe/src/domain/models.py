@@ -53,7 +53,7 @@ class DocProcessingConfig:
 
     ):
         self.name = name
-        self.postprocessors = postprocessors
+        self.postprocessors = json.dumps(list(map(lambda x: x.value, postprocessors))) if postprocessors is not None else None
         self.chunking_strategy = chunking_strategy
 
         if self.chunking_strategy is None:
@@ -66,33 +66,6 @@ class DocProcessingConfig:
             self.new_after_n_chars = self.max_characters if new_after_n_chars is None else new_after_n_chars
             self.overlap = 0 if overlap is None else overlap
             self.overlap_all = False if overlap_all is None else overlap_all
-
-        self.json_config = self.__form_json_config()
-
-    def __form_json_config(self) -> str:
-        """
-        Forms json string out of passed attributes.
-        """
-
-        dict_ = {key: self.__dict__[key] for key in [
-            'postprocessors',
-            'chunking_strategy',
-            'max_characters',
-            'new_after_n_chars',
-            'overlap',
-            'overlap_all',
-        ]}
-
-        # extracting values from enums
-        postproc = dict_.get('postprocessors')
-        if postproc is not None:
-            dict_['postprocessors'] = list(map(lambda item: item.value, postproc))
-
-        strategy = dict_.get('chunking_strategy')
-        if strategy is not None:
-            dict_['chunking_strategy'] = strategy.value
-
-        return json.dumps(dict_)
 
 
 class BaseChat:
@@ -115,7 +88,7 @@ class ChatModel:
 
     def __init__(
             self,
-            model_name: ChatModelName,
+            name: ChatModelName,
             api_key_credential_id: int,
             temperature: float | None,
             top_p: float | None,
@@ -124,7 +97,7 @@ class ChatModel:
             max_retries: int | None,
             stop_sequences: list[str] | None
     ):
-        self.model_name = model_name
+        self.name = name
         self.api_key_credential_id = api_key_credential_id
         self.temperature = temperature
         self.top_p = top_p

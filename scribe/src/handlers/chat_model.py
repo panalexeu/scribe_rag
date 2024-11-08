@@ -11,7 +11,7 @@ from src.adapters.uow import AbstractUoW
 
 
 class ChatModelAddCommand(BaseModel, GenericQuery[ChatModel]):
-    model_name: ChatModelName
+    name: ChatModelName
     api_key_credential_id: int
     temperature: float | None
     top_p: float | None
@@ -89,7 +89,7 @@ class ChatModelReadAllHandler:
 
 class ChatModelUpdateCommand(BaseModel, GenericQuery[ChatModel]):
     id_: int
-    model_name: ChatModelName | None
+    name: ChatModelName | None
     api_key_credential_id: int | None
     temperature: float | None
     top_p: float | None

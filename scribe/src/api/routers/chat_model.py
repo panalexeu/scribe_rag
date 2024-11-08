@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from mediatr import Mediator
 from fastapi import APIRouter, status, Depends
 from dependency_injector.wiring import inject, Provide
@@ -22,7 +24,7 @@ router = APIRouter(
 
 
 class ChatModelPostModel(BaseModel):
-    model_name: ChatModelName
+    name: ChatModelName
     api_key_credential_id: int
     temperature: float | None = None
     top_p: float | None = None
@@ -34,7 +36,7 @@ class ChatModelPostModel(BaseModel):
 
 class ChatModelResponseModel(BaseModel):
     id: int
-    model_name: ChatModelName
+    name: ChatModelName
     api_key_credential_id: int
     api_key_credential: ApiKeyResponseModel | None
     temperature: float | None
@@ -43,10 +45,11 @@ class ChatModelResponseModel(BaseModel):
     max_tokens: int | None
     max_retries: int | None
     stop_sequences: str | None
+    datetime: datetime
 
 
 class ChatModelPutModel(BaseModel):
-    model_name: ChatModelName | None = None
+    name: ChatModelName | None = None
     api_key_credential_id: int | None = None
     temperature: float | None = None
     top_p: float | None = None
