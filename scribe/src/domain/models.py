@@ -112,7 +112,7 @@ class BaseChat:
         self.doc_proc_cnf_id = doc_proc_cnf_id
 
 
-class ChatModel(Serializable):
+class ChatModel:
 
     def __init__(
             self,
@@ -132,7 +132,4 @@ class ChatModel(Serializable):
         self.base_url = base_url
         self.max_tokens = max_tokens
         self.max_retries = max_retries
-        self.stop_sequences = stop_sequences
-
-        self.json_str = self.serialize(['temperature', 'top_p', 'base_url',
-                                        'max_tokens', 'max_retries', 'stop_sequences'])
+        self.stop_sequences = json.dumps(stop_sequences) if stop_sequences is not None else None

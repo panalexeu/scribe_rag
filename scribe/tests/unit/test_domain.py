@@ -82,9 +82,8 @@ def test_doc_proc_cnf_sets_up_default_values_if_chunking_strategy_provided_but_c
     assert config.overlap_all is False
 
 
-@pytest.fixture(scope='function')
-def chat_model():
-    return ChatModel(
+def test_chat_model_serializes_stop_sequences_to_json_string():
+    chat_model = ChatModel(
         ChatModelName.GPT_4O,
         1,
         2,
@@ -95,33 +94,4 @@ def chat_model():
         ['yes', 'no'],
     )
 
-
-def test_chat_model_returns_json_string(chat_model):
-    assert isinstance(chat_model.json_str, str)
-
-
-def test_chat_model_is_serializable(chat_model):
-    dict_ = json.loads(chat_model.json_str)
-
-    # everything is serializable except the model name, api key credential id and json_str
-    attr_dict = chat_model.__dict__
-    attr_dict.pop('model_name')
-    attr_dict.pop('api_key_credential_id')
-    attr_dict.pop('json_str')
-
-    # attr_dict and dict_ are the same
-    assert attr_dict == dict_
-
-
-def test_chat_model_is_deserializable(chat_model):
-    json_str = chat_model.json_str
-
-    # since model_name and api_key_credential_id are not serializable, we provide them with the json_str
-    deserialized_chat_model = ChatModel.deserialize(
-        json_str,
-        model_name=chat_model.model_name,
-        api_key_credential_id=chat_model.api_key_credential_id
-    )
-
-    assert isinstance(deserialized_chat_model, ChatModel)
-    assert deserialized_chat_model.__dict__ == chat_model.__dict__
+    assert isinstance(chat_model.stop_sequences, str)
