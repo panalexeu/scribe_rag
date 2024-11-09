@@ -12,7 +12,8 @@ from src.adapters.codecs import FernetCodec
 from src.domain.services import (
     EncodeApiKeyCredentialService,
     LoadDocumentService,
-    ChatModelBuilder
+    ChatModelBuilder,
+    ChatPromptTemplateBuilder
 )
 from src.system.dir import get_scribe_dir_path, read_scribe_key
 from src.system.logging import read_log_config
@@ -137,4 +138,7 @@ class Container(DeclarativeContainer):
     )
     chat_model_builder_service = Factory(
         ChatModelBuilder
+    )
+    chat_prompt_template_builder = Factory(
+        ChatPromptTemplateBuilder
     )

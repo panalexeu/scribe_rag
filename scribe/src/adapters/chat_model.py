@@ -1,7 +1,10 @@
 from typing import AsyncIterator
 
 from abc import ABC
+
+import overrides
 from langchain_core.runnables.base import Runnable
+from langchain_core.prompts import ChatPromptTemplate
 
 
 class AbstractChatModel(ABC):
@@ -26,8 +29,12 @@ class LangchainChatModel(AbstractChatModel):
     ):
         self.chat_model = chat_model
 
-    async def async_stream(self, input_: str) -> AsyncIterator[str]:
-        return self.chat_model.astream(input_)
+    @overrides.override
+    async def async_stream(
+            self,
+            prompt: ChatPromptTemplate
+    ) -> AsyncIterator[str]:
+        return self.chat_model.astream(prompt)
 
     def stream(self, input_: str):
         raise NotImplementedError

@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, AsyncIterator
 
 from pydantic import BaseModel
 from dependency_injector.wiring import inject, Provide
@@ -7,7 +7,7 @@ from mediatr import Mediator, GenericQuery
 from src.adapters.uow import AbstractUoW
 from src.di_container import Container
 from src.domain.models import BaseChat
-from src.domain.services import ChatModelBuilder
+from src.domain.services import ChatModelBuilder, ChatPromptTemplateBuilder
 from src.adapters.codecs import AbstractCodec
 
 
@@ -146,7 +146,7 @@ class BaseChatCountHandler:
             return uow.repository.count()
 
 
-class BaseChatStreamCommand(BaseModel, GenericQuery[...]):
+class BaseChatStreamCommand(BaseModel, GenericQuery[AsyncIterator[str]]):
     id_: int
     prompt: str
 
@@ -158,13 +158,15 @@ class BaseChatStreamHandler:
             self,
             base_chat_uow: AbstractUoW = Provide[Container.base_chat_uow],
             chat_model_builder_service: ChatModelBuilder = Provide[Container.chat_model_builder_service],
+            chat_prompt_template_builder: ChatPromptTemplateBuilder = Provide[Container.chat_prompt_template_builder],
             codec: AbstractCodec = Provide[Container.codec]
     ):
         self.base_chat_uow = base_chat_uow
         self.chat_model_builder_service = chat_model_builder_service
+        self.chat_prompt_template_builder = chat_prompt_template_builder
         self.codec = codec
 
-    async def handle(self, request: BaseChatStreamCommand) -> ...:
+    async def handle(self, request: BaseChatStreamCommand) -> AsyncIterator[str]:
         with self.base_chat_uow as uow:
             base_chat: BaseChat = uow.repository.read(request.id_)
 
@@ -173,6 +175,10 @@ class BaseChatStreamHandler:
             chat_model=base_chat.chat_model,
             api_key=decoded_api_key
         )
+        prompt = self.chat_prompt_template_builder.build(
+            prompt=request.prompt,
+            system_prompt=base_chat.system_prompt,
+            context=None
+        )
 
-        if base_chat.system_prompt is not None:
-            pass
+        return built_chat_model.async_stream(prompt)  # type: ignore

@@ -1,11 +1,15 @@
 import io
 from typing import Type
-from abc import ABC
 
 from langchain_anthropic.chat_models import ChatAnthropic
 from langchain_cohere.llms import Cohere
 from langchain_core.document_loaders.base import BaseLoader, Document
 from langchain_openai.chat_models.base import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import (
+    SystemMessage,
+    HumanMessage,
+)
 
 from src.adapters.chat_model import AbstractChatModel, LangchainChatModel
 from src.adapters.codecs import AbstractCodec
@@ -142,3 +146,24 @@ class ChatModelBuilder:
             ChatModelName.CLAUDE_3_SONNET_20240229
         ]:
             return ModelProvider.ANTHROPIC
+
+
+class ChatPromptTemplateBuilder:
+
+    @staticmethod
+    def build(
+            prompt: str,
+            system_prompt: str | None,
+            context: str | None
+    ) -> ChatPromptTemplate:
+        return ChatPromptTemplate(
+            messages=[
+                SystemMessage(
+                    'You are a helpful AI-assistant. Consider user preferences. Answer to the user questions based on '
+                    'the retrieved context.'
+                ),
+                SystemMessage(f'Context: {context}'),
+                HumanMessage(f'Preferences: {system_prompt}'),
+                HumanMessage(prompt)
+            ]
+        )
