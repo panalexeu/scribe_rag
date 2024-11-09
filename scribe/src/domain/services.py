@@ -6,10 +6,6 @@ from langchain_cohere.llms import Cohere
 from langchain_core.document_loaders.base import BaseLoader, Document
 from langchain_openai.chat_models.base import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.messages import (
-    SystemMessage,
-    HumanMessage,
-)
 
 from src.adapters.chat_model import AbstractChatModel, LangchainChatModel
 from src.adapters.codecs import AbstractCodec
@@ -100,7 +96,7 @@ class ChatModelBuilder:
                 return LangchainChatModel(model)
             case ModelProvider.COHERE:
                 model = Cohere(
-                    model=chat_model.name.value,
+                    # model=chat_model.name.value, TODO fix this issue
                     temperature=chat_model.temperature,
                     p=chat_model.top_p,
                     base_url=chat_model.base_url,
@@ -152,18 +148,14 @@ class ChatPromptTemplateBuilder:
 
     @staticmethod
     def build(
-            prompt: str,
             system_prompt: str | None,
             context: str | None
     ) -> ChatPromptTemplate:
         return ChatPromptTemplate(
             messages=[
-                SystemMessage(
-                    'You are a helpful AI-assistant. Consider user preferences. Answer to the user questions based on '
-                    'the retrieved context.'
-                ),
-                SystemMessage(f'Context: {context}'),
-                HumanMessage(f'Preferences: {system_prompt}'),
-                HumanMessage(prompt)
+                ('system', 'You are a helpful AI-assistant.'),
+                ('system', f'Context: {context}'),
+                ('human', f'Preferences: {system_prompt}'),
+                ('human', '{input}')
             ]
         )

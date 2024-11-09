@@ -1,10 +1,8 @@
+from abc import ABC
 from typing import AsyncIterator
 
-from abc import ABC
-
-import overrides
-from langchain_core.runnables.base import Runnable
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables.base import Runnable
 
 
 class AbstractChatModel(ABC):
@@ -15,7 +13,7 @@ class AbstractChatModel(ABC):
     def invoke(self, prompt):
         pass
 
-    async def async_stream(self, prompt):
+    async def async_stream(self, prompt, **kwargs):
         pass
 
     async def async_invoke(self, prompt):
@@ -31,9 +29,15 @@ class LangchainChatModel(AbstractChatModel):
 
     def async_stream(
             self,
-            prompt: ChatPromptTemplate
+            prompt: ChatPromptTemplate,
+            **kwargs
     ) -> AsyncIterator[str]:
-        return self.chat_model.astream(prompt)
+        """
+        :param prompt: ChatPromptTemplate.
+        :param kwargs: Keyword arguments that will be passed to the ChatPromptTemplate.
+        """
+        chain = prompt | self.chat_model
+        return chain.astream(kwargs)
 
     def stream(self, input_: str):
         raise NotImplementedError

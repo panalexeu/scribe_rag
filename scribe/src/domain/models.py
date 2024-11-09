@@ -98,6 +98,12 @@ class ChatModel:
 
 
 class BaseChat:
+    system_prompt: SystemPrompt
+    chat_model: ChatModel
+    chat_model_api_key: ApiKeyCredential
+    doc_proc_cnf: DocProcessingConfig
+    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - are set by db (bad design 😭)
+
     def __init__(
             self,
             name: str,
@@ -106,10 +112,6 @@ class BaseChat:
             chat_model_id: int,
             chat_model_api_key_id: int,
             doc_proc_cnf_id: int,
-            system_prompt: SystemPrompt = None,
-            chat_model: ChatModel = None,
-            chat_model_api_key: ApiKeyCredential = None,
-            doc_proc_cnf: DocProcessingConfig = None
     ):
         self.name = name
         self.desc = desc
@@ -117,7 +119,3 @@ class BaseChat:
         self.chat_model_id = chat_model_id
         self.chat_model_api_key_id = chat_model_api_key_id
         self.doc_proc_cnf_id = doc_proc_cnf_id
-        self.system_prompt = system_prompt
-        self.chat_model = chat_model
-        self.chat_model_api_key = chat_model_api_key
-        self.doc_proc_cnf = doc_proc_cnf

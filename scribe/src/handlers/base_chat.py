@@ -31,7 +31,7 @@ class BaseChatAddHandler:
 
     def handle(self, request: BaseChatAddCommand) -> BaseChat:
         with self.base_chat_uow as uow:
-            base_chat_obj = BaseChat(**request.__dict__)
+            base_chat_obj = BaseChat(**request.model_dump())
             uow.repository.add(base_chat_obj)
             uow.commit()
 
@@ -171,14 +171,15 @@ class BaseChatStreamHandler:
             base_chat: BaseChat = uow.repository.read(request.id_)
 
         decoded_api_key = self.codec.decode(base_chat.chat_model_api_key.api_key)
+
         built_chat_model = self.chat_model_builder_service.build(
             chat_model=base_chat.chat_model,
             api_key=decoded_api_key
         )
+
         prompt = self.chat_prompt_template_builder.build(
-            prompt=request.prompt,
-            system_prompt=base_chat.system_prompt,
+            system_prompt=base_chat.system_prompt.content if base_chat.system_prompt is not None else None,
             context=None
         )
 
-        return built_chat_model.async_stream(prompt)  # type: ignore
+        return built_chat_model.async_stream(prompt, input=request.prompt)  # type: ignore
