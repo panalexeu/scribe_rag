@@ -13,6 +13,7 @@ from src.enums import (
     Postprocessor,
     ChatModelName
 )
+from src.adapters.codecs import FakeCodec
 
 
 def test_encode_api_key_credential_service():
@@ -89,3 +90,51 @@ def test_chat_model_serializes_stop_sequences_to_json_string():
     )
 
     assert isinstance(chat_model.stop_sequences, str)
+
+
+def test_chat_model_deserializes_stop_sequences_to_list_str():
+    seq = ['yes', 'no']
+    chat_model = ChatModel(
+        ChatModelName.GPT_4O,
+        1,
+        2,
+        0.1,
+        'web.com',
+        1,
+        3,
+        seq
+    )
+
+    assert isinstance(chat_model.stop_sequences, str)
+    assert chat_model.deserialized_stop_sequence == seq
+
+
+def test_chat_model_doesnt_serialize_and_deserialize_none_stop_sequence():
+    chat_model = ChatModel(
+        ChatModelName.GPT_4O,
+        1,
+        2,
+        0.1,
+        'web.com',
+        1,
+        3,
+        None
+    )
+
+    assert chat_model.stop_sequences is None
+    assert chat_model.deserialized_stop_sequence is None
+
+
+# def test_chat_model_builder_builds_models():
+#     codec = FakeCodec('fake-key')
+#     open_ai = ChatModel(
+#         ChatModelName.GPT_4O,
+#         1,
+#         None,
+#         None,
+#         None,
+#         None,
+#         None,
+#         None,
+#         None,
+#     )

@@ -87,7 +87,6 @@ class BaseChat:
 
 
 class ChatModel:
-
     def __init__(
             self,
             name: ChatModelName,
@@ -97,7 +96,8 @@ class ChatModel:
             base_url: str | None,
             max_tokens: int | None,
             max_retries: int | None,
-            stop_sequences: list[str] | None
+            stop_sequences: list[str] | None,
+            api_key_credential: ApiKeyCredential = None
     ):
         self.name = name
         self.api_key_credential_id = api_key_credential_id
@@ -106,4 +106,12 @@ class ChatModel:
         self.base_url = base_url
         self.max_tokens = max_tokens
         self.max_retries = max_retries
+        self.api_key_credential = api_key_credential
         self.stop_sequences = json.dumps(stop_sequences) if stop_sequences is not None else None
+
+    @property
+    def deserialized_stop_sequence(self) -> list[str] | None:
+        """
+        I need this method because of the db mapping 😥. Probably I did some bad designing.
+        """
+        return json.loads(self.stop_sequences) if self.stop_sequences is not None else None
