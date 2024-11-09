@@ -155,4 +155,5 @@ async def stream(
     command = BaseChatStreamCommand(id_=id_, prompt=item.prompt)
     res = await mediatr.send_async(command)
 
-    return res
+    async for chunk in res:  # type: ignore
+        print(chunk)

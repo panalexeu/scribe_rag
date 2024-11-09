@@ -9,16 +9,16 @@ from langchain_core.prompts import ChatPromptTemplate
 
 class AbstractChatModel(ABC):
 
-    def stream(self, input_: str):
+    def stream(self, prompt):
         pass
 
-    def invoke(self, input_: str):
+    def invoke(self, prompt):
         pass
 
-    async def async_stream(self, input_: str):
+    async def async_stream(self, prompt):
         pass
 
-    async def async_invoke(self, input_: str):
+    async def async_invoke(self, prompt):
         pass
 
 
@@ -29,8 +29,7 @@ class LangchainChatModel(AbstractChatModel):
     ):
         self.chat_model = chat_model
 
-    @overrides.override
-    async def async_stream(
+    def async_stream(
             self,
             prompt: ChatPromptTemplate
     ) -> AsyncIterator[str]:
