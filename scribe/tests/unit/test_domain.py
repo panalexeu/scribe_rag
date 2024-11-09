@@ -1,19 +1,22 @@
-import json
 from copy import copy
 
 from src.adapters.codecs import FakeCodec
-from src.domain.services import EncodeApiKeyCredentialService
+from src.adapters.chat_model import AbstractChatModel
 from src.domain.models import (
     ApiKeyCredential,
     DocProcessingConfig,
     ChatModel
 )
+from src.domain.services import (
+    EncodeApiKeyCredentialService,
+    ChatModelBuilder
+)
 from src.enums import (
     ChunkingStrategy,
     Postprocessor,
-    ChatModelName
+    ChatModelName,
+    ModelProvider
 )
-from src.adapters.codecs import FakeCodec
 
 
 def test_encode_api_key_credential_service():
@@ -80,7 +83,6 @@ def test_doc_proc_cnf_sets_up_default_values_if_chunking_strategy_provided_but_c
 def test_chat_model_serializes_stop_sequences_to_json_string():
     chat_model = ChatModel(
         ChatModelName.GPT_4O,
-        1,
         2,
         0.1,
         'web.com',
@@ -96,7 +98,6 @@ def test_chat_model_deserializes_stop_sequences_to_list_str():
     seq = ['yes', 'no']
     chat_model = ChatModel(
         ChatModelName.GPT_4O,
-        1,
         2,
         0.1,
         'web.com',
@@ -112,7 +113,6 @@ def test_chat_model_deserializes_stop_sequences_to_list_str():
 def test_chat_model_doesnt_serialize_and_deserialize_none_stop_sequence():
     chat_model = ChatModel(
         ChatModelName.GPT_4O,
-        1,
         2,
         0.1,
         'web.com',
@@ -125,16 +125,23 @@ def test_chat_model_doesnt_serialize_and_deserialize_none_stop_sequence():
     assert chat_model.deserialized_stop_sequence is None
 
 
-# def test_chat_model_builder_builds_models():
-#     codec = FakeCodec('fake-key')
-#     open_ai = ChatModel(
-#         ChatModelName.GPT_4O,
-#         1,
-#         None,
-#         None,
-#         None,
-#         None,
-#         None,
-#         None,
-#         None,
-#     )
+def test_chat_model_builder_correctly_assigns_provider():
+    model_names = [ChatModelName.GPT_4O, ChatModelName.COMMAND, ChatModelName.CLAUDE_3_HAIKU_20240307]
+
+    assert list(map(lambda m: ChatModelBuilder.determine_model_provider(m), model_names)) == [ModelProvider.OPENAI,
+                                                                                              ModelProvider.COHERE,
+                                                                                              ModelProvider.ANTHROPIC]
+
+
+def test_chat_model_builder_builds_models():
+    model = ChatModel(
+        ChatModelName.GPT_4O,
+        1,
+        None,
+        None,
+        None,
+        None,
+        None
+    )
+
+    assert isinstance(ChatModelBuilder.build(model, 'fake-key'), AbstractChatModel)

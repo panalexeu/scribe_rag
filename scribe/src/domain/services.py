@@ -72,54 +72,50 @@ class LoadDocumentService:
 
 
 class ChatModelBuilder:
-    def __init__(
-            self,
-            model: ChatModel
-    ):
-        self.model = model
-
-    def build(self, codec: AbstractCodec) -> AbstractChatModel:
+    @staticmethod
+    def build(
+            chat_model: ChatModel,
+            api_key: str
+    ) -> AbstractChatModel:
         """
         Sets up chat model from the class attributes. Maps attributes for different model providers.
         """
-        decoded_api_key = codec.decode(self.model.api_key_credential.api_key)
-
-        provider = self.determine_model_provider(self.model.name)
+        provider = ChatModelBuilder.determine_model_provider(chat_model.name)
         match provider:
             case ModelProvider.OPENAI:
                 model = ChatOpenAI(
-                    model_name=self.model.name,
-                    temperature=self.model.temperature if self.model.temperature is not None else 0.7,
-                    top_p=self.model.top_p,
-                    openai_api_base=self.model.base_url,
-                    max_tokens=self.model.max_tokens,
-                    max_retries=self.model.max_retries if self.model.max_retries is not None else 2,
-                    stop=self.model.deserialized_stop_sequence,
-                    api_key=decoded_api_key
+                    model_name=chat_model.name.value,
+                    temperature=chat_model.temperature if chat_model.temperature is not None else 0.7,
+                    top_p=chat_model.top_p,
+                    openai_api_base=chat_model.base_url,
+                    max_tokens=chat_model.max_tokens,
+                    max_retries=chat_model.max_retries if chat_model.max_retries is not None else 2,
+                    stop=chat_model.deserialized_stop_sequence,
+                    api_key=api_key
                 )
                 return LangchainChatModel(model)
             case ModelProvider.COHERE:
                 model = Cohere(
-                    model=self.model.name,
-                    temperature=self.model.temperature,
-                    p=self.model.top_p,
-                    base_url=self.model.base_url,
-                    max_tokens=self.model.max_tokens,
-                    max_retries=self.model.max_retries if self.model.max_retries is not None else 10,
-                    stop=self.model.deserialized_stop_sequence,
-                    cohere_api_key=decoded_api_key
+                    model=chat_model.name.value,
+                    temperature=chat_model.temperature,
+                    p=chat_model.top_p,
+                    base_url=chat_model.base_url,
+                    max_tokens=chat_model.max_tokens,
+                    max_retries=chat_model.max_retries if chat_model.max_retries is not None else 10,
+                    stop=chat_model.deserialized_stop_sequence,
+                    cohere_api_key=api_key
                 )
                 return LangchainChatModel(model)
             case ModelProvider.ANTHROPIC:
                 model = ChatAnthropic(
-                    model=self.model.name,
-                    temperature=self.model.temperature,
-                    top_p=self.model.top_p,
-                    base_url=self.model.base_url,
-                    max_tokens=self.model.max_tokens if self.model.max_tokens is not None else 1024,
-                    max_retries=self.model.max_retries if self.model.max_retries is not None else 2,
-                    stop=self.model.deserialized_stop_sequence,
-                    api_key=decoded_api_key
+                    model=chat_model.name.value,
+                    temperature=chat_model.temperature,
+                    top_p=chat_model.top_p,
+                    base_url=chat_model.base_url,
+                    max_tokens=chat_model.max_tokens if chat_model.max_tokens is not None else 1024,
+                    max_retries=chat_model.max_retries if chat_model.max_retries is not None else 2,
+                    stop=chat_model.deserialized_stop_sequence,
+                    api_key=api_key
                 )
                 return LangchainChatModel(model)
 
