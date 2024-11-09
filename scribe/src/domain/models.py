@@ -90,23 +90,19 @@ class ChatModel:
     def __init__(
             self,
             name: ChatModelName,
-            api_key_credential_id: int,
             temperature: float | None,
             top_p: float | None,
             base_url: str | None,
             max_tokens: int | None,
             max_retries: int | None,
             stop_sequences: list[str] | None,
-            api_key_credential: ApiKeyCredential = None
     ):
         self.name = name
-        self.api_key_credential_id = api_key_credential_id
         self.temperature = temperature
         self.top_p = top_p
         self.base_url = base_url
         self.max_tokens = max_tokens
         self.max_retries = max_retries
-        self.api_key_credential = api_key_credential
         self.stop_sequences = json.dumps(stop_sequences) if stop_sequences is not None else None
 
     @property

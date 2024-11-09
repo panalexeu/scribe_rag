@@ -7,7 +7,6 @@ from pydantic import BaseModel
 
 from src.di_container import Container
 from src.enums import ChatModelName
-from .api_key_credential import ApiKeyResponseModel
 from src.handlers.chat_model import (
     ChatModelAddCommand,
     ChatModelReadQuery,
@@ -25,7 +24,6 @@ router = APIRouter(
 
 class ChatModelPostModel(BaseModel):
     name: ChatModelName
-    api_key_credential_id: int
     temperature: float | None = None
     top_p: float | None = None
     base_url: str | None = None
@@ -37,8 +35,6 @@ class ChatModelPostModel(BaseModel):
 class ChatModelResponseModel(BaseModel):
     id: int
     name: ChatModelName
-    api_key_credential_id: int
-    api_key_credential: ApiKeyResponseModel | None
     temperature: float | None
     top_p: float | None
     base_url: str | None
@@ -50,7 +46,6 @@ class ChatModelResponseModel(BaseModel):
 
 class ChatModelPutModel(BaseModel):
     name: ChatModelName | None = None
-    api_key_credential_id: int | None = None
     temperature: float | None = None
     top_p: float | None = None
     base_url: str | None = None

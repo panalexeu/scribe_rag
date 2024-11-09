@@ -93,7 +93,6 @@ def map_sqlalchemy_models(registry_: registry):
         registry_.metadata,
         Column('id', Integer, primary_key=True),
         Column('name', Enum(ChatModelName), nullable=False),
-        Column('api_key_credential_id', Integer, ForeignKey('api_key_credential.id'), nullable=False),
         Column('temperature', Float, nullable=True),
         Column('top_p', Float, nullable=True),
         Column('base_url', String, nullable=True),
@@ -107,13 +106,7 @@ def map_sqlalchemy_models(registry_: registry):
     registry_.map_imperatively(FakeModel, fake_table)
     registry_.map_imperatively(SystemPrompt, system_prompt_table)
     registry_.map_imperatively(DocProcessingConfig, doc_processing_config_table)
-    registry_.map_imperatively(
-        ChatModel,
-        chat_model_table,
-        properties={
-            'api_key_credential': relationship(ApiKeyCredential, uselist=False)
-        }
-    )
+    registry_.map_imperatively(ChatModel, chat_model_table)
     registry_.map_imperatively(
         BaseChat,
         base_chat_table,
