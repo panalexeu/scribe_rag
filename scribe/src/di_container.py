@@ -11,7 +11,8 @@ from langchain_unstructured.document_loaders import UnstructuredLoader
 from src.adapters.codecs import FernetCodec
 from src.domain.services import (
     EncodeApiKeyCredentialService,
-    LoadDocumentService
+    LoadDocumentService,
+    ChatModelBuilder
 )
 from src.system.dir import get_scribe_dir_path, read_scribe_key
 from src.system.logging import read_log_config
@@ -133,4 +134,7 @@ class Container(DeclarativeContainer):
     encode_api_key_service = Factory(
         EncodeApiKeyCredentialService,
         codec=codec
+    )
+    chat_model_builder_service = Factory(
+        ChatModelBuilder
     )

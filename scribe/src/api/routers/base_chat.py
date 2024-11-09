@@ -12,7 +12,8 @@ from src.handlers.base_chat import (
     BaseChatReadAllQuery,
     BaseChatUpdateCommand,
     BaseChatDeleteCommand,
-    BaseChatCountQuery
+    BaseChatCountQuery,
+    BaseChatStreamCommand
 )
 
 from src.api.routers import (
@@ -136,3 +137,22 @@ def delete_base_chat(
 ):
     command = BaseChatDeleteCommand(id_=id_)
     mediatr.send(command)
+
+
+class BaseChatStreamModel(BaseModel):
+    prompt: str
+
+
+@router.post(
+    '/{id_}/stream'
+)
+@inject
+async def stream(
+        id_: int,
+        item: BaseChatStreamModel,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = BaseChatStreamCommand(id_=id_, prompt=item.prompt)
+    res = await mediatr.send_async(command)
+
+    return res

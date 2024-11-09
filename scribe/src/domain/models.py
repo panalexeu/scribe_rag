@@ -70,24 +70,6 @@ class DocProcessingConfig:
             self.overlap_all = False if overlap_all is None else overlap_all
 
 
-class BaseChat:
-    def __init__(
-            self,
-            name: str,
-            desc: str,
-            system_prompt_id: int,
-            chat_model_id: int,
-            chat_model_api_key_id: int,
-            doc_proc_cnf_id: int
-    ):
-        self.name = name
-        self.desc = desc
-        self.system_prompt_id = system_prompt_id
-        self.chat_model_id = chat_model_id
-        self.chat_model_api_key_id = chat_model_api_key_id
-        self.doc_proc_cnf_id = doc_proc_cnf_id
-
-
 class ChatModel:
     def __init__(
             self,
@@ -113,3 +95,29 @@ class ChatModel:
         I need this method because of the db mapping 😥. Probably I did some bad designing.
         """
         return json.loads(self.stop_sequences) if self.stop_sequences is not None else None
+
+
+class BaseChat:
+    def __init__(
+            self,
+            name: str,
+            desc: str,
+            system_prompt_id: int,
+            chat_model_id: int,
+            chat_model_api_key_id: int,
+            doc_proc_cnf_id: int,
+            system_prompt: SystemPrompt = None,
+            chat_model: ChatModel = None,
+            chat_model_api_key: ApiKeyCredential = None,
+            doc_proc_cnf: DocProcessingConfig = None
+    ):
+        self.name = name
+        self.desc = desc
+        self.system_prompt_id = system_prompt_id
+        self.chat_model_id = chat_model_id
+        self.chat_model_api_key_id = chat_model_api_key_id
+        self.doc_proc_cnf_id = doc_proc_cnf_id
+        self.system_prompt = system_prompt
+        self.chat_model = chat_model
+        self.chat_model_api_key = chat_model_api_key
+        self.doc_proc_cnf = doc_proc_cnf

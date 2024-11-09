@@ -7,6 +7,8 @@ from mediatr import Mediator, GenericQuery
 from src.adapters.uow import AbstractUoW
 from src.di_container import Container
 from src.domain.models import BaseChat
+from src.domain.services import ChatModelBuilder
+from src.adapters.codecs import AbstractCodec
 
 
 class BaseChatAddCommand(BaseModel, GenericQuery[BaseChat]):
@@ -142,3 +144,35 @@ class BaseChatCountHandler:
     def handle(self, request: BaseChatCountQuery) -> int:
         with self.base_chat_uow as uow:
             return uow.repository.count()
+
+
+class BaseChatStreamCommand(BaseModel, GenericQuery[...]):
+    id_: int
+    prompt: str
+
+
+@Mediator.handler
+class BaseChatStreamHandler:
+    @inject
+    def __init__(
+            self,
+            base_chat_uow: AbstractUoW = Provide[Container.base_chat_uow],
+            chat_model_builder_service: ChatModelBuilder = Provide[Container.chat_model_builder_service],
+            codec: AbstractCodec = Provide[Container.codec]
+    ):
+        self.base_chat_uow = base_chat_uow
+        self.chat_model_builder_service = chat_model_builder_service
+        self.codec = codec
+
+    async def handle(self, request: BaseChatStreamCommand) -> ...:
+        with self.base_chat_uow as uow:
+            base_chat: BaseChat = uow.repository.read(request.id_)
+
+        decoded_api_key = self.codec.decode(base_chat.chat_model_api_key.api_key)
+        built_chat_model = self.chat_model_builder_service.build(
+            chat_model=base_chat.chat_model,
+            api_key=decoded_api_key
+        )
+
+        if base_chat.system_prompt is not None:
+            pass

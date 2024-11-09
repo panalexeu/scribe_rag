@@ -1,17 +1,17 @@
 import io
 from typing import Type
-import json
+from abc import ABC
 
+from langchain_anthropic.chat_models import ChatAnthropic
+from langchain_cohere.llms import Cohere
 from langchain_core.document_loaders.base import BaseLoader, Document
 from langchain_openai.chat_models.base import ChatOpenAI
-from langchain_cohere.llms import Cohere
-from langchain_anthropic.chat_models import ChatAnthropic
 
-from .models import ApiKeyCredential
-from src.adapters.codecs import AbstractCodec
-from src.enums import ChatModelName, ModelProvider
 from src.adapters.chat_model import AbstractChatModel, LangchainChatModel
+from src.adapters.codecs import AbstractCodec
 from src.domain.models import ChatModel
+from src.enums import ChatModelName, ModelProvider
+from .models import ApiKeyCredential
 
 
 class EncodeApiKeyCredentialService:
@@ -71,7 +71,18 @@ class LoadDocumentService:
         return all_docs
 
 
-class ChatModelBuilder:
+class AbstractModelBuilder(ABC):
+
+    @staticmethod
+    def build(chat_model: ChatModel, api_key: str) -> AbstractChatModel:
+        pass
+
+    @staticmethod
+    def determine_model_provider(name: ChatModelName) -> ModelProvider:
+        pass
+
+
+class ChatModelBuilder(AbstractModelBuilder):
     @staticmethod
     def build(
             chat_model: ChatModel,
