@@ -9,6 +9,7 @@ def test_base_chat_adds(client):
             "desc": "string",
             "system_prompt_id": 0,
             "chat_model_id": 0,
+            "chat_model_api_key_id": 0,
             "doc_proc_cnf_id": 0
         }
     )
@@ -42,6 +43,7 @@ def test_base_chat_updates(client):
             "desc": "string",
             "system_prompt_id": 0,
             "chat_model_id": 1,
+            "chat_model_api_key_id": 0,
             "doc_proc_cnf_id": 0
         }
     )

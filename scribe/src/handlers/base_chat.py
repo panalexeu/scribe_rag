@@ -14,6 +14,7 @@ class BaseChatAddCommand(BaseModel, GenericQuery[BaseChat]):
     desc: str
     system_prompt_id: int
     chat_model_id: int
+    chat_model_api_key_id: int
     doc_proc_cnf_id: int
 
 

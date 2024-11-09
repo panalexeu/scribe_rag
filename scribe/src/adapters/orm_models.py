@@ -76,18 +76,6 @@ def map_sqlalchemy_models(registry_: registry):
         Column('datetime', DateTime, default=datetime.now)
     )
 
-    base_chat_table = Table(
-        'base_chat',
-        registry_.metadata,
-        Column('id', Integer, primary_key=True),
-        Column('name', String, nullable=False),
-        Column('desc', String, nullable=False),
-        Column('system_prompt_id', Integer, ForeignKey('system_prompt.id'), nullable=False),
-        Column('chat_model_id', Integer, ForeignKey('chat_model.id'), nullable=False),
-        Column('doc_proc_cnf_id', Integer, ForeignKey('doc_processing_config.id'), nullable=True),
-        Column('datetime', DateTime, default=datetime.now)
-    )
-
     chat_model_table = Table(
         'chat_model',
         registry_.metadata,
@@ -102,6 +90,19 @@ def map_sqlalchemy_models(registry_: registry):
         Column('datetime', DateTime, default=datetime.now)
     )
 
+    base_chat_table = Table(
+        'base_chat',
+        registry_.metadata,
+        Column('id', Integer, primary_key=True),
+        Column('name', String, nullable=False),
+        Column('desc', String, nullable=False),
+        Column('system_prompt_id', Integer, ForeignKey('system_prompt.id'), nullable=False),
+        Column('chat_model_id', Integer, ForeignKey('chat_model.id'), nullable=False),
+        Column('chat_model_api_key_id', Integer, ForeignKey('api_key_credential.id'), nullable=False),
+        Column('doc_proc_cnf_id', Integer, ForeignKey('doc_processing_config.id'), nullable=True),
+        Column('datetime', DateTime, default=datetime.now)
+    )
+
     registry_.map_imperatively(ApiKeyCredential, api_key_credential_table)
     registry_.map_imperatively(FakeModel, fake_table)
     registry_.map_imperatively(SystemPrompt, system_prompt_table)
@@ -113,6 +114,7 @@ def map_sqlalchemy_models(registry_: registry):
         properties={
             'system_prompt': relationship(SystemPrompt, uselist=False),
             'chat_model': relationship(ChatModel, uselist=False),
+            'chat_model_api_key': relationship(ApiKeyCredential, uselist=False),
             'doc_proc_cnf': relationship(DocProcessingConfig, uselist=False)
         }
     )
