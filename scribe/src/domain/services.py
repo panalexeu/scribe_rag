@@ -71,18 +71,7 @@ class LoadDocumentService:
         return all_docs
 
 
-class AbstractModelBuilder(ABC):
-
-    @staticmethod
-    def build(chat_model: ChatModel, api_key: str) -> AbstractChatModel:
-        pass
-
-    @staticmethod
-    def determine_model_provider(name: ChatModelName) -> ModelProvider:
-        pass
-
-
-class ChatModelBuilder(AbstractModelBuilder):
+class ChatModelBuilder:
     @staticmethod
     def build(
             chat_model: ChatModel,
