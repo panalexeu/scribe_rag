@@ -9,6 +9,7 @@ from src.di_container import Container
 from src.domain.models import BaseChat
 from src.domain.services import ChatModelBuilder, ChatPromptTemplateBuilder
 from src.adapters.codecs import AbstractCodec
+from src.adapters.msg_chunk import BaseMessageChunk
 
 
 class BaseChatAddCommand(BaseModel, GenericQuery[BaseChat]):
@@ -146,7 +147,7 @@ class BaseChatCountHandler:
             return uow.repository.count()
 
 
-class BaseChatStreamCommand(BaseModel, GenericQuery[AsyncIterator[str]]):
+class BaseChatStreamCommand(BaseModel, GenericQuery[AsyncIterator[BaseMessageChunk]]):
     id_: int
     prompt: str
 
@@ -166,7 +167,7 @@ class BaseChatStreamHandler:
         self.chat_prompt_template_builder = chat_prompt_template_builder
         self.codec = codec
 
-    async def handle(self, request: BaseChatStreamCommand) -> AsyncIterator[str]:
+    def handle(self, request: BaseChatStreamCommand) -> AsyncIterator[BaseMessageChunk]:
         with self.base_chat_uow as uow:
             base_chat: BaseChat = uow.repository.read(request.id_)
 

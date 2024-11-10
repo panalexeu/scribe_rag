@@ -1,5 +1,7 @@
 import json
 from enum import Enum
+from typing import AsyncIterator
+from src.adapters.msg_chunk import BaseMessageChunk
 
 
 def JsonEnum(name: str, path: str):
@@ -11,3 +13,8 @@ def JsonEnum(name: str, path: str):
         json_: dict = json.loads(content)
 
     return Enum(name, json_.get(name))
+
+
+async def async_msg_chunk_generator_wrapper(iterator: AsyncIterator[BaseMessageChunk]) -> str:
+    async for item in iterator:
+        yield item.content

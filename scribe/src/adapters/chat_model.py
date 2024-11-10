@@ -4,6 +4,8 @@ from typing import AsyncIterator
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables.base import Runnable
 
+from src.adapters.msg_chunk import BaseMessageChunk, LangChainMessageChunk
+
 
 class AbstractChatModel(ABC):
 
@@ -31,7 +33,7 @@ class LangchainChatModel(AbstractChatModel):
             self,
             prompt: ChatPromptTemplate,
             **kwargs
-    ) -> AsyncIterator[str]:
+    ) -> AsyncIterator[LangChainMessageChunk]:
         """
         :param prompt: ChatPromptTemplate.
         :param kwargs: Keyword arguments that will be passed to the ChatPromptTemplate.
