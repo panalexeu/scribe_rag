@@ -14,7 +14,3 @@ def JsonEnum(name: str, path: str):
 
     return Enum(name, json_.get(name))
 
-
-async def async_msg_chunk_generator_wrapper(iterator: AsyncIterator[BaseMessageChunk]) -> str:
-    async for item in iterator:
-        yield item.content

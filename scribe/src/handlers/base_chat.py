@@ -1,4 +1,4 @@
-from typing import Sequence, AsyncIterator
+from typing import Sequence, AsyncGenerator
 
 from pydantic import BaseModel
 from dependency_injector.wiring import inject, Provide
@@ -9,7 +9,7 @@ from src.di_container import Container
 from src.domain.models import BaseChat
 from src.domain.services import ChatModelBuilder, ChatPromptTemplateBuilder
 from src.adapters.codecs import AbstractCodec
-from src.adapters.msg_chunk import BaseMessageChunk
+from src.adapters.chat_model import AsyncStream
 
 
 class BaseChatAddCommand(BaseModel, GenericQuery[BaseChat]):
@@ -147,7 +147,7 @@ class BaseChatCountHandler:
             return uow.repository.count()
 
 
-class BaseChatStreamCommand(BaseModel, GenericQuery[AsyncIterator[BaseMessageChunk]]):
+class BaseChatStreamCommand(BaseModel, GenericQuery[AsyncStream]):
     id_: int
     prompt: str
 
@@ -167,7 +167,7 @@ class BaseChatStreamHandler:
         self.chat_prompt_template_builder = chat_prompt_template_builder
         self.codec = codec
 
-    def handle(self, request: BaseChatStreamCommand) -> AsyncIterator[BaseMessageChunk]:
+    def handle(self, request: BaseChatStreamCommand) -> AsyncStream:
         with self.base_chat_uow as uow:
             base_chat: BaseChat = uow.repository.read(request.id_)
 
@@ -183,4 +183,4 @@ class BaseChatStreamHandler:
             context=None
         )
 
-        return built_chat_model.async_stream(prompt, input=request.prompt)  # type: ignore
+        return built_chat_model.async_stream(prompt, input=request.prompt)

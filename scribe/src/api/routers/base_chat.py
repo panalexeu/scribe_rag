@@ -23,7 +23,6 @@ from src.api.routers import (
     doc_processing_cnf,
     api_key_credential
 )
-from src.system.utils import async_msg_chunk_generator_wrapper
 
 router = APIRouter(
     prefix='/base-chat',
@@ -155,11 +154,9 @@ async def stream(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     command = BaseChatStreamCommand(id_=id_, prompt=item.prompt)
-    async_iterator = mediatr.send(command)
+    async_generator = mediatr.send(command)
 
     return StreamingResponse(
-        async_msg_chunk_generator_wrapper(async_iterator)
+        async_generator,
+        media_type='text/event-stream'
     )
-
-
-

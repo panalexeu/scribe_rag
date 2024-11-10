@@ -1,10 +1,11 @@
 from abc import ABC
-from typing import AsyncIterator
+from typing import AsyncGenerator, AsyncIterator
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables.base import Runnable
+from langchain_core.messages.ai import AIMessageChunk
 
-from src.adapters.msg_chunk import BaseMessageChunk, LangChainMessageChunk
+AsyncStream = AsyncGenerator[str, None]
 
 
 class AbstractChatModel(ABC):
@@ -15,7 +16,7 @@ class AbstractChatModel(ABC):
     def invoke(self, prompt):
         pass
 
-    async def async_stream(self, prompt, **kwargs):
+    def async_stream(self, prompt, **kwargs) -> AsyncStream:
         pass
 
     async def async_invoke(self, prompt):
@@ -29,17 +30,24 @@ class LangchainChatModel(AbstractChatModel):
     ):
         self.chat_model = chat_model
 
+    @staticmethod
+    async def langchain_async_generator_wrapper(iterator: AsyncIterator[AIMessageChunk]) \
+            -> AsyncStream:
+        async for chunk in iterator:
+            yield chunk.content
+
     def async_stream(
             self,
             prompt: ChatPromptTemplate,
             **kwargs
-    ) -> AsyncIterator[LangChainMessageChunk]:
+    ) -> AsyncStream:
         """
         :param prompt: ChatPromptTemplate.
         :param kwargs: Keyword arguments that will be passed to the ChatPromptTemplate.
         """
         chain = prompt | self.chat_model
-        return chain.astream(kwargs)
+
+        return self.langchain_async_generator_wrapper(chain.astream(kwargs))
 
     def stream(self, input_: str):
         raise NotImplementedError
