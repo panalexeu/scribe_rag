@@ -152,6 +152,11 @@ class BaseChatStreamCommand(BaseModel, GenericQuery[AsyncStream]):
     prompt: str
 
 
+class InvalidBaseChatObjectError(LookupError):
+    def __init__(self, obj_name: str, id_: int):
+        super().__init__(f"BaseChat: '{obj_name}' with the id '{id_}' was not found.")
+
+
 @Mediator.handler
 class BaseChatStreamHandler:
     @inject
@@ -170,6 +175,11 @@ class BaseChatStreamHandler:
     def handle(self, request: BaseChatStreamCommand) -> AsyncStream:
         with self.base_chat_uow as uow:
             base_chat: BaseChat = uow.repository.read(request.id_)
+
+        if base_chat.chat_model is None:
+            raise InvalidBaseChatObjectError('ChatModel', base_chat.chat_model_id)
+        elif base_chat.chat_model_api_key is None:
+            raise InvalidBaseChatObjectError('ChatModelApiKey', base_chat.chat_model_api_key_id)
 
         decoded_api_key = self.codec.decode(base_chat.chat_model_api_key.api_key)
 

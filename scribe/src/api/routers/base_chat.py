@@ -36,9 +36,9 @@ class BaseChatResponseModel(BaseModel):
     name: str
     desc: str
     chat_model_id: int
-    chat_model: chat_model.ChatModelResponseModel
+    chat_model: chat_model.ChatModelResponseModel | None
     chat_model_api_key_id: int
-    chat_model_api_key: api_key_credential.ApiKeyPostModel
+    chat_model_api_key: api_key_credential.ApiKeyPostModel | None
     doc_proc_cnf_id: int | None
     doc_proc_cnf: doc_processing_cnf.DocProcCnfResponseModel | None
     system_prompt_id: int | None
@@ -145,7 +145,7 @@ class BaseChatStreamModel(BaseModel):
     prompt: str
 
 
-@router.get(
+@router.post(
     '/{id_}/stream',
 )
 @inject

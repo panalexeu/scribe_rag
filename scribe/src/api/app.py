@@ -19,6 +19,7 @@ from .routers import (
     base_chat,
     chat_model
 )
+from src.handlers.base_chat import InvalidBaseChatObjectError
 
 
 @asynccontextmanager
@@ -61,5 +62,13 @@ async def handle_item_not_found_error(req, exc: ItemNotFoundError):
 async def handle_unsupported_file_format_error(req, exc: UnsupportedFileFormatError):
     raise HTTPException(
         status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        detail=exc.__str__()
+    )
+
+
+@app.exception_handler(InvalidBaseChatObjectError)
+async def handle_invalid_base_chat_obj_err(req, exc: InvalidBaseChatObjectError):
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
         detail=exc.__str__()
     )
