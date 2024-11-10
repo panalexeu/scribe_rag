@@ -2,15 +2,27 @@ from .conftest import client
 
 
 def test_base_chat_adds(client):
+    # setup
+    client.post(
+        url='/chat-model/',
+        json={
+            "name": "gpt-4o-mini",
+        }
+    )
+    client.post(
+        url='/api-key/',
+        json={'name': 'fake-ai', 'api_key': '12345'}
+    )
+
     res = client.post(
         '/base-chat/',
         json={
             "name": "string",
             "desc": "string",
-            "system_prompt_id": 0,
-            "chat_model_id": 0,
-            "chat_model_api_key_id": 0,
-            "doc_proc_cnf_id": 0
+            "chat_model_id": 1,
+            "chat_model_api_key_id": 1,
+            "doc_proc_cnf_id": None,
+            "system_prompt_id": None,
         }
     )
 
@@ -38,17 +50,11 @@ def test_base_chat_updates(client):
     res = client.put(
         '/base-chat/1',
         json={
-
-            "name": "string",
-            "desc": "string",
-            "system_prompt_id": 0,
-            "chat_model_id": 1,
-            "chat_model_api_key_id": 0,
-            "doc_proc_cnf_id": 0
+            "desc": "stringer"
         }
     )
 
-    assert res.json()['chat_model_id'] == 1
+    assert res.json()['desc'] == 'stringer'
     assert res.status_code == 200
 
 
