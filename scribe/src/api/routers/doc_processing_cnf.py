@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 from mediatr import Mediator
 from fastapi import APIRouter, status, Depends
@@ -28,33 +29,33 @@ router = APIRouter(
 class DocProcCnfResponseModel(BaseModel):
     id: int
     name: str
-    postprocessors: str | None
-    chunking_strategy: ChunkingStrategy | None
-    max_characters: int | None
-    new_after_n_chars: int | None
-    overlap: int | None
-    overlap_all: bool | None
+    postprocessors: Optional[None]
+    chunking_strategy: Optional[ChunkingStrategy]
+    max_characters: Optional[None]
+    new_after_n_chars: Optional[int]
+    overlap: Optional[int]
+    overlap_all: Optional[bool]
     datetime: datetime.datetime
 
 
 class DocProcCnfPostModel(BaseModel):
     name: str
-    postprocessors: list[Postprocessor] | None = None
-    chunking_strategy: ChunkingStrategy | None = None
-    max_characters: int | None = None
-    new_after_n_chars: int | None = None
-    overlap: int | None = None
-    overlap_all: bool | None = None
+    postprocessors: Optional[list[Postprocessor]] = None
+    chunking_strategy: Optional[ChunkingStrategy] = None
+    max_characters: Optional[int] = None
+    new_after_n_chars: Optional[int] = None
+    overlap: Optional[int] = None
+    overlap_all: Optional[bool] = None
 
 
 class DocProcCnfPutModel(BaseModel):
-    name: str | None = None
-    postprocessors: str | None = None
-    chunking_strategy: ChunkingStrategy | None = None
-    max_characters: int | None = None
-    new_after_n_chars: int | None = None
-    overlap: int | None = None
-    overlap_all: bool | None = None
+    name: Optional[str] = None
+    postprocessors: Optional[str] = None
+    chunking_strategy: Optional[ChunkingStrategy] = None
+    max_characters: Optional[int] = None
+    new_after_n_chars: Optional[int] = None
+    overlap: Optional[int] = None
+    overlap_all: Optional[bool] = None
 
 
 @router.post(

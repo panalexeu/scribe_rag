@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Depends, status
@@ -34,7 +35,7 @@ class ApiKeyPostModel(BaseModel):
 
 
 class ApiKeyPutModel(BaseModel):
-    name: str | None = None
+    name: Optional[str] = None
 
 
 @router.post(

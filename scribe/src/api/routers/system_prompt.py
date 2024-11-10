@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from mediatr import Mediator
 from dependency_injector.wiring import inject, Provide
@@ -34,8 +35,8 @@ class SystemPromptPostModel(BaseModel):
 
 
 class SystemPromptPutModel(BaseModel):
-    name: str | None = None
-    content: str | None = None
+    name: Optional[str] = None
+    content: Optional[str] = None
 
 
 @router.post(

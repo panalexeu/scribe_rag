@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from mediatr import Mediator
 from fastapi import APIRouter, status, Depends
@@ -24,34 +25,34 @@ router = APIRouter(
 
 class ChatModelPostModel(BaseModel):
     name: ChatModelName
-    temperature: float | None = None
-    top_p: float | None = None
-    base_url: str | None = None
-    max_tokens: int | None = None
-    max_retries: int | None = None
-    stop_sequences: list[str] | None = None
+    temperature: Optional[float] = None
+    top_p: Optional[float] = None
+    base_url: Optional[str] = None
+    max_tokens: Optional[int] = None
+    max_retries: Optional[int] = None
+    stop_sequences: Optional[list[str]] = None
 
 
 class ChatModelResponseModel(BaseModel):
     id: int
     name: ChatModelName
-    temperature: float | None
-    top_p: float | None
-    base_url: str | None
-    max_tokens: int | None
-    max_retries: int | None
-    stop_sequences: str | None
+    temperature: Optional[float]
+    top_p: Optional[float]
+    base_url: Optional[str]
+    max_tokens: Optional[int]
+    max_retries: Optional[int]
+    stop_sequences: Optional[str]
     datetime: datetime
 
 
 class ChatModelPutModel(BaseModel):
-    name: ChatModelName | None = None
-    temperature: float | None = None
-    top_p: float | None = None
-    base_url: str | None = None
-    max_tokens: int | None = None
-    max_retries: int | None = None
-    stop_sequences: str | None = None
+    name: Optional[ChatModelName] = None
+    temperature: Optional[float] = None
+    top_p: Optional[float] = None
+    base_url: Optional[str] = None
+    max_tokens: Optional[int] = None
+    max_retries: Optional[int] = None
+    stop_sequences: Optional[str] = None
 
 
 @router.post(
