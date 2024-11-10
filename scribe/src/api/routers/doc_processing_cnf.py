@@ -29,12 +29,12 @@ router = APIRouter(
 class DocProcCnfResponseModel(BaseModel):
     id: int
     name: str
-    postprocessors: Optional[None]
-    chunking_strategy: Optional[ChunkingStrategy]
-    max_characters: Optional[None]
-    new_after_n_chars: Optional[int]
-    overlap: Optional[int]
-    overlap_all: Optional[bool]
+    postprocessors: str | None
+    chunking_strategy: ChunkingStrategy | None
+    max_characters: int | None
+    new_after_n_chars: int | None
+    overlap: int | None
+    overlap_all: bool | None
     datetime: datetime.datetime
 
 

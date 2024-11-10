@@ -108,10 +108,10 @@ class BaseChat:
             self,
             name: str,
             desc: str,
-            system_prompt_id: int,
             chat_model_id: int,
             chat_model_api_key_id: int,
-            doc_proc_cnf_id: int,
+            system_prompt_id: int | None,
+            doc_proc_cnf_id: int | None,
     ):
         self.name = name
         self.desc = desc

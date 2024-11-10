@@ -96,9 +96,9 @@ def map_sqlalchemy_models(registry_: registry):
         Column('id', Integer, primary_key=True),
         Column('name', String, nullable=False),
         Column('desc', String, nullable=False),
-        Column('system_prompt_id', Integer, ForeignKey('system_prompt.id'), nullable=False),
         Column('chat_model_id', Integer, ForeignKey('chat_model.id'), nullable=False),
         Column('chat_model_api_key_id', Integer, ForeignKey('api_key_credential.id'), nullable=False),
+        Column('system_prompt_id', Integer, ForeignKey('system_prompt.id'), nullable=True),
         Column('doc_proc_cnf_id', Integer, ForeignKey('doc_processing_config.id'), nullable=True),
         Column('datetime', DateTime, default=datetime.now)
     )

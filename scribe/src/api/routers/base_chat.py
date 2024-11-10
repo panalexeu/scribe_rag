@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from mediatr import Mediator
 from fastapi import APIRouter, status, Depends
@@ -34,33 +35,33 @@ class BaseChatResponseModel(BaseModel):
     id: int
     name: str
     desc: str
-    system_prompt_id: int
-    system_prompt: system_prompt.SystemPromptResponseModel | None
     chat_model_id: int
-    chat_model: chat_model.ChatModelResponseModel | None
+    chat_model: chat_model.ChatModelResponseModel
     chat_model_api_key_id: int
-    chat_model_api_key: api_key_credential.ApiKeyPostModel | None
-    doc_proc_cnf_id: int
+    chat_model_api_key: api_key_credential.ApiKeyPostModel
+    doc_proc_cnf_id: int | None
     doc_proc_cnf: doc_processing_cnf.DocProcCnfResponseModel | None
+    system_prompt_id: int | None
+    system_prompt: system_prompt.SystemPromptResponseModel | None
     datetime: datetime
 
 
 class BaseChatAddModel(BaseModel):
     name: str
     desc: str
-    system_prompt_id: int
     chat_model_id: int
     chat_model_api_key_id: int
-    doc_proc_cnf_id: int
+    system_prompt_id: Optional[int] = None
+    doc_proc_cnf_id: Optional[int] = None
 
 
 class BaseChatPutModel(BaseModel):
-    name: str | None = None
-    desc: str | None = None
-    system_prompt_id: int | None = None
-    chat_model_id: int | None = None
-    chat_model_api_key_id: int | None = None
-    doc_proc_cnf_id: int | None = None
+    name: Optional[str] = None
+    desc: Optional[str] = None
+    system_prompt_id: Optional[int] = None
+    chat_model_id: Optional[int] = None
+    chat_model_api_key_id: Optional[int] = None
+    doc_proc_cnf_id: Optional[int] = None
 
 
 @router.post(
