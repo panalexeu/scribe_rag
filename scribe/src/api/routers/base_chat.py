@@ -144,8 +144,8 @@ class BaseChatStreamModel(BaseModel):
     prompt: str
 
 
-@router.post(
-    '/{id_}/stream'
+@router.get(
+    '/{id_}/stream',
 )
 @inject
 async def stream(

@@ -1,3 +1,4 @@
+import json
 from abc import ABC
 from typing import AsyncGenerator, AsyncIterator
 
@@ -34,7 +35,7 @@ class LangchainChatModel(AbstractChatModel):
     async def langchain_async_generator_wrapper(iterator: AsyncIterator[AIMessageChunk]) \
             -> AsyncStream:
         async for chunk in iterator:
-            yield chunk.content
+            yield f"data: {chunk.content}\n\n"  # yield f"data: {chunk.content}\n\n" - is the right sse standard
 
     def async_stream(
             self,
