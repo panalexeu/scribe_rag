@@ -1,11 +1,12 @@
 from abc import ABC
-from typing import get_args, Sequence, Optional
+from typing import get_args, Sequence, Optional, Callable
 
 import overrides
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from chromadb.api.models import Collection
+from chromadb import AsyncHttpClient
 
 
 class AbstractRepository[T](ABC):
@@ -18,8 +19,8 @@ class AbstractRepository[T](ABC):
 
     def read_all(
             self,
-            offset: int | None = None,
-            limit: int | None = None,
+            offset: Optional[int] = None,
+            limit: Optional[int] = None,
             **kwargs
     ) -> Sequence[T]:
         """
@@ -48,35 +49,6 @@ class AbstractRepository[T](ABC):
         pass
 
     def count(self) -> int:
-        pass
-
-
-class AsyncAbstractRepository[T](ABC):
-    async def add(self, item: T) -> T:
-        pass
-
-    async def read(self, id_: int) -> T:
-        pass
-
-    async def read_all(
-            self,
-            offset: int | None = None,
-            limit: int | None = None,
-            **kwargs
-    ) -> Sequence[T]:
-        pass
-
-    async def update(
-            self,
-            id_: int,
-            **kwargs
-    ) -> T:
-        pass
-
-    async def delete(self, id_: int) -> None:
-        pass
-
-    async def count(self) -> int:
         pass
 
 
@@ -225,3 +197,24 @@ class SqlAlchemyRelationRepository[T](SqlAlchemyRepository):
         statement = select(type_T).where(type_T.id == id_).options(joinedload('*'))
 
         return self.session.execute(statement).scalar()
+
+
+class AsyncAbstractVectorCollectionRepository[T](ABC):
+
+    async def add(self, name: str, embedding_function: Optional[Callable] = None, **kwargs) -> T:
+        pass
+
+    async def read(self, name: str, embedding_function: Optional[Callable] = None) -> T:
+        pass
+
+    async def read_all(self, limit: Optional[int] = None, offset: Optional[int] = None) -> Sequence[T]:
+        pass
+
+    async def update(self, **kwargs) -> T:
+        pass
+
+    async def delete(self, name: str) -> None:
+        pass
+
+    async def count(self) -> int:
+        pass

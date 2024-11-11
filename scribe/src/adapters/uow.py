@@ -68,4 +68,3 @@ class SqlAlchemyUoW(AbstractUoW):
 
     def __exit__(self, *args):
         self.session.close()
-        
