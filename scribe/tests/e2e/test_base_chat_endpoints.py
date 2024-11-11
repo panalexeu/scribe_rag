@@ -9,11 +9,12 @@ def test_base_chat_adds(client):
             "name": "string",
             "desc": "string",
             "chat_model_id": 1,
-            "chat_model_api_key_id": 1,
             "doc_proc_cnf_id": None,
             "system_prompt_id": None,
         }
     )
+
+    print(res)
 
     assert res.status_code == 201
 

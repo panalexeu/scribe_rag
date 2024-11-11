@@ -6,6 +6,7 @@ def test_chat_model_add(client):
         url='/chat-model/',
         json={
             "name": "gpt-4o-mini",
+            "api_key_credential_id": 1,
             "temperature": 0,
             "top_p": 0,
             "base_url": "string",
@@ -42,16 +43,11 @@ def test_chat_model_updates(client):
     res = client.put(
         url='/chat-model/1',
         json={
-            "name": "gpt-4o-mini",
-            "temperature": 0,
-            "top_p": 0,
-            "base_url": "string",
-            "max_tokens": 0,
-            "max_retries": 0,
-            "stop_sequences": "string"
+            'name': 'command'
         }
     )
 
+    assert res.json()['name'] == 'command'
     assert res.status_code == 200
 
 
