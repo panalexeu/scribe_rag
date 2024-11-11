@@ -1,6 +1,9 @@
 all:
 	fastapi dev src/api/app.py
 
+test:
+	pytest
+
 test_unit:
 	pytest tests/unit
 
