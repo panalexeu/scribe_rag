@@ -52,6 +52,7 @@ class ModelProvider(Enum):
     OPENAI = 'openai'
     COHERE = 'cohere'
     ANTHROPIC = 'anthropic'
+    LOCAL = 'local'
 
 
 class DistanceFunction(Enum):

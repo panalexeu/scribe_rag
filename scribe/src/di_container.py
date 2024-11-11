@@ -16,12 +16,14 @@ from src.domain.services import (
     ChatModelBuilder,
     ChatPromptTemplateBuilder
 )
+from src.domain.services.embbeding_model import EmbeddingModelBuilder
 from src.system.dir import get_scribe_dir_path, read_scribe_key
 from src.system.logging import read_log_config
 from src.adapters.repository import (
     SqlAlchemyRepository,
     SqlAlchemyRelationRepository
 )
+from src.adapters.vector_collection_repository import AsyncAbstractVectorCollectionRepository
 from src.adapters.uow import SqlAlchemyUoW
 from src.domain.models import (
     ApiKeyCredential,
@@ -29,7 +31,7 @@ from src.domain.models import (
     DocProcessingConfig,
     BaseChat,
     ChatModel,
-    EmbeddingModel
+    EmbeddingModel,
 )
 
 
@@ -107,6 +109,10 @@ class Container(DeclarativeContainer):
         AsyncHttpClient,
         port=8001
     )
+    async_vector_collection_repository = Factory(
+        AsyncAbstractVectorCollectionRepository,
+        async_vector_db_client
+    )
 
     # uow's
     api_key_uow = Factory(
@@ -154,4 +160,8 @@ class Container(DeclarativeContainer):
     )
     chat_prompt_template_builder = Factory(
         ChatPromptTemplateBuilder
+    )
+    embedding_model_builder = Factory(
+        EmbeddingModelBuilder,
+        codec
     )
