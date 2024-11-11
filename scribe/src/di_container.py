@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import registry, Session
 from sqlalchemy.pool import StaticPool
 from langchain_unstructured.document_loaders import UnstructuredLoader
+from chromadb import AsyncHttpClient
 
 from src.adapters.codecs import FernetCodec
 from src.domain.services import (
@@ -99,6 +100,12 @@ class Container(DeclarativeContainer):
         bind=engine,
         autoflush=False,
         expire_on_commit=False
+    )
+
+    # chroma vector store
+    async_vector_db_client = Singleton(
+        AsyncHttpClient,
+        port=8001
     )
 
     # uow's

@@ -35,7 +35,6 @@ class SqlAlchemyUoW(AbstractUoW):
     Rollbacks in case of exceptions or exit. Commits should be explicit.
     """
 
-    @overrides.override
     def __init__(
             self,
             repository: Type[SqlAlchemyRepository],
@@ -55,3 +54,7 @@ class SqlAlchemyUoW(AbstractUoW):
 
     def __exit__(self, *args):
         self.session.close()
+
+
+class ChromaDBUoW(AbstractUoW):
+    ...

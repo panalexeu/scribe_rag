@@ -83,6 +83,7 @@ def test_doc_proc_cnf_sets_up_default_values_if_chunking_strategy_provided_but_c
 def test_chat_model_serializes_stop_sequences_to_json_string():
     chat_model = ChatModel(
         ChatModelName.GPT_4O,
+        1,
         2,
         0.1,
         'web.com',
@@ -98,6 +99,7 @@ def test_chat_model_deserializes_stop_sequences_to_list_str():
     seq = ['yes', 'no']
     chat_model = ChatModel(
         ChatModelName.GPT_4O,
+        1,
         2,
         0.1,
         'web.com',
@@ -113,6 +115,7 @@ def test_chat_model_deserializes_stop_sequences_to_list_str():
 def test_chat_model_doesnt_serialize_and_deserialize_none_stop_sequence():
     chat_model = ChatModel(
         ChatModelName.GPT_4O,
+        1,
         2,
         0.1,
         'web.com',
@@ -136,6 +139,7 @@ def test_chat_model_builder_correctly_assigns_provider():
 def test_chat_model_builder_builds_models():
     model = ChatModel(
         ChatModelName.GPT_4O,
+        1,
         1,
         None,
         None,
