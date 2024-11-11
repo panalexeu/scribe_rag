@@ -21,8 +21,7 @@ from src.handlers.base_chat import (
 from src.api.routers import (
     system_prompt,
     chat_model,
-    doc_processing_cnf,
-    api_key_credential
+    doc_processing_cnf
 )
 
 router = APIRouter(
@@ -37,8 +36,6 @@ class BaseChatResponseModel(BaseModel):
     desc: str
     chat_model_id: int
     chat_model: chat_model.ChatModelResponseModel | None
-    chat_model_api_key_id: int
-    chat_model_api_key: api_key_credential.ApiKeyPostModel | None
     doc_proc_cnf_id: int | None
     doc_proc_cnf: doc_processing_cnf.DocProcCnfResponseModel | None
     system_prompt_id: int | None
@@ -50,7 +47,6 @@ class BaseChatAddModel(BaseModel):
     name: str
     desc: str
     chat_model_id: int
-    chat_model_api_key_id: int
     system_prompt_id: Optional[int] = None
     doc_proc_cnf_id: Optional[int] = None
 
@@ -60,7 +56,6 @@ class BaseChatPutModel(BaseModel):
     desc: Optional[str] = None
     system_prompt_id: Optional[int] = None
     chat_model_id: Optional[int] = None
-    chat_model_api_key_id: Optional[int] = None
     doc_proc_cnf_id: Optional[int] = None
 
 

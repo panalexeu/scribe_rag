@@ -16,7 +16,6 @@ class BaseChatAddCommand(BaseModel, GenericQuery[BaseChat]):
     name: str
     desc: str
     chat_model_id: int
-    chat_model_api_key_id: int
     system_prompt_id: int | None
     doc_proc_cnf_id: int | None
 
@@ -157,6 +156,7 @@ class InvalidBaseChatObjectError(LookupError):
         super().__init__(f"BaseChat: '{obj_name}' with the id '{id_}' was not found.")
 
 
+# TODO massive rework is needed here
 @Mediator.handler
 class BaseChatStreamHandler:
     @inject
