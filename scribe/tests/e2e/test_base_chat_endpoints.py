@@ -3,17 +3,6 @@ from .conftest import client
 
 def test_base_chat_adds(client):
     # setup
-    client.post(
-        url='/chat-model/',
-        json={
-            "name": "gpt-4o-mini",
-        }
-    )
-    client.post(
-        url='/api-key/',
-        json={'name': 'fake-ai', 'api_key': '12345'}
-    )
-
     res = client.post(
         '/base-chat/',
         json={
