@@ -27,7 +27,8 @@ from src.domain.models import (
     SystemPrompt,
     DocProcessingConfig,
     BaseChat,
-    ChatModel
+    ChatModel,
+    EmbeddingModel
 )
 
 
@@ -124,6 +125,11 @@ class Container(DeclarativeContainer):
     chat_model_uow = Factory(
         SqlAlchemyUoW,
         repository=SqlAlchemyRelationRepository[ChatModel],
+        session=session
+    )
+    embedding_model_uow = Factory(
+        SqlAlchemyUoW,
+        repository=SqlAlchemyRelationRepository[EmbeddingModel],
         session=session
     )
 

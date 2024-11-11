@@ -23,11 +23,13 @@ from src.domain.models import (
     SystemPrompt,
     DocProcessingConfig,
     BaseChat,
-    ChatModel
+    ChatModel,
+    EmbeddingModel
 )
 from src.enums import (
     ChatModelName,
-    ChunkingStrategy
+    ChunkingStrategy,
+    EmbeddingModelName
 )
 
 
@@ -103,6 +105,15 @@ def map_sqlalchemy_models(registry_: registry):
         Column('datetime', DateTime, default=datetime.now)
     )
 
+    embedding_model_table = Table(
+        'embedding_model',
+        registry_.metadata,
+        Column('id', Integer, primary_key=True),
+        Column('name', Enum(EmbeddingModelName), nullable=False),
+        Column('api_key_credential_id', Integer, ForeignKey('api_key_credential.id'), nullable=False),
+        Column('datetime', DateTime, default=datetime.now)
+    )
+
     registry_.map_imperatively(ApiKeyCredential, api_key_credential_table)
     registry_.map_imperatively(FakeModel, fake_table)
     registry_.map_imperatively(SystemPrompt, system_prompt_table)
@@ -116,5 +127,12 @@ def map_sqlalchemy_models(registry_: registry):
             'chat_model': relationship(ChatModel, uselist=False),
             'chat_model_api_key': relationship(ApiKeyCredential, uselist=False),
             'doc_proc_cnf': relationship(DocProcessingConfig, uselist=False)
+        }
+    )
+    registry_.map_imperatively(
+        EmbeddingModel,
+        embedding_model_table,
+        properties={
+            'api_key_credential': relationship(ApiKeyCredential, uselist=False)
         }
     )
