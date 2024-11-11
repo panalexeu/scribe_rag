@@ -3,7 +3,9 @@ import json
 from src.enums import (
     Postprocessor,
     ChunkingStrategy,
-    ChatModelName
+    ChatModelName,
+    DistanceFunction,
+    EmbeddingModelName
 )
 
 
@@ -97,11 +99,24 @@ class ChatModel:
         return json.loads(self.stop_sequences) if self.stop_sequences is not None else None
 
 
+class EmbeddingModel:
+    api_key_credential: ApiKeyCredential  # populated by db
+
+    def __init__(
+            self,
+            name: EmbeddingModelName,
+            api_key_credential_id: int
+    ):
+        self.name = name
+        self.api_key_credential_id = api_key_credential_id
+
+
 class BaseChat:
     system_prompt: SystemPrompt
     chat_model: ChatModel
     chat_model_api_key: ApiKeyCredential
     doc_proc_cnf: DocProcessingConfig
+
     # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - are set by db (bad design 😭)
 
     def __init__(
@@ -119,3 +134,17 @@ class BaseChat:
         self.chat_model_id = chat_model_id
         self.chat_model_api_key_id = chat_model_api_key_id
         self.doc_proc_cnf_id = doc_proc_cnf_id
+
+
+class VectorCollection:
+    embedding_model: EmbeddingModel
+
+    def __init__(
+            self,
+            name: str,
+            distance: DistanceFunction,
+            embedding_model_id: int
+    ):
+        self.name = name
+        self.distance = distance
+        self.embedding_model_id = embedding_model_id

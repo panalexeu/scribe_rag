@@ -36,7 +36,21 @@ class ChatModelName(Enum):
     CLAUDE_3_HAIKU_20240307 = "claude-3-haiku-20240307"
 
 
+class EmbeddingModelName(Enum):
+    # local sentence transformers
+    ALL_MINILM_L6_V2 = 'all-MiniLM-L6-v2'
+
+    # open ai
+    TEXT_EMBEDDING_3_SMALL = 'text-embedding-3-small'
+
+
 class ModelProvider(Enum):
     OPENAI = 'openai'
     COHERE = 'cohere'
     ANTHROPIC = 'anthropic'
+
+
+class DistanceFunction(Enum):
+    SQUARED_L2 = 'l2'
+    INNER_PRODUCT = 'ip'
+    COSINE_SIMILARITY = 'cosine'
