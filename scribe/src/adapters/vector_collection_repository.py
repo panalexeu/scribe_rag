@@ -2,7 +2,7 @@ from typing import Optional, Callable, Sequence
 from abc import ABC
 
 from chromadb.api.models import Collection
-from chromadb import AsyncHttpClient
+from chromadb import AsyncClientAPI
 
 
 class AsyncAbstractVectorCollectionRepository[T](ABC):
@@ -38,7 +38,7 @@ class CollectionNotFoundError(LookupError):
 
 class AsyncChromaDBVectorCollectionRepository(AsyncAbstractVectorCollectionRepository[Collection]):
 
-    def __init__(self, client: AsyncHttpClient):
+    def __init__(self, client: AsyncClientAPI):
         self.client = client
 
     async def add(self, name: str, embedding_function: Optional[Callable] = None, **kwargs) -> Collection:
