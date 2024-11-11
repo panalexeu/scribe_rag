@@ -10,6 +10,10 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from src.adapters.repository import ItemNotFoundError
+from src.adapters.vector_collection_repository import (
+    CollectionNameError,
+    CollectionNotFoundError
+)
 from src.bootstrap import bootstrap
 from src.domain.services import UnsupportedFileFormatError
 from .routers import (
@@ -70,6 +74,22 @@ async def handle_unsupported_file_format_error(req, exc: UnsupportedFileFormatEr
 
 @app.exception_handler(InvalidBaseChatObjectError)
 async def handle_invalid_base_chat_obj_err(req, exc: InvalidBaseChatObjectError):
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=exc.__str__()
+    )
+
+
+@app.exception_handler(CollectionNameError)
+async def handle_collection_name_error(req, exc: CollectionNameError):
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail=exc.__str__()
+    )
+
+
+@app.exception_handler(CollectionNotFoundError)
+async def handle_collection_not_found_error(req, exc: CollectionNotFoundError):
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail=exc.__str__()

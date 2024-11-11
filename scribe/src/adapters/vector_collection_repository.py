@@ -26,6 +26,16 @@ class AsyncAbstractVectorCollectionRepository[T](ABC):
         pass
 
 
+class CollectionNameError(LookupError):
+    def __init__(self, name: str):
+        super().__init__(f"Collection with the name: '{name}' already exists, or the provided name is invalid.")
+
+
+class CollectionNotFoundError(LookupError):
+    def __init__(self, name: str):
+        super().__init__(f"Collection with the name: '{name}' is not found:")
+
+
 class AsyncChromaDBVectorCollectionRepository(AsyncAbstractVectorCollectionRepository[Collection]):
 
     def __init__(self, client: AsyncHttpClient):
@@ -36,7 +46,10 @@ class AsyncChromaDBVectorCollectionRepository(AsyncAbstractVectorCollectionRepos
         :param name: Name of a collection to create.
         :param embedding_function: If no embedding_function supplied - default is used.
         """
-        return await self.client.create_collection(name=name, embedding_function=embedding_function, **kwargs)
+        try:
+            return await self.client.create_collection(name=name, embedding_function=embedding_function, **kwargs)
+        except ValueError:
+            raise CollectionNameError(name)
 
     async def read(self, name: str, embedding_function: Optional[Callable] = None) -> Collection:
         """
@@ -45,7 +58,10 @@ class AsyncChromaDBVectorCollectionRepository(AsyncAbstractVectorCollectionRepos
         embedding function you supplied while creating the collection". If no embedding_function supplied - default is
         used.
         """
-        return await self.client.get_collection(name=name, embedding_function=embedding_function)
+        try:
+            return await self.client.get_collection(name=name, embedding_function=embedding_function)
+        except ValueError:
+            raise CollectionNotFoundError(name)
 
     async def read_all(self, limit: Optional[int] = None, offset: Optional[int] = None) -> Sequence[Collection]:
         return await self.client.list_collections(limit, offset)
@@ -54,7 +70,10 @@ class AsyncChromaDBVectorCollectionRepository(AsyncAbstractVectorCollectionRepos
         raise NotImplementedError
 
     async def delete(self, name: str) -> None:
-        return await self.client.delete_collection(name)
+        try:
+            return await self.client.delete_collection(name)
+        except ValueError:
+            raise CollectionNotFoundError(name)
 
     async def count(self) -> int:
         return await self.client.count_collections()
