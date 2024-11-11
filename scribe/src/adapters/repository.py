@@ -1,10 +1,11 @@
 from abc import ABC
-from typing import get_args, Sequence
+from typing import get_args, Sequence, Optional
 
 import overrides
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
+from chromadb.api.models import Collection
 
 
 class AbstractRepository[T](ABC):
@@ -47,6 +48,35 @@ class AbstractRepository[T](ABC):
         pass
 
     def count(self) -> int:
+        pass
+
+
+class AsyncAbstractRepository[T](ABC):
+    async def add(self, item: T) -> T:
+        pass
+
+    async def read(self, id_: int) -> T:
+        pass
+
+    async def read_all(
+            self,
+            offset: int | None = None,
+            limit: int | None = None,
+            **kwargs
+    ) -> Sequence[T]:
+        pass
+
+    async def update(
+            self,
+            id_: int,
+            **kwargs
+    ) -> T:
+        pass
+
+    async def delete(self, id_: int) -> None:
+        pass
+
+    async def count(self) -> int:
         pass
 
 

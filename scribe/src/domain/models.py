@@ -136,15 +136,15 @@ class EmbeddingModel:
         self.api_key_credential_id = api_key_credential_id
 
 
-class VectorCollection:
-    embedding_model: EmbeddingModel
-
-    def __init__(
-            self,
-            name: str,
-            distance: DistanceFunction,
-            embedding_model_id: int
-    ):
-        self.name = name
-        self.distance = distance
-        self.embedding_model_id = embedding_model_id
+# class VectorCollection:
+#     embedding_model: EmbeddingModel
+#
+#     def __init__(
+#             self,
+#             name: str,
+#             distance: DistanceFunction,
+#             embedding_model_id: int
+#     ):
+#         self.name = name
+#         self.distance = distance
+#         self.embedding_model_id = embedding_model_id

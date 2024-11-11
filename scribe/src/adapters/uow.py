@@ -1,10 +1,10 @@
 from abc import ABC
 from typing import Type
 
-import overrides
+from sqlalchemy.orm import Session
+from chromadb import AsyncHttpClient
 
 from .repository import SqlAlchemyRepository, AbstractRepository
-from sqlalchemy.orm import Session
 
 
 class AbstractUoW(ABC):
@@ -24,6 +24,20 @@ class AbstractUoW(ABC):
         pass
 
     def __exit__(self, *args):
+        pass
+
+
+class AsyncAbstractUoW(ABC):
+    async def commit(self):
+        pass
+
+    async def rollback(self):
+        pass
+
+    async def __aenter__(self):
+        pass
+
+    async def __aexit__(self, *args):
         pass
 
 
@@ -54,7 +68,4 @@ class SqlAlchemyUoW(AbstractUoW):
 
     def __exit__(self, *args):
         self.session.close()
-
-
-class ChromaDBUoW(AbstractUoW):
-    ...
+        
