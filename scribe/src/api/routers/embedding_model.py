@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from mediatr import Mediator
 from dependency_injector.wiring import inject, Provide
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi import status
 
 from src.enums import EmbeddingModelName
@@ -51,7 +51,7 @@ class EmbeddingModelPutModel(BaseModel):
 @inject
 def add_embedding_model(
         item: EmbeddingModelPostModel,
-        mediatr: Mediator = Provide[Container.mediatr]
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     command = EmbeddingModelAddCommand(**item.model_dump())
     return mediatr.send(command)
@@ -61,7 +61,9 @@ def add_embedding_model(
     '/count'
 )
 @inject
-def count_embedding_model(mediatr: Mediator = Provide[Container.mediatr]) -> int:
+def count_embedding_model(
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+) -> int:
     query = EmbeddingModelCountQuery()
     return mediatr.send(query)
 
@@ -73,7 +75,7 @@ def count_embedding_model(mediatr: Mediator = Provide[Container.mediatr]) -> int
 @inject
 def read_embedding_model(
         id_: int,
-        mediatr: Mediator = Provide[Container.mediatr]
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = EmbeddingModelReadQuery(id_=id_)
     return mediatr.send(query)
@@ -87,7 +89,7 @@ def read_embedding_model(
 def read_all_embedding_model(
         limit: Optional[int] = None,
         offset: Optional[int] = None,
-        mediatr: Mediator = Provide[Container.mediatr]
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = EmbeddingModelReadAllQuery(limit, offset)
     return mediatr.send(query)
@@ -101,7 +103,7 @@ def read_all_embedding_model(
 def update_embedding_model(
         id_: int,
         upd_item: EmbeddingModelPutModel,
-        mediatr: Mediator = Provide[Container.mediatr]
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     command = EmbeddingModelUpdateCommand(id_=id_, **upd_item.model_dump())
     return mediatr.send(command)
@@ -114,7 +116,7 @@ def update_embedding_model(
 @inject
 def delete_embedding_model(
         id_: int,
-        mediatr: Mediator = Provide[Container.mediatr]
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     command = EmbeddingModelDeleteCommand(id_=id_)
     mediatr.send(command)

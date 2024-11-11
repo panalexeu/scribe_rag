@@ -17,7 +17,8 @@ from .routers import (
     system_prompt,
     doc_processing_cnf,
     base_chat,
-    chat_model
+    chat_model,
+    embedding_model
 )
 from src.handlers.base_chat import InvalidBaseChatObjectError
 
@@ -34,6 +35,7 @@ app.include_router(system_prompt.router)
 app.include_router(doc_processing_cnf.router)
 app.include_router(base_chat.router)
 app.include_router(chat_model.router)
+app.include_router(embedding_model.router)
 
 
 @app.get('/')
