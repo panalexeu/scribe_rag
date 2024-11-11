@@ -6,7 +6,7 @@ def test_chat_model_add(client):
         url='/chat-model/',
         json={
             "name": "gpt-4o-mini",
-            "api_key_credential_id": 1,
+            "api_key_credential_id": 0,
             "temperature": 0,
             "top_p": 0,
             "base_url": "string",
