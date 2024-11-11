@@ -43,6 +43,10 @@ class EmbeddingModelName(Enum):
     # open ai
     TEXT_EMBEDDING_3_SMALL = 'text-embedding-3-small'
 
+    # cohere
+    EMBED_ENGLISH_LIGHT_V3_0 = 'embed-english-light-v3.0'
+    EMBED_MULTILINGUAL_LIGHT_V3_0 = 'embed-multilingual-light-v3.0'
+
 
 class ModelProvider(Enum):
     OPENAI = 'openai'

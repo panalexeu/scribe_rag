@@ -99,18 +99,6 @@ class ChatModel:
         return json.loads(self.stop_sequences) if self.stop_sequences is not None else None
 
 
-class EmbeddingModel:
-    api_key_credential: ApiKeyCredential  # populated by db
-
-    def __init__(
-            self,
-            name: EmbeddingModelName,
-            api_key_credential_id: int
-    ):
-        self.name = name
-        self.api_key_credential_id = api_key_credential_id
-
-
 class BaseChat:
     system_prompt: SystemPrompt
     chat_model: ChatModel
@@ -134,6 +122,18 @@ class BaseChat:
         self.chat_model_id = chat_model_id
         self.chat_model_api_key_id = chat_model_api_key_id
         self.doc_proc_cnf_id = doc_proc_cnf_id
+
+
+class EmbeddingModel:
+    api_key_credential: ApiKeyCredential  # populated by db
+
+    def __init__(
+            self,
+            name: EmbeddingModelName,
+            api_key_credential_id: int
+    ):
+        self.name = name
+        self.api_key_credential_id = api_key_credential_id
 
 
 class VectorCollection:
