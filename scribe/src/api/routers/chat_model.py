@@ -16,6 +16,7 @@ from src.handlers.chat_model import (
     ChatModelDeleteCommand,
     ChatModelCountQuery
 )
+from src.api.routers.api_key_credential import ApiKeyResponseModel
 
 router = APIRouter(
     prefix='/chat-model',
@@ -25,6 +26,7 @@ router = APIRouter(
 
 class ChatModelPostModel(BaseModel):
     name: ChatModelName
+    api_key_credential_id: int
     temperature: Optional[float] = None
     top_p: Optional[float] = None
     base_url: Optional[str] = None
@@ -36,17 +38,20 @@ class ChatModelPostModel(BaseModel):
 class ChatModelResponseModel(BaseModel):
     id: int
     name: ChatModelName
-    temperature: Optional[float]
-    top_p: Optional[float]
-    base_url: Optional[str]
-    max_tokens: Optional[int]
-    max_retries: Optional[int]
-    stop_sequences: Optional[str]
+    api_key_credential_id: int
+    api_key_credential: ApiKeyResponseModel | None
+    temperature: float | None
+    top_p: float | None
+    base_url: str | None
+    max_tokens: int | None
+    max_retries: int | None
+    stop_sequences: str | None
     datetime: datetime
 
 
 class ChatModelPutModel(BaseModel):
     name: Optional[ChatModelName] = None
+    api_key_credential_id: Optional[int] = None
     temperature: Optional[float] = None
     top_p: Optional[float] = None
     base_url: Optional[str] = None
