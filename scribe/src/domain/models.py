@@ -73,9 +73,12 @@ class DocProcessingConfig:
 
 
 class ChatModel:
+    api_key_credential: ApiKeyCredential
+
     def __init__(
             self,
             name: ChatModelName,
+            api_key_credential_id: int,
             temperature: float | None,
             top_p: float | None,
             base_url: str | None,
@@ -84,6 +87,7 @@ class ChatModel:
             stop_sequences: list[str] | None,
     ):
         self.name = name
+        self.api_key_credential_id = api_key_credential_id
         self.temperature = temperature
         self.top_p = top_p
         self.base_url = base_url
@@ -102,9 +106,7 @@ class ChatModel:
 class BaseChat:
     system_prompt: SystemPrompt
     chat_model: ChatModel
-    chat_model_api_key: ApiKeyCredential
     doc_proc_cnf: DocProcessingConfig
-
     # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - populated by db
 
     def __init__(
@@ -112,7 +114,6 @@ class BaseChat:
             name: str,
             desc: str,
             chat_model_id: int,
-            chat_model_api_key_id: int,
             system_prompt_id: int | None,
             doc_proc_cnf_id: int | None,
     ):
@@ -120,7 +121,6 @@ class BaseChat:
         self.desc = desc
         self.system_prompt_id = system_prompt_id
         self.chat_model_id = chat_model_id
-        self.chat_model_api_key_id = chat_model_api_key_id
         self.doc_proc_cnf_id = doc_proc_cnf_id
 
 

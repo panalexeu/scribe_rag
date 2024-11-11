@@ -83,6 +83,7 @@ def map_sqlalchemy_models(registry_: registry):
         registry_.metadata,
         Column('id', Integer, primary_key=True),
         Column('name', Enum(ChatModelName), nullable=False),
+        Column('api_key_credential_id', Integer, ForeignKey('api_key_credential.id'), nullable=False),
         Column('temperature', Float, nullable=True),
         Column('top_p', Float, nullable=True),
         Column('base_url', String, nullable=True),
@@ -99,7 +100,6 @@ def map_sqlalchemy_models(registry_: registry):
         Column('name', String, nullable=False),
         Column('desc', String, nullable=False),
         Column('chat_model_id', Integer, ForeignKey('chat_model.id'), nullable=False),
-        Column('chat_model_api_key_id', Integer, ForeignKey('api_key_credential.id'), nullable=False),
         Column('system_prompt_id', Integer, ForeignKey('system_prompt.id'), nullable=True),
         Column('doc_proc_cnf_id', Integer, ForeignKey('doc_processing_config.id'), nullable=True),
         Column('datetime', DateTime, default=datetime.now)
@@ -118,15 +118,11 @@ def map_sqlalchemy_models(registry_: registry):
     registry_.map_imperatively(FakeModel, fake_table)
     registry_.map_imperatively(SystemPrompt, system_prompt_table)
     registry_.map_imperatively(DocProcessingConfig, doc_processing_config_table)
-    registry_.map_imperatively(ChatModel, chat_model_table)
     registry_.map_imperatively(
-        BaseChat,
-        base_chat_table,
+        ChatModel,
+        chat_model_table,
         properties={
-            'system_prompt': relationship(SystemPrompt, uselist=False),
-            'chat_model': relationship(ChatModel, uselist=False),
-            'chat_model_api_key': relationship(ApiKeyCredential, uselist=False),
-            'doc_proc_cnf': relationship(DocProcessingConfig, uselist=False)
+            'api_key_credential': relationship(ApiKeyCredential, uselist=False)
         }
     )
     registry_.map_imperatively(
@@ -134,5 +130,14 @@ def map_sqlalchemy_models(registry_: registry):
         embedding_model_table,
         properties={
             'api_key_credential': relationship(ApiKeyCredential, uselist=False)
+        }
+    )
+    registry_.map_imperatively(
+        BaseChat,
+        base_chat_table,
+        properties={
+            'system_prompt': relationship(SystemPrompt, uselist=False),
+            'chat_model': relationship(ChatModel, uselist=False),
+            'doc_proc_cnf': relationship(DocProcessingConfig, uselist=False)
         }
     )
