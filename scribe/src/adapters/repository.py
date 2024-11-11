@@ -1,12 +1,10 @@
 from abc import ABC
-from typing import get_args, Sequence, Optional, Callable
+from typing import get_args, Sequence, Optional
 
 import overrides
+from sqlalchemy import func
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func
-from chromadb.api.models import Collection
-from chromadb import AsyncHttpClient
 
 
 class AbstractRepository[T](ABC):
@@ -197,24 +195,3 @@ class SqlAlchemyRelationRepository[T](SqlAlchemyRepository):
         statement = select(type_T).where(type_T.id == id_).options(joinedload('*'))
 
         return self.session.execute(statement).scalar()
-
-
-class AsyncAbstractVectorCollectionRepository[T](ABC):
-
-    async def add(self, name: str, embedding_function: Optional[Callable] = None, **kwargs) -> T:
-        pass
-
-    async def read(self, name: str, embedding_function: Optional[Callable] = None) -> T:
-        pass
-
-    async def read_all(self, limit: Optional[int] = None, offset: Optional[int] = None) -> Sequence[T]:
-        pass
-
-    async def update(self, **kwargs) -> T:
-        pass
-
-    async def delete(self, name: str) -> None:
-        pass
-
-    async def count(self) -> int:
-        pass
