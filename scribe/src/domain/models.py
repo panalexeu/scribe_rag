@@ -105,7 +105,7 @@ class BaseChat:
     chat_model_api_key: ApiKeyCredential
     doc_proc_cnf: DocProcessingConfig
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - are set by db (bad design 😭)
+    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - populated by db 
 
     def __init__(
             self,
@@ -125,7 +125,7 @@ class BaseChat:
 
 
 class EmbeddingModel:
-    api_key_credential: ApiKeyCredential  # populated by db
+    api_key_credential: ApiKeyCredential
 
     def __init__(
             self,
