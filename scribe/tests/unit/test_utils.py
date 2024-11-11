@@ -1,6 +1,5 @@
 import os
 import shutil
-from enum import Enum
 
 import pytest
 
