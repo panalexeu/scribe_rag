@@ -105,7 +105,7 @@ class BaseChat:
     chat_model_api_key: ApiKeyCredential
     doc_proc_cnf: DocProcessingConfig
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - populated by db 
+    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - populated by db
 
     def __init__(
             self,
