@@ -36,7 +36,7 @@ class CollectionNotFoundError(LookupError):
         super().__init__(f"Collection with the name: '{name}' is not found:")
 
 
-class AsyncChromaDBVectorCollectionRepository(AsyncAbstractVectorCollectionRepository[Collection]):
+class AsyncChromaDBVectorCollectionRepository:
 
     def __init__(self, client: AsyncClientAPI):
         self.client = client
@@ -48,7 +48,7 @@ class AsyncChromaDBVectorCollectionRepository(AsyncAbstractVectorCollectionRepos
         """
         try:
             return await self.client.create_collection(name=name, embedding_function=embedding_function, **kwargs)
-        except ValueError:
+        except Exception:
             raise CollectionNameError(name)
 
     async def read(self, name: str, embedding_function: Optional[Callable] = None) -> Collection:

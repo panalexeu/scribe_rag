@@ -1,7 +1,7 @@
 import os
 
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
-from dependency_injector.providers import Singleton, Callable, Factory
+from dependency_injector.providers import Singleton, Callable, Factory, Resource, Object
 from mediatr import Mediator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import registry, Session
@@ -9,6 +9,7 @@ from sqlalchemy.pool import StaticPool
 from langchain_unstructured.document_loaders import UnstructuredLoader
 from chromadb import AsyncHttpClient
 
+from src.adapters.async_vector_client import ChromaAsyncVectorClient
 from src.adapters.codecs import FernetCodec
 from src.domain.services import (
     EncodeApiKeyCredentialService,
@@ -23,7 +24,7 @@ from src.adapters.repository import (
     SqlAlchemyRepository,
     SqlAlchemyRelationRepository
 )
-from src.adapters.vector_collection_repository import AsyncAbstractVectorCollectionRepository
+from src.adapters.vector_collection_repository import AsyncChromaDBVectorCollectionRepository
 from src.adapters.uow import SqlAlchemyUoW
 from src.domain.models import (
     ApiKeyCredential,
@@ -106,12 +107,12 @@ class Container(DeclarativeContainer):
 
     # chroma vector store
     async_vector_db_client = Singleton(
+        ChromaAsyncVectorClient,
         AsyncHttpClient,
         port=8001
     )
-    async_vector_collection_repository = Factory(
-        AsyncAbstractVectorCollectionRepository,
-        async_vector_db_client
+    async_vector_collection_repository = Object(
+        AsyncChromaDBVectorCollectionRepository
     )
 
     # uow's

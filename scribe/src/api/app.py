@@ -22,7 +22,8 @@ from .routers import (
     doc_processing_cnf,
     base_chat,
     chat_model,
-    embedding_model
+    embedding_model,
+    vector_collection
 )
 from src.handlers.base_chat import InvalidBaseChatObjectError
 
@@ -40,6 +41,7 @@ app.include_router(doc_processing_cnf.router)
 app.include_router(base_chat.router)
 app.include_router(chat_model.router)
 app.include_router(embedding_model.router)
+app.include_router(vector_collection.router)
 
 
 @app.get('/')
