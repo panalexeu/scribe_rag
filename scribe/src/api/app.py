@@ -14,7 +14,7 @@ from src.adapters.vector_collection_repository import (
     CollectionNameError,
     CollectionNotFoundError
 )
-from src.bootstrap import bootstrap
+from src.bootstrap import bootstrap, shutdown
 from src.domain.services import UnsupportedFileFormatError
 from .routers import (
     api_key_credential,
@@ -32,6 +32,7 @@ from src.handlers.base_chat import InvalidBaseChatObjectError
 async def lifespan(app: FastAPI):
     bootstrap()  # things to be completed before the app's start-up
     yield
+    shutdown()  # things to be completed on shutdown
 
 
 app = FastAPI(lifespan=lifespan)
