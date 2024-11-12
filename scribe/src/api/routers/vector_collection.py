@@ -7,7 +7,8 @@ from pydantic import BaseModel
 
 from src.di_container import Container
 from src.handlers.vector_collection import (
-    VecCollectionAddCommand
+    VecCollectionAddCommand,
+    VecCollectionReadQuery
 )
 from src.enums import DistanceFunction
 
@@ -41,3 +42,16 @@ async def create_vec_col(
 ):
     command = VecCollectionAddCommand(**item.model_dump())
     return await mediatr.send_async(command)
+
+
+@router.get(
+    '/{name}',
+    response_model=VectorCollectionResponseModel
+)
+@inject
+async def read_vec_col(
+        name: str,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = VecCollectionReadQuery(name=name)
+    return await mediatr.send_async(query)

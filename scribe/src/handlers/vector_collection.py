@@ -54,5 +54,26 @@ class VecCollectionAddHandler:
         return VectorCollection(raw_collection)
 
 
-class VecCollectionReadCommand(BaseModel, GenericQuery[VectorCollection]):
+class VecCollectionReadQuery(BaseModel, GenericQuery[VectorCollection]):
     name: str
+
+
+@Mediator.handler
+class VecCollectionReadHandler:
+    @inject
+    def __init__(
+            self,
+            async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
+                Container.async_vector_collection_repository],
+            async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client]
+    ):
+        self.async_vector_collection_repository = async_vector_collection_repository
+        self.async_vector_db_client = async_vector_db_client
+
+    async def handle(self, request: VecCollectionReadQuery) -> VectorCollection:
+        async_vec_db_client = await self.async_vector_db_client.async_init()
+        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
+
+        raw_collection = await vector_collection_repo.read(request.name)
+
+        return VectorCollection(raw_collection)

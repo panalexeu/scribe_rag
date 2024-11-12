@@ -3,6 +3,7 @@ from abc import ABC
 
 from chromadb.api.models import Collection
 from chromadb import AsyncClientAPI
+from chromadb.errors import InvalidCollectionException
 
 
 class AbstractAsyncVectorCollectionRepository[T](ABC):
@@ -45,6 +46,7 @@ class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionReposit
         """
         :param name: Name of a collection to create.
         :param embedding_function: If no embedding_function supplied - default is used.
+        :raises CollectionNamerError:
         """
         try:
             return await self.client.create_collection(name=name, embedding_function=embedding_function, **kwargs)
@@ -57,10 +59,11 @@ class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionReposit
         :param embedding_function: from ChromaDB docs: "If you later wish to get_collection, you MUST do so with the
         embedding function you supplied while creating the collection". If no embedding_function supplied - default is
         used.
+        :raises CollectionNamerError:
         """
         try:
             return await self.client.get_collection(name=name, embedding_function=embedding_function)
-        except ValueError:
+        except InvalidCollectionException:
             raise CollectionNotFoundError(name)
 
     async def read_all(self, limit: Optional[int] = None, offset: Optional[int] = None) -> Sequence[Collection]:
