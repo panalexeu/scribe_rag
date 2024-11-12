@@ -11,7 +11,7 @@ class AbstractAsyncVectorCollectionRepository[T](ABC):
     async def add(self, name: str, embedding_function: Optional[Callable] = None, **kwargs) -> T:
         pass
 
-    async def read(self, name: str, embedding_function: Optional[Callable] = None) -> T:
+    async def read(self, name: str) -> T:
         pass
 
     async def read_all(self, limit: Optional[int] = None, offset: Optional[int] = None) -> Sequence[T]:
@@ -53,7 +53,7 @@ class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionReposit
         except Exception:
             raise CollectionNameError(name)
 
-    async def read(self, name: str, embedding_function: Optional[Callable] = None) -> Collection:
+    async def read(self, name: str) -> Collection:
         """
         :param name: name of a previously created collection
         :param embedding_function: from ChromaDB docs: "If you later wish to get_collection, you MUST do so with the
@@ -62,7 +62,7 @@ class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionReposit
         :raises CollectionNamerError:
         """
         try:
-            return await self.client.get_collection(name=name, embedding_function=embedding_function)
+            return await self.client.get_collection(name=name)
         except InvalidCollectionException:
             raise CollectionNotFoundError(name)
 
