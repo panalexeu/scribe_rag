@@ -5,17 +5,21 @@ from src.adapters.chat_model import AbstractChatModel
 from src.domain.models import (
     ApiKeyCredential,
     DocProcessingConfig,
-    ChatModel
+    ChatModel,
 )
 from src.domain.services import (
     EncodeApiKeyCredentialService,
-    ChatModelBuilder
+    ChatModelBuilder,
+)
+from src.domain.services.embbeding_model import (
+    EmbeddingModelBuilder
 )
 from src.enums import (
     ChunkingStrategy,
     Postprocessor,
     ChatModelName,
-    ModelProvider
+    ModelProvider,
+    EmbeddingModelName
 )
 
 
@@ -149,3 +153,15 @@ def test_chat_model_builder_builds_models():
     )
 
     assert isinstance(ChatModelBuilder.build(model, 'fake-key'), AbstractChatModel)
+
+
+def test_embedding_model_builder_correctly_assigns_provider():
+    model_names = [
+        EmbeddingModelName.ALL_MINILM_L6_V2,
+        EmbeddingModelName.EMBED_ENGLISH_LIGHT_V3_0,
+        EmbeddingModelName.TEXT_EMBEDDING_3_SMALL
+    ]
+
+    assert list(map(lambda m: EmbeddingModelBuilder.determine_model_provider(m), model_names)) == [ModelProvider.LOCAL,
+                                                                                                   ModelProvider.COHERE,
+                                                                                                   ModelProvider.OPENAI]
