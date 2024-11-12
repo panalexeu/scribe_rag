@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import get_args, Sequence, Optional
+from typing import get_args, Sequence, Optional, Type
 
 import overrides
 from sqlalchemy import func
@@ -51,8 +51,8 @@ class AbstractRepository[T](ABC):
 
 
 class ItemNotFoundError(LookupError):
-    def __init__(self, id_: int):
-        super().__init__(f"Item with the id '{id_}' was not found.")
+    def __init__(self, id_: int, item: str):
+        super().__init__(f"Item: {item} with the id '{id_}' was not found.")
 
 
 class SqlAlchemyRepository[T](AbstractRepository):
@@ -78,7 +78,7 @@ class SqlAlchemyRepository[T](AbstractRepository):
 
         res = self.session.execute(statement).scalar()
         if res is None:
-            raise ItemNotFoundError(id_)
+            raise ItemNotFoundError(id_, type_T)
 
         return res
 
@@ -100,7 +100,7 @@ class SqlAlchemyRepository[T](AbstractRepository):
 
         item = self.session.get(type_T, id_)
         if item is None:
-            raise ItemNotFoundError(id_)
+            raise ItemNotFoundError(id_, type_T)
 
         item_dict = item.__dict__
 
@@ -121,7 +121,7 @@ class SqlAlchemyRepository[T](AbstractRepository):
 
         item = self.session.get(type_T, id_)
         if item is None:
-            raise ItemNotFoundError(id_)
+            raise ItemNotFoundError(id_, type_T)
 
         self.session.delete(item)
 
@@ -157,7 +157,7 @@ class SqlAlchemyRelationRepository[T](SqlAlchemyRepository):
 
         res = self.session.execute(statement).scalar()
         if res is None:
-            raise ItemNotFoundError(id_)
+            raise ItemNotFoundError(id_, type_T)
 
         return res
 
@@ -181,7 +181,7 @@ class SqlAlchemyRelationRepository[T](SqlAlchemyRepository):
 
         item = self.session.get(type_T, id_)
         if item is None:
-            raise ItemNotFoundError(id_)
+            raise ItemNotFoundError(id_, type_T)
 
         item_dict = item.__dict__
 

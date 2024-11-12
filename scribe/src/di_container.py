@@ -106,7 +106,7 @@ class Container(DeclarativeContainer):
     )
 
     # chroma vector store
-    async_vector_db_client = Singleton(
+    async_vector_db_client = Factory(
         ChromaAsyncVectorClient,
         AsyncHttpClient,
         port=8001
