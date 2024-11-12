@@ -1,15 +1,15 @@
+from typing import Type
+
 from dependency_injector.wiring import inject, Provide
 from mediatr import Mediator, GenericQuery
 from pydantic import BaseModel
-from typing import Type
 
+from src.adapters.async_vector_client import AbstractAsyncClient
 from src.adapters.chroma_models import VectorCollection
 from src.adapters.uow import AbstractUoW
-from src.adapters.async_vector_client import AbstractAsyncClient
 from src.adapters.vector_collection_repository import AbstractAsyncVectorCollectionRepository
 from src.di_container import Container
 from src.domain.services.embbeding_model import EmbeddingModelBuilder
-from chromadb.api.models import Collection
 
 
 class VecCollectionAddCommand(BaseModel, GenericQuery[VectorCollection]):
