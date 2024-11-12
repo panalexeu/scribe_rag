@@ -14,7 +14,7 @@ from src.domain.services import (
     EncodeApiKeyCredentialService,
     ChatModelBuilder,
 )
-from src.domain.services.embbeding_model import (
+from src.domain.services.embedding_model_builder import (
     EmbeddingModelBuilder
 )
 from src.enums import (

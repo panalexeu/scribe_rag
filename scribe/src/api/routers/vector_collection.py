@@ -1,3 +1,5 @@
+from typing import Optional
+
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, status, Depends
 from mediatr import Mediator
@@ -7,6 +9,7 @@ from src.di_container import Container
 from src.handlers.vector_collection import (
     VecCollectionAddCommand
 )
+from src.enums import DistanceFunction
 
 router = APIRouter(
     prefix='/vec-col',
@@ -17,6 +20,7 @@ router = APIRouter(
 class VectorCollectionPostModel(BaseModel):
     name: str
     embedding_model_id: int
+    distance_func: Optional[DistanceFunction] = None
 
 
 @router.post(

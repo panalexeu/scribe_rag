@@ -4,17 +4,19 @@ from dependency_injector.wiring import inject, Provide
 from mediatr import Mediator, GenericQuery
 from pydantic import BaseModel
 
+from src.enums import DistanceFunction
 from src.adapters.async_vector_client import AbstractAsyncClient
 from src.adapters.chroma_models import VectorCollection
 from src.adapters.uow import AbstractUoW
 from src.adapters.vector_collection_repository import AbstractAsyncVectorCollectionRepository
 from src.di_container import Container
-from src.domain.services.embbeding_model import EmbeddingModelBuilder
+from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
 
 
 class VecCollectionAddCommand(BaseModel, GenericQuery[VectorCollection]):
     name: str
     embedding_model_id: int
+    distance_func: DistanceFunction | None
 
 
 @Mediator.handler
@@ -46,7 +48,8 @@ class VecCollectionAddHandler:
 
         raw_collection = await vector_collection_repo.add(
             name=request.name,
-            embedding_function=embedding_func
+            embedding_function=embedding_func,
+            metadata={'hnswspace': request.distance_func.value} if request.distance_func is not None else None
         )
 
         return VectorCollection(raw_collection)

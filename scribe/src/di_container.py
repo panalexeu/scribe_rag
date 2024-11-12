@@ -17,7 +17,7 @@ from src.domain.services import (
     ChatModelBuilder,
     ChatPromptTemplateBuilder
 )
-from src.domain.services.embbeding_model import EmbeddingModelBuilder
+from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
 from src.system.dir import get_scribe_dir_path, read_scribe_key
 from src.system.logging import read_log_config
 from src.adapters.repository import (
