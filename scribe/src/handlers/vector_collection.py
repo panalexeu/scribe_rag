@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, Sequence
 
 from dependency_injector.wiring import inject, Provide
 from mediatr import Mediator, GenericQuery
@@ -77,3 +77,75 @@ class VecCollectionReadHandler:
         raw_collection = await vector_collection_repo.read(request.name)
 
         return VectorCollection(raw_collection)
+
+
+class VecCollectionReadAllQuery(BaseModel, GenericQuery[Sequence[VectorCollection]]):
+    limit: int | None
+    offset: int | None
+
+
+@Mediator.handler
+class VecCollectionReadAllHandler:
+    @inject
+    def __init__(
+            self,
+            async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
+                Container.async_vector_collection_repository],
+            async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client]
+    ):
+        self.async_vector_collection_repository = async_vector_collection_repository
+        self.async_vector_db_client = async_vector_db_client
+
+    async def handle(self, request: VecCollectionReadQuery) -> Sequence[VectorCollection]:
+        async_vec_db_client = await self.async_vector_db_client.async_init()
+        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
+
+        raw_collections = await vector_collection_repo.read_all(**request.model_dump())
+
+        return list(map(lambda c: VectorCollection(c), raw_collections))
+
+
+class VecCollectionDeleteCommand(BaseModel, GenericQuery[None]):
+    name: str
+
+
+@Mediator.handler
+class VecCollectionDeleteHandler:
+    @inject
+    def __init__(
+            self,
+            async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
+                Container.async_vector_collection_repository],
+            async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client]
+    ):
+        self.async_vector_collection_repository = async_vector_collection_repository
+        self.async_vector_db_client = async_vector_db_client
+
+    async def handle(self, request: VecCollectionReadQuery) -> None:
+        async_vec_db_client = await self.async_vector_db_client.async_init()
+        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
+
+        await vector_collection_repo.delete(request.name)
+
+
+class VecCollectionCountQuery(GenericQuery[int]):
+    pass
+
+
+@Mediator.handler
+class VecCollectionCountHandler:
+    @inject
+    def __init__(
+            self,
+            async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
+                Container.async_vector_collection_repository],
+            async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client]
+    ):
+        self.async_vector_collection_repository = async_vector_collection_repository
+        self.async_vector_db_client = async_vector_db_client
+
+    async def handle(self, request: VecCollectionReadQuery) -> int:
+        async_vec_db_client = await self.async_vector_db_client.async_init()
+        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
+
+        return await vector_collection_repo.count()
