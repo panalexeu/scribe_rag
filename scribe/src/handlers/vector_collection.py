@@ -36,14 +36,13 @@ class VecCollectionAddHandler:
         self.async_vector_db_client = async_vector_db_client
 
     async def handle(self, request: VecCollectionAddCommand) -> VectorCollection:
-        # initializing async vector db collection and repo
-        async_vec_db_client = await self.async_vector_db_client.async_init()
-        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
-
         # retrieving values from non vector db
         with self.embedding_model_uow as uow:
             embedding_model = uow.repository.read(request.embedding_model_id)
 
+        # initializing async vector db collection and repo
+        async_vec_db_client = await self.async_vector_db_client.async_init()
+        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
         embedding_func = self.embedding_model_builder.build(embedding_model)
 
         raw_collection = await vector_collection_repo.add(
@@ -53,3 +52,4 @@ class VecCollectionAddHandler:
         )
 
         return VectorCollection(raw_collection)
+
