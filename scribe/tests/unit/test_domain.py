@@ -1,11 +1,14 @@
 from copy import copy
 
+from chromadb.utils.embedding_functions import EmbeddingFunction
+
 from src.adapters.codecs import FakeCodec
 from src.adapters.chat_model import AbstractChatModel
 from src.domain.models import (
     ApiKeyCredential,
     DocProcessingConfig,
     ChatModel,
+    EmbeddingModel
 )
 from src.domain.services import (
     EncodeApiKeyCredentialService,
@@ -21,6 +24,7 @@ from src.enums import (
     ModelProvider,
     EmbeddingModelName
 )
+from src.adapters.codecs import FakeCodec
 
 
 def test_encode_api_key_credential_service():
@@ -165,3 +169,12 @@ def test_embedding_model_builder_correctly_assigns_provider():
     assert list(map(lambda m: EmbeddingModelBuilder.determine_model_provider(m), model_names)) == [ModelProvider.LOCAL,
                                                                                                    ModelProvider.COHERE,
                                                                                                    ModelProvider.OPENAI]
+
+
+def test_embedding_model_builder_builds_models():
+    model = EmbeddingModel(
+        name=EmbeddingModelName.ALL_MINILM_L6_V2,
+        api_key_credential_id=0
+    )
+
+    assert isinstance(EmbeddingModelBuilder(FakeCodec('fake-key')).build(model), EmbeddingFunction)
