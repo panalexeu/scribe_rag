@@ -37,6 +37,10 @@ def bootstrap():
 
 
 def shutdown():
+    """
+    Terminates ChromaDB process. Clears ChromaDB directory (in-memory behaviour simulation).
+    """
+
     # terminating chroma db process
     if CHROMA_PROCESS and CHROMA_PROCESS.poll() is None:
         CHROMA_PROCESS.terminate()
