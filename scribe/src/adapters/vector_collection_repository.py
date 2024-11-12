@@ -3,7 +3,7 @@ from abc import ABC
 
 from chromadb.api.models import Collection
 from chromadb import AsyncClientAPI
-from chromadb.errors import InvalidCollectionException
+from chromadb.errors import InvalidCollectionException, InvalidArgumentError
 
 
 class AbstractAsyncVectorCollectionRepository[T](ABC):
@@ -34,7 +34,7 @@ class CollectionNameError(LookupError):
 
 class CollectionNotFoundError(LookupError):
     def __init__(self, name: str):
-        super().__init__(f"Collection with the name: '{name}' is not found:")
+        super().__init__(f"Collection with the name: '{name}' is not found.")
 
 
 class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionRepository[Collection]):
@@ -75,7 +75,7 @@ class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionReposit
     async def delete(self, name: str) -> None:
         try:
             return await self.client.delete_collection(name)
-        except ValueError:
+        except InvalidArgumentError:
             raise CollectionNotFoundError(name)
 
     async def count(self) -> int:

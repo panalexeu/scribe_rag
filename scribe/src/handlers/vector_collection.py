@@ -96,7 +96,7 @@ class VecCollectionReadAllHandler:
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_vector_db_client = async_vector_db_client
 
-    async def handle(self, request: VecCollectionReadQuery) -> Sequence[VectorCollection]:
+    async def handle(self, request: VecCollectionReadAllQuery) -> Sequence[VectorCollection]:
         async_vec_db_client = await self.async_vector_db_client.async_init()
         vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
 
@@ -121,7 +121,7 @@ class VecCollectionDeleteHandler:
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_vector_db_client = async_vector_db_client
 
-    async def handle(self, request: VecCollectionReadQuery) -> None:
+    async def handle(self, request: VecCollectionDeleteCommand) -> None:
         async_vec_db_client = await self.async_vector_db_client.async_init()
         vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
 
@@ -144,7 +144,7 @@ class VecCollectionCountHandler:
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_vector_db_client = async_vector_db_client
 
-    async def handle(self, request: VecCollectionReadQuery) -> int:
+    async def handle(self, request: VecCollectionCountQuery) -> int:
         async_vec_db_client = await self.async_vector_db_client.async_init()
         vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
 

@@ -8,7 +8,10 @@ from pydantic import BaseModel
 from src.di_container import Container
 from src.handlers.vector_collection import (
     VecCollectionAddCommand,
-    VecCollectionReadQuery
+    VecCollectionReadQuery,
+    VecCollectionCountQuery,
+    VecCollectionDeleteCommand,
+    VecCollectionReadAllQuery
 )
 from src.enums import DistanceFunction
 
@@ -45,6 +48,17 @@ async def create_vec_col(
 
 
 @router.get(
+    '/count'
+)
+@inject
+async def count_vec_col(
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+) -> int:
+    query = VecCollectionCountQuery()
+    return await mediatr.send_async(query)
+
+
+@router.get(
     '/{name}',
     response_model=VectorCollectionResponseModel
 )
@@ -55,3 +69,30 @@ async def read_vec_col(
 ):
     query = VecCollectionReadQuery(name=name)
     return await mediatr.send_async(query)
+
+
+@router.get(
+    '/',
+    response_model=list[VectorCollectionResponseModel]
+)
+@inject
+async def read_all_vec_col(
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = VecCollectionReadAllQuery(limit=limit, offset=offset)
+    return await mediatr.send_async(query)
+
+
+@router.delete(
+    '/{name}',
+    status_code=status.HTTP_204_NO_CONTENT
+)
+@inject
+async def delete_vec_col(
+        name: str,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = VecCollectionDeleteCommand(name=name)
+    return await mediatr.send_async(command)
