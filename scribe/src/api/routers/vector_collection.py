@@ -23,9 +23,16 @@ class VectorCollectionPostModel(BaseModel):
     distance_func: Optional[DistanceFunction] = None
 
 
+class VectorCollectionResponseModel(BaseModel):
+    name: str
+    embedding_function: str
+    metadata: dict[str, str] | None
+
+
 @router.post(
     '/',
     status_code=status.HTTP_201_CREATED,
+    response_model=VectorCollectionResponseModel
 )
 @inject
 async def create_vec_col(

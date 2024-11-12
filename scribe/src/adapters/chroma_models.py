@@ -14,7 +14,6 @@ class VectorCollection:
             self,
             collection: Collection
     ):
-        self.name = collection.name
-        self.embedding_function = collection._embedding_function.__repr__()
-        self.metadata = collection.metadata
-        self.configuration_json = collection.configuration_json
+        self.name: str = collection.name
+        self.embedding_function: str = collection._embedding_function.__repr__()
+        self.metadata: dict[str, str] = collection.metadata

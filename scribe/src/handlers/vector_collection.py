@@ -53,3 +53,6 @@ class VecCollectionAddHandler:
 
         return VectorCollection(raw_collection)
 
+
+class VecCollectionReadCommand(BaseModel, GenericQuery[VectorCollection]):
+    name: str
