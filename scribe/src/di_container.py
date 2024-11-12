@@ -24,7 +24,7 @@ from src.adapters.repository import (
     SqlAlchemyRepository,
     SqlAlchemyRelationRepository
 )
-from src.adapters.vector_collection_repository import AsyncChromaDBVectorCollectionRepository
+from src.adapters.vector_collection_repository import AsyncChromaVectorCollectionRepository
 from src.adapters.uow import SqlAlchemyUoW
 from src.domain.models import (
     ApiKeyCredential,
@@ -112,7 +112,7 @@ class Container(DeclarativeContainer):
         port=8001
     )
     async_vector_collection_repository = Object(
-        AsyncChromaDBVectorCollectionRepository
+        AsyncChromaVectorCollectionRepository
     )
 
     # uow's

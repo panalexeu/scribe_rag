@@ -5,7 +5,7 @@ from chromadb.api.models import Collection
 from chromadb import AsyncClientAPI
 
 
-class AsyncAbstractVectorCollectionRepository[T](ABC):
+class AbstractAsyncVectorCollectionRepository[T](ABC):
 
     async def add(self, name: str, embedding_function: Optional[Callable] = None, **kwargs) -> T:
         pass
@@ -36,7 +36,7 @@ class CollectionNotFoundError(LookupError):
         super().__init__(f"Collection with the name: '{name}' is not found:")
 
 
-class AsyncChromaDBVectorCollectionRepository:
+class AsyncChromaVectorCollectionRepository:
 
     def __init__(self, client: AsyncClientAPI):
         self.client = client

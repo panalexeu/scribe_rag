@@ -2,10 +2,8 @@ from abc import ABC
 from typing import Type
 
 from sqlalchemy.orm import Session
-from chromadb import AsyncHttpClient, AsyncClientAPI
 
 from .repository import SqlAlchemyRepository, AbstractRepository
-from src.adapters.vector_collection_repository import AsyncAbstractVectorCollectionRepository
 
 
 class AbstractUoW(ABC):

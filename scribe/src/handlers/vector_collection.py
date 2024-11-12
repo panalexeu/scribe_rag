@@ -5,7 +5,7 @@ from typing import Type
 
 from src.adapters.uow import AbstractUoW
 from src.adapters.async_vector_client import AbstractAsyncClient
-from src.adapters.vector_collection_repository import AsyncAbstractVectorCollectionRepository
+from src.adapters.vector_collection_repository import AbstractAsyncVectorCollectionRepository
 from src.di_container import Container
 from src.domain.services.embbeding_model import EmbeddingModelBuilder
 
@@ -22,7 +22,7 @@ class VecCollectionAddHandler:
             self,
             embedding_model_uow: AbstractUoW = Provide[Container.embedding_model_uow],
             embedding_model_builder: EmbeddingModelBuilder = Provide[Container.embedding_model_builder],
-            async_vector_collection_repository: Type[AsyncAbstractVectorCollectionRepository] = Provide[
+            async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
                 Container.async_vector_collection_repository],
             async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client]
     ):
@@ -42,11 +42,7 @@ class VecCollectionAddHandler:
 
         embedding_func = self.embedding_model_builder.build(embedding_model)
 
-
-        res = await vector_collection_repo.add(
+        return await vector_collection_repo.add(
             name=request.name,
             embedding_function=embedding_func
         )
-
-
-        breakpoint()
