@@ -36,7 +36,7 @@ class CollectionNotFoundError(LookupError):
         super().__init__(f"Collection with the name: '{name}' is not found:")
 
 
-class AsyncChromaVectorCollectionRepository:
+class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionRepository[Collection]):
 
     def __init__(self, client: AsyncClientAPI):
         self.client = client

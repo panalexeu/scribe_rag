@@ -3,14 +3,16 @@ from mediatr import Mediator, GenericQuery
 from pydantic import BaseModel
 from typing import Type
 
+from src.adapters.chroma_models import VectorCollection
 from src.adapters.uow import AbstractUoW
 from src.adapters.async_vector_client import AbstractAsyncClient
 from src.adapters.vector_collection_repository import AbstractAsyncVectorCollectionRepository
 from src.di_container import Container
 from src.domain.services.embbeding_model import EmbeddingModelBuilder
+from chromadb.api.models import Collection
 
 
-class VecCollectionAddCommand(BaseModel, GenericQuery):
+class VecCollectionAddCommand(BaseModel, GenericQuery[VectorCollection]):
     name: str
     embedding_model_id: int
 
@@ -31,7 +33,7 @@ class VecCollectionAddHandler:
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_vector_db_client = async_vector_db_client
 
-    async def handle(self, request: VecCollectionAddCommand):
+    async def handle(self, request: VecCollectionAddCommand) -> VectorCollection:
         # initializing async vector db collection and repo
         async_vec_db_client = await self.async_vector_db_client.async_init()
         vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
@@ -42,7 +44,9 @@ class VecCollectionAddHandler:
 
         embedding_func = self.embedding_model_builder.build(embedding_model)
 
-        return await vector_collection_repo.add(
+        raw_collection = await vector_collection_repo.add(
             name=request.name,
             embedding_function=embedding_func
         )
+
+        return VectorCollection(raw_collection)

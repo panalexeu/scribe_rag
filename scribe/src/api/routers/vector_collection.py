@@ -21,7 +21,7 @@ class VectorCollectionPostModel(BaseModel):
 
 @router.post(
     '/',
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
 )
 @inject
 async def create_vec_col(
@@ -29,7 +29,4 @@ async def create_vec_col(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     command = VecCollectionAddCommand(**item.model_dump())
-    res = await mediatr.send_async(command)
-    print(res)
-
-    return res
+    return await mediatr.send_async(command)
