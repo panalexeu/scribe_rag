@@ -133,24 +133,7 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
             include=["metadatas", "documents", "embeddings"]
         )
 
-        # mapping GetResult to VectorChromaDocument
-        mapped_res: list[VectorChromaDocument] = []
-        for id_, document, metadata, embedding in zip(
-                res['ids'],
-                res['documents'],
-                res['metadatas'],
-                res['embeddings']
-        ):
-            mapped_res.append(
-                VectorChromaDocument(
-                    id_=id_,
-                    document=document,
-                    metadata=metadata,
-                    embedding=embedding
-                )
-            )
-
-        return mapped_res
+        return self.map_get_result(res)
 
     async def update(self):
         raise NotImplementedError
@@ -177,5 +160,26 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
     async def count(self):
         return await self.async_collection.count()
 
-    async def peek(self):
-        raise NotImplementedError
+    async def peek(self) -> list[VectorChromaDocument]:
+        res = await self.async_collection.peek(limit=3)
+        return self.map_get_result(res)
+
+    @staticmethod
+    def map_get_result(res: GetResult) -> list[VectorChromaDocument]:
+        mapped_res: list[VectorChromaDocument] = []
+        for id_, document, metadata, embedding in zip(
+                res['ids'],
+                res['documents'],
+                res['metadatas'],
+                res['embeddings']
+        ):
+            mapped_res.append(
+                VectorChromaDocument(
+                    id_=id_,
+                    document=document,
+                    metadata=metadata,
+                    embedding=embedding
+                )
+            )
+
+        return mapped_res
