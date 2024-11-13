@@ -224,14 +224,18 @@ def test_load_document_service_builds_config():
     }
 
 
-def test_load_document_service_build_config_with_unique_postprocessors():
+def test_load_document_service_builds_config_with_unique_postprocessors():
     loader = LoadDocumentService(UnstructuredLoader)
     config = DocProcessingConfig(
         'fake',
         [Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS,
          Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS],
+        None,
+        None,
+        None,
+        None,
+        None,
     )
 
     res = loader.build_config(doc_proc_cnf=config)
     assert len(res['post_processors']) == 2
-   
