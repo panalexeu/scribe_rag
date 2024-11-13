@@ -44,7 +44,7 @@ app.include_router(base_chat.router)
 app.include_router(chat_model.router)
 app.include_router(embedding_model.router)
 app.include_router(vector_collection.router)
-app.include_router(document.router)
+app.include_router(vector_document.router)
 
 
 @app.get('/')
