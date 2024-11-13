@@ -254,3 +254,11 @@ def test_load_document_service_maps_doc():
     assert doc.page_content == res.page_content
     assert doc.metadata == res.metadata
     assert res.id_ is not None
+
+
+def test_vector_document_normalizes_metadata():
+    metadata = {'fake-list': ['a', 'b'], 'val': 'just-a-val'}
+    res = VectorDocument.normalize_metadata(metadata)
+
+    assert isinstance(res['fake-list'], str)
+    assert res['val'] == 'just-a-val'

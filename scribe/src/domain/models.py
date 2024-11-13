@@ -150,11 +150,11 @@ class VectorDocument:
             metadata: dict[str, list | str | int | float]
     ):
         self.page_content = page_content
-        self.metadata = self.map_metadata(metadata)
+        self.metadata = self.normalize_metadata(metadata)
         self.id_ = sha224(self.page_content.encode()).hexdigest()  # 28 byte hash id (sha224)
 
     @staticmethod
-    def map_metadata(dict_: dict):
+    def normalize_metadata(dict_: dict):
         metadata = {}
         for key, val in dict_.items():
             if isinstance(val, list):
