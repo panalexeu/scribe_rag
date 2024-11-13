@@ -107,6 +107,7 @@ class BaseChat:
     system_prompt: SystemPrompt
     chat_model: ChatModel
     doc_proc_cnf: DocProcessingConfig
+
     # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - populated by db
 
     def __init__(
@@ -134,3 +135,14 @@ class EmbeddingModel:
     ):
         self.name = name
         self.api_key_credential_id = api_key_credential_id
+
+
+class VectorDocument:
+    def __init__(
+            self,
+            page_content: str,
+            metadata: dict[str, str | int | float]
+    ):
+        self.id_ = 'test'
+        self.page_content = page_content
+        self.metadata = metadata

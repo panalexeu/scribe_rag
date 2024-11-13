@@ -15,7 +15,7 @@ from src.adapters.vector_collection_repository import (
     CollectionNotFoundError
 )
 from src.bootstrap import bootstrap, shutdown
-from src.domain.services import UnsupportedFileFormatError
+from src.domain.services.load_document_service import UnsupportedFileFormatError
 from .routers import (
     api_key_credential,
     system_prompt,

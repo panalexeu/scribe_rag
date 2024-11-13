@@ -17,12 +17,3 @@ class VectorCollection:
         self.name: str = collection.name
         self.embedding_function: str = collection._embedding_function.__repr__()
         self.metadata: dict[str, str] | None = collection.metadata
-
-
-class VectorDocument:
-    """
-    Document abstraction.
-    """
-
-    def __init__(self):
-        pass

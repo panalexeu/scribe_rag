@@ -1,31 +1,22 @@
 import os
 
+from chromadb import AsyncHttpClient
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
-from dependency_injector.providers import Singleton, Callable, Factory, Resource, Object
+from dependency_injector.providers import Singleton, Callable, Factory, Object
+from langchain_unstructured.document_loaders import UnstructuredLoader
 from mediatr import Mediator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import registry, Session
 from sqlalchemy.pool import StaticPool
-from langchain_unstructured.document_loaders import UnstructuredLoader
-from chromadb import AsyncHttpClient
 
 from src.adapters.async_vector_client import ChromaAsyncVectorClient
 from src.adapters.codecs import FernetCodec
-from src.domain.services import (
-    EncodeApiKeyCredentialService,
-    LoadDocumentService,
-    ChatModelBuilder,
-    ChatPromptTemplateBuilder
-)
-from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
-from src.system.dir import get_scribe_dir_path, read_scribe_key
-from src.system.logging import read_log_config
 from src.adapters.repository import (
     SqlAlchemyRepository,
     SqlAlchemyRelationRepository
 )
-from src.adapters.vector_collection_repository import AsyncChromaVectorCollectionRepository
 from src.adapters.uow import SqlAlchemyUoW
+from src.adapters.vector_collection_repository import AsyncChromaVectorCollectionRepository
 from src.domain.models import (
     ApiKeyCredential,
     SystemPrompt,
@@ -34,6 +25,15 @@ from src.domain.models import (
     ChatModel,
     EmbeddingModel,
 )
+from src.domain.services import (
+    EncodeApiKeyCredentialService,
+    ChatModelBuilder,
+    ChatPromptTemplateBuilder
+)
+from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
+from src.domain.services.load_document_service import LoadDocumentService
+from src.system.dir import get_scribe_dir_path, read_scribe_key
+from src.system.logging import read_log_config
 
 
 class Container(DeclarativeContainer):
