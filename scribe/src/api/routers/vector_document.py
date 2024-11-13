@@ -7,7 +7,8 @@ from pydantic import BaseModel
 from src.di_container import Container
 from src.handlers.vector_document import (
     DocAddCommand,
-    DocReadAllQuery
+    DocReadAllQuery,
+    DocCountQuery
 )
 
 router = APIRouter(
@@ -25,7 +26,8 @@ class VectorDocumentResponseModel(BaseModel):
 
 @router.post(
     path='/{vec_col_name}',
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    response_model=None
 )
 @inject
 async def create_doc(
@@ -68,4 +70,17 @@ async def read_all_doc(
         offset=offset
     )
 
+    return await mediatr.send_async(query)
+
+
+@router.get(
+    path='/{vec_col_name}/count',
+    response_model=int
+)
+@inject
+async def count_doc(
+        vec_col_name: str,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = DocCountQuery(vec_col_name=vec_col_name)
     return await mediatr.send_async(query)

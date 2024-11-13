@@ -159,7 +159,7 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
         raise NotImplementedError
 
     async def count(self):
-        raise NotImplementedError
+        return await self.async_collection.count()
 
     async def peek(self):
         raise NotImplementedError
