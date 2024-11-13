@@ -1,9 +1,10 @@
 from typing import Optional, Callable, Sequence
 from abc import ABC
 
-from chromadb.api.models import Collection
+from chromadb.api.models import AsyncCollection
 from chromadb import AsyncClientAPI
 from chromadb.errors import InvalidCollectionException, InvalidArgumentError
+from src.domain.models import VectorDocument
 
 
 class AbstractAsyncVectorCollectionRepository[T](ABC):
@@ -37,12 +38,12 @@ class CollectionNotFoundError(LookupError):
         super().__init__(f"Collection with the name: '{name}' is not found.")
 
 
-class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionRepository[Collection]):
+class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionRepository[AsyncCollection]):
 
     def __init__(self, client: AsyncClientAPI):
         self.client = client
 
-    async def add(self, name: str, embedding_function: Optional[Callable] = None, **kwargs) -> Collection:
+    async def add(self, name: str, embedding_function: Optional[Callable] = None, **kwargs) -> AsyncCollection:
         """
         :param name: Name of a collection to create.
         :param embedding_function: If no embedding_function supplied - default is used.
@@ -53,7 +54,7 @@ class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionReposit
         except Exception:
             raise CollectionNameError(name)
 
-    async def read(self, name: str) -> Collection:
+    async def read(self, name: str) -> AsyncCollection:
         """
         :param name: name of a previously created collection
         :param embedding_function: from ChromaDB docs: "If you later wish to get_collection, you MUST do so with the
@@ -66,10 +67,10 @@ class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionReposit
         except InvalidCollectionException:
             raise CollectionNotFoundError(name)
 
-    async def read_all(self, limit: Optional[int] = None, offset: Optional[int] = None) -> Sequence[Collection]:
+    async def read_all(self, limit: Optional[int] = None, offset: Optional[int] = None) -> Sequence[AsyncCollection]:
         return await self.client.list_collections(limit, offset)
 
-    async def update(self, **kwargs) -> Collection:
+    async def update(self, **kwargs) -> AsyncCollection:
         raise NotImplementedError
 
     async def delete(self, name: str) -> None:
@@ -83,7 +84,7 @@ class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionReposit
 
 
 class AbstractAsyncDocumentRepository(ABC):
-    async def add(self, doc):
+    async def add(self, docs):
         pass
 
     async def read(self):
@@ -106,11 +107,18 @@ class AbstractAsyncDocumentRepository(ABC):
 
 
 class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
-    def __init__(self, collection: Collection):
-        self.collection = collection
+    def __init__(self, async_collection: AsyncCollection):
+        self.async_collection = async_collection
 
-    async def add(self, doc: ...) -> None:
-        raise NotImplementedError
+    async def add(self, docs: list[VectorDocument]) -> None:
+        for doc in docs:
+            await self.async_collection.add(
+                ids=doc.id_,
+                metadatas=doc.metadata,
+                documents=doc.page_content
+            )
+
+        return None
 
     async def read(self):
         raise NotImplementedError

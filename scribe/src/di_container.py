@@ -16,7 +16,10 @@ from src.adapters.repository import (
     SqlAlchemyRelationRepository
 )
 from src.adapters.uow import SqlAlchemyUoW
-from src.adapters.vector_collection_repository import AsyncChromaVectorCollectionRepository
+from src.adapters.vector_collection_repository import (
+    AsyncChromaVectorCollectionRepository,
+    AsyncChromaDocumentRepository
+)
 from src.domain.models import (
     ApiKeyCredential,
     SystemPrompt,
@@ -113,6 +116,9 @@ class Container(DeclarativeContainer):
     )
     async_vector_collection_repository = Object(
         AsyncChromaVectorCollectionRepository
+    )
+    async_vector_document_repository = Object(
+        AsyncChromaDocumentRepository
     )
 
     # uow's

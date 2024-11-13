@@ -1,5 +1,5 @@
 from dependency_injector.wiring import inject, Provide
-from fastapi import APIRouter, Depends, UploadFile, Form
+from fastapi import APIRouter, Depends, UploadFile, Form, status
 from mediatr import Mediator
 from typing import Optional
 
@@ -9,13 +9,14 @@ from src.handlers.document import (
 )
 
 router = APIRouter(
-    prefix='/doc',
+    prefix='/vec-doc',
     tags=['Document']
 )
 
 
 @router.post(
     path='/{vec_col_name}',
+    status_code=status.HTTP_201_CREATED
 )
 @inject
 async def create_doc(

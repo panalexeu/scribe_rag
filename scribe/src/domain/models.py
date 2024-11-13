@@ -147,11 +147,22 @@ class VectorDocument:
     def __init__(
             self,
             page_content: str,
-            metadata: dict[str, str | int | float]
+            metadata: dict[str, list | str | int | float]
     ):
         self.page_content = page_content
-        self.metadata = metadata
+        self.metadata = self.map_metadata(metadata)
         self.id_ = sha224(self.page_content.encode()).hexdigest()  # 28 byte hash id (sha224)
+
+    @staticmethod
+    def map_metadata(dict_: dict):
+        metadata = {}
+        for key, val in dict_.items():
+            if isinstance(val, list):
+                metadata[key] = json.dumps(val)
+            else:
+                metadata[key] = val
+
+        return metadata
 
     def __repr__(self) -> str:
         return f"VectorDocument<id_={self.id_} page_content='{self.page_content}' metadata={self.metadata}>"
