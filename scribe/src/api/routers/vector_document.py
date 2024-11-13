@@ -4,7 +4,7 @@ from mediatr import Mediator
 from typing import Optional
 
 from src.di_container import Container
-from src.handlers.document import (
+from src.handlers.vector_document import (
     DocAddModel
 )
 

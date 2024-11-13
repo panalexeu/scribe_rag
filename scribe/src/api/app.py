@@ -24,7 +24,7 @@ from .routers import (
     chat_model,
     embedding_model,
     vector_collection,
-    document
+    vector_document
 )
 from src.handlers.base_chat import InvalidBaseChatObjectError
 
