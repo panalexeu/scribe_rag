@@ -12,7 +12,7 @@ from src.adapters.chat_model import AbstractChatModel, LangchainChatModel
 from src.adapters.codecs import AbstractCodec
 from src.domain.models import ChatModel
 from src.enums import ChatModelName, ModelProvider
-from ..models import ApiKeyCredential
+from ..models import ApiKeyCredential, DocProcessingConfig
 
 
 class EncodeApiKeyCredentialService:
@@ -49,7 +49,11 @@ class LoadDocumentService:
         self.doc_loader = doc_loader
 
     # TODO make the loop truly async
-    async def load_async(self, files: dict[str, bytes]) -> list[Document]:
+    async def load_async(
+            self,
+            files: dict[str, bytes],
+            doc_proc_cnf: DocProcessingConfig
+    ) -> list[Document]:
         """
         :raises UnsupportedFileFormatError:
         """

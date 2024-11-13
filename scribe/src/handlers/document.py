@@ -1,6 +1,7 @@
 from dependency_injector.wiring import inject, Provide
 from mediatr import Mediator, GenericQuery
 from pydantic import BaseModel
+from rich import print
 
 from src.adapters.uow import AbstractUoW
 from src.di_container import Container
@@ -29,7 +30,8 @@ class DocAddHandler:
             doc_proc_cnf = uow.repository.read(request.doc_processing_cnf_id)
 
         loaded_docs = await self.load_document_service.load_async(
-            files=request.files
+            files=request.files,
+            doc_proc_cnf=doc_proc_cnf
         )
 
         print(loaded_docs)

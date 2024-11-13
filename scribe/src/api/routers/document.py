@@ -1,5 +1,5 @@
 from mediatr import Mediator
-from fastapi import APIRouter, Depends, UploadFile
+from fastapi import APIRouter, Depends, UploadFile, Form
 from dependency_injector.wiring import inject, Provide
 from pydantic import BaseModel
 
@@ -14,22 +14,19 @@ router = APIRouter(
 )
 
 
-class DocPostModel(BaseModel):
-    vec_col_name: str
-    doc_processing_cnf_id: int
-
-
 @router.post(
     path='/',
 )
 @inject
 async def create_doc(
         files: list[UploadFile],
-        item: DocPostModel,
+        vec_col_name: str = Form(...),
+        doc_processing_cnf_id: int = Form(...),
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     command = DocAddModel(
-        **item.model_dump(),
+        vec_col_name=vec_col_name,
+        doc_processing_cnf_id=doc_processing_cnf_id,
         files={file.filename: await file.read() for file in files}
     )
 
