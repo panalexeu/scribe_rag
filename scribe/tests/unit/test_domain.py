@@ -2,6 +2,7 @@ from copy import copy
 
 from chromadb.utils.embedding_functions import EmbeddingFunction
 
+from langchain_unstructured.document_loaders import UnstructuredLoader
 from src.adapters.chat_model import AbstractChatModel
 from src.adapters.codecs import FakeCodec
 from src.domain.models import (
@@ -10,6 +11,7 @@ from src.domain.models import (
     ChatModel,
     EmbeddingModel
 )
+from src.domain.services.load_document_service import LoadDocumentService
 from src.domain.services import (
     EncodeApiKeyCredentialService,
     ChatModelBuilder,
@@ -23,6 +25,10 @@ from src.enums import (
     ChatModelName,
     ModelProvider,
     EmbeddingModelName
+)
+from unstructured.cleaners.core import (
+    clean,
+    clean_bullets
 )
 
 
@@ -191,3 +197,28 @@ def test_embedding_model_builder_builds_models():
     )
 
     assert isinstance(EmbeddingModelBuilder(FakeCodec('fake-key')).build(model), EmbeddingFunction)
+
+
+def test_load_document_service_builds_config():
+    loader = LoadDocumentService(UnstructuredLoader)
+    config = DocProcessingConfig(
+        'fake',
+        [Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS],
+        ChunkingStrategy.BASIC,
+        150,
+        100,
+        230,
+        False
+    )
+
+    res = loader.build_config(doc_proc_cnf=config)
+    post_processors = res.pop('post_processors')
+
+    assert {clean.__name__, clean_bullets.__name__} == set((map(lambda p: p.__name__, post_processors)))
+    assert res == {
+        'chunking_strategy': 'basic',
+        'max_characters': 150,
+        'new_after_n_chars': 100,
+        'overlap': 230,
+        'overlap_all': False
+    }

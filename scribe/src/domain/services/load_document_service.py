@@ -89,7 +89,7 @@ class LoadDocumentService:
 
         if doc_proc_cnf.deserialized_postprocessors is not None:
             cleaners = []
-            for proc in doc_proc_cnf.postprocessors:
+            for proc in doc_proc_cnf.deserialized_postprocessors:
                 match proc:
                     case Postprocessor.BYTES_STRING_TO_STRING:
                         cleaners.append(bytes_string_to_string)
@@ -113,6 +113,6 @@ class LoadDocumentService:
                         cleaners.append(replace_unicode_quotes)
 
             unique_vals = set(cleaners)
-            config['post_processors'] = unique_vals
+            config['post_processors'] = list(unique_vals)
 
         return config
