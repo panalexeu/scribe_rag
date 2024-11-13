@@ -48,10 +48,12 @@ class LoadDocumentService:
             doc_proc_cnf: DocProcessingConfig
     ) -> list[VectorDocument]:
         """
+        Loads provided documents to list[VectorDocument] based on the provided DocProcessingConfig.
+
         :raises UnsupportedFileFormatError:
         """
         config = self.build_config(doc_proc_cnf)
-        
+
         all_docs: list[VectorDocument] = []
         for filename, bytes_ in files.items():
             wrapped_bytes = io.BytesIO(bytes_)  # <-- BytesIO wrapping around bytes
