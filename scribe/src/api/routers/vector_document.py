@@ -8,7 +8,8 @@ from src.di_container import Container
 from src.handlers.vector_document import (
     DocAddCommand,
     DocReadAllQuery,
-    DocCountQuery
+    DocCountQuery,
+    DocDeleteCommand
 )
 
 router = APIRouter(
@@ -22,6 +23,10 @@ class VectorDocumentResponseModel(BaseModel):
     document: str
     metadata: dict
     embedding: str
+
+
+class VectorDocumentDeleteModel(BaseModel):
+    doc_name: str
 
 
 @router.post(
@@ -84,3 +89,17 @@ async def count_doc(
 ):
     query = DocCountQuery(vec_col_name=vec_col_name)
     return await mediatr.send_async(query)
+
+
+@router.delete(
+    path='/{vec_col_name}',
+    response_model=None
+)
+@inject
+async def delete_doc(
+        vec_col_name: str,
+        item: VectorDocumentDeleteModel,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    command = DocDeleteCommand(vec_col_name=vec_col_name, **item.model_dump())
+    return await mediatr.send_async(command)

@@ -99,7 +99,7 @@ class AbstractAsyncDocumentRepository(ABC):
     async def update(self):
         pass
 
-    async def delete(self):
+    async def delete(self, doc_name):
         pass
 
     async def count(self):
@@ -155,8 +155,24 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
     async def update(self):
         raise NotImplementedError
 
-    async def delete(self):
-        raise NotImplementedError
+    async def delete(self, doc_name: str) -> None:
+        return await self.async_collection.delete(
+            where={
+                '$or': [
+                    {
+                        'filename': {
+                            '$eq': doc_name
+                        }
+                    },
+                    {
+                        'url': {
+                            '$eq': doc_name
+                        }
+                    }
+                ]
+
+            }
+        )
 
     async def count(self):
         return await self.async_collection.count()
