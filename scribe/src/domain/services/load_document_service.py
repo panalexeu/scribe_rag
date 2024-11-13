@@ -1,8 +1,7 @@
-from hashlib import sha224
-
 import io
 from typing import Type
-from langchain_core.document_loaders.base import BaseLoader, Document
+
+from langchain_unstructured.document_loaders import UnstructuredLoader
 
 from src.domain.models import (
     DocProcessingConfig,
@@ -27,7 +26,7 @@ class LoadDocumentService:
         - langchain_unstructured.document_loaders.UnstructuredLoader;
     """
 
-    def __init__(self, doc_loader: Type[BaseLoader]):
+    def __init__(self, doc_loader: Type[UnstructuredLoader]):
         self.doc_loader = doc_loader
 
     # TODO make the loop truly async
@@ -44,8 +43,9 @@ class LoadDocumentService:
         for filename, bytes_ in files.items():
             wrapped_bytes = io.BytesIO(bytes_)  # <-- BytesIO wrapping around bytes
             document_loader = self.doc_loader(
-                file=wrapped_bytes,  # type: ignore
-                metadata_filename=filename  # type: ignore
+                file=wrapped_bytes,
+                metadata_filename=filename,
+
             )
 
             try:
@@ -64,3 +64,4 @@ class LoadDocumentService:
             )
 
         return all_docs
+

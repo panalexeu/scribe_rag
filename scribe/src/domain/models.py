@@ -149,4 +149,4 @@ class VectorDocument:
         self.id_ = sha224(self.page_content.encode()).hexdigest()  # 28 byte hash id (sha224)
 
     def __repr__(self) -> str:
-        return f'VectorDocument<id_={self.id_} page_content={self.page_content} metadata={self.metadata}>'
+        return f"VectorDocument<id_={self.id_} page_content='{self.page_content}' metadata={self.metadata}>"
