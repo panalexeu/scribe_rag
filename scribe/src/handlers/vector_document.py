@@ -12,6 +12,7 @@ from src.adapters.vector_collection_repository import (
 )
 from src.di_container import Container
 from src.domain.services.load_document_service import LoadDocumentService
+from src.adapters.chroma_models import VectorChromaDocument
 
 
 class DocAddCommand(BaseModel, GenericQuery[None]):
@@ -58,7 +59,7 @@ class DocAddHandler:
         return await async_doc_repo.add(loaded_docs)
 
 
-class DocReadAllQuery(BaseModel, GenericQuery[None]):
+class DocReadAllQuery(BaseModel, GenericQuery[list[VectorChromaDocument]]):
     vec_col_name: str
     limit: int | None
     offset: int | None
@@ -83,7 +84,7 @@ class DocReadAllHandler:
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
 
-    async def handle(self, request: DocReadAllQuery) -> None:
+    async def handle(self, request: DocReadAllQuery) -> list[VectorChromaDocument]:
         async_vec_db_client = await self.async_vector_db_client.async_init()
         vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
         collection = await vector_collection_repo.read(request.vec_col_name)

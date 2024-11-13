@@ -6,6 +6,7 @@ from chromadb import AsyncClientAPI
 from chromadb.errors import InvalidCollectionException, InvalidArgumentError
 from chromadb.api.types import GetResult
 
+from src.adapters.chroma_models import VectorChromaDocument
 from src.domain.models import VectorDocument
 
 
@@ -125,12 +126,31 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
     async def read(self):
         raise NotImplementedError
 
-    async def read_all(self, limit: int | None, offset: int | None) -> GetResult:
-        return await self.async_collection.get(
+    async def read_all(self, limit: int | None, offset: int | None) -> list[VectorChromaDocument]:
+        res = await self.async_collection.get(
             limit=limit,
             offset=offset,
-            include=["metadatas", "documents"]
+            include=["metadatas", "documents", "embeddings"]
         )
+
+        # mapping GetResult to VectorChromaDocument
+        mapped_res: list[VectorChromaDocument] = []
+        for id_, document, metadata, embedding in zip(
+                res['ids'],
+                res['documents'],
+                res['metadatas'],
+                res['embeddings']
+        ):
+            mapped_res.append(
+                VectorChromaDocument(
+                    id_=id_,
+                    document=document,
+                    metadata=metadata,
+                    embedding=embedding
+                )
+            )
+
+        return mapped_res
 
     async def update(self):
         raise NotImplementedError
