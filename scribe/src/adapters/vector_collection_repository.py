@@ -5,6 +5,8 @@ from chromadb.api.models import Collection
 from chromadb import AsyncClientAPI
 from chromadb.errors import InvalidCollectionException, InvalidArgumentError
 
+from src.adapters.chroma_models import VectorDocument
+
 
 class AbstractAsyncVectorCollectionRepository[T](ABC):
 
@@ -80,3 +82,52 @@ class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionReposit
 
     async def count(self) -> int:
         return await self.client.count_collections()
+
+
+class AbstractAsyncDocumentRepository(ABC):
+    async def add(self, doc):
+        pass
+
+    async def read(self):
+        pass
+
+    async def read_all(self):
+        pass
+
+    async def update(self):
+        pass
+
+    async def delete(self):
+        pass
+
+    async def count(self):
+        pass
+
+    async def peek(self):
+        pass
+
+
+class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
+    def __init__(self, collection: Collection):
+        self.collection = collection
+
+    async def add(self, doc: VectorDocument) -> None:
+        raise NotImplementedError
+
+    async def read(self):
+        raise NotImplementedError
+
+    async def read_all(self):
+        raise NotImplementedError
+
+    async def update(self):
+        raise NotImplementedError
+
+    async def delete(self):
+        raise NotImplementedError
+
+    async def count(self):
+        raise NotImplementedError
+
+    async def peek(self):
+        raise NotImplementedError
