@@ -12,7 +12,7 @@ class DocAddModel(BaseModel, GenericQuery[...]):
     vec_col_name: str
     doc_processing_cnf_id: int
     files: dict[str, bytes] | None
-    url: str | None
+    urls: list[str] | None
 
 
 @Mediator.handler
@@ -32,7 +32,7 @@ class DocAddHandler:
 
         loaded_docs = await self.load_document_service.load_async(
             files=request.files,
-            url=request.url,
+            urls=request.urls,
             doc_proc_cnf=doc_proc_cnf
         )
 

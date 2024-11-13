@@ -21,15 +21,21 @@ router = APIRouter(
 async def create_doc(
         vec_col_name: str = Form(...),
         doc_processing_cnf_id: int = Form(...),
-        url: Optional[str] = Form(None),
+        urls: Optional[list[str]] = Form(None),
         files: Optional[list[UploadFile]] = None,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
+    if urls is not None:
+        urls = urls[0].split(',')
+
+    if files is not None:
+        files = {file.filename: await file.read() for file in files}
+
     command = DocAddModel(
         vec_col_name=vec_col_name,
         doc_processing_cnf_id=doc_processing_cnf_id,
-        files={file.filename: await file.read() for file in files} if files is not None else files,
-        url=url
+        files=files,
+        urls=urls
     )
 
     return await mediatr.send_async(command)

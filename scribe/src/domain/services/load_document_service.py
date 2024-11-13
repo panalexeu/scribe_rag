@@ -46,7 +46,7 @@ class LoadDocumentService:
     async def load_async(
             self,
             files: dict[str, bytes] | None,
-            url: str | None,
+            urls: list[str] | None,
             doc_proc_cnf: DocProcessingConfig
     ) -> list[VectorDocument]:
         """
@@ -58,15 +58,18 @@ class LoadDocumentService:
         all_docs: list[VectorDocument] = []
 
         # handling url
-        if url is not None:
-            document_loader = self.doc_loader(
-                web_url=url,
-                **config
-            )
-            docs = await document_loader.aload()
-            all_docs.extend(
-                list(map(lambda d: self.map_doc(d), docs))
-            )
+        if urls is not None:
+            for url in urls:
+                document_loader = self.doc_loader(
+                    web_url=url,
+                    **config
+                )
+
+                docs = await document_loader.aload()
+
+                all_docs.extend(
+                    list(map(lambda d: self.map_doc(d), docs))
+                )
 
         # handling files
         if files is not None:
