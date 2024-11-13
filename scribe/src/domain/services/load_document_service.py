@@ -44,7 +44,8 @@ class LoadDocumentService:
     # TODO make the loop truly async
     async def load_async(
             self,
-            files: dict[str, bytes],
+            files: dict[str, bytes] | None,
+            url: str | None,
             doc_proc_cnf: DocProcessingConfig
     ) -> list[VectorDocument]:
         """
@@ -53,30 +54,46 @@ class LoadDocumentService:
         :raises UnsupportedFileFormatError:
         """
         config = self.build_config(doc_proc_cnf)
-
         all_docs: list[VectorDocument] = []
-        for filename, bytes_ in files.items():
-            wrapped_bytes = io.BytesIO(bytes_)  # <-- BytesIO wrapping around bytes
+
+        # handling url
+        if url is not None:
             document_loader = self.doc_loader(
-                file=wrapped_bytes,
-                metadata_filename=filename,
+                web_url=url,
                 **config
             )
+            docs = await document_loader.aload()
+            all_docs.extend(list(
+                map(lambda d: VectorDocument(
+                    page_content=d.page_content,
+                    metadata=d.metadata
+                ), docs)
+            ))
 
-            try:
-                docs = await document_loader.aload()
-            except ImportError:
-                raise UnsupportedFileFormatError
-
-            all_docs.extend(
-                list(
-                    # mapping to VectorDocument
-                    map(lambda d: VectorDocument(
-                        page_content=d.page_content,
-                        metadata=d.metadata
-                    ), docs)
+        # handling files
+        if files is not None:
+            for filename, bytes_ in files.items():
+                wrapped_bytes = io.BytesIO(bytes_)  # <-- BytesIO wrapping around bytes
+                document_loader = self.doc_loader(
+                    file=wrapped_bytes,
+                    metadata_filename=filename,
+                    **config
                 )
-            )
+
+                try:
+                    docs = await document_loader.aload()
+                except ImportError:
+                    raise UnsupportedFileFormatError
+
+                all_docs.extend(
+                    list(
+                        # mapping to VectorDocument
+                        map(lambda d: VectorDocument(
+                            page_content=d.page_content,
+                            metadata=d.metadata
+                        ), docs)
+                    )
+                )
 
         return all_docs
 
