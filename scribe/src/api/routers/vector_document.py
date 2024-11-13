@@ -2,6 +2,7 @@ from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Depends, UploadFile, Form, status
 from mediatr import Mediator
 from typing import Optional
+from pydantic import BaseModel
 
 from src.di_container import Container
 from src.handlers.vector_document import (
@@ -13,6 +14,13 @@ router = APIRouter(
     prefix='/vec-doc',
     tags=['Document']
 )
+
+
+class VectorDocumentResponseModel(BaseModel):
+    id_: str
+    document: str
+    metadata: dict
+    embedding: str
 
 
 @router.post(
@@ -44,7 +52,8 @@ async def create_doc(
 
 
 @router.get(
-    path='/{vec_col_name}'
+    path='/{vec_col_name}',
+    response_model=list[VectorDocumentResponseModel]
 )
 @inject
 async def read_all_doc(
@@ -59,9 +68,4 @@ async def read_all_doc(
         offset=offset
     )
 
-    res = await mediatr.send_async(query)
-    print(res)
-    breakpoint()
-
     return await mediatr.send_async(query)
-
