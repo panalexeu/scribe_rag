@@ -4,6 +4,8 @@ from abc import ABC
 from chromadb.api.models import AsyncCollection
 from chromadb import AsyncClientAPI
 from chromadb.errors import InvalidCollectionException, InvalidArgumentError
+from chromadb.api.types import GetResult
+
 from src.domain.models import VectorDocument
 
 
@@ -54,7 +56,7 @@ class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionReposit
         except Exception:
             raise CollectionNameError(name)
 
-    async def read(self, name: str) -> AsyncCollection:
+    async def read(self, name: str, ) -> AsyncCollection:
         """
         :param name: name of a previously created collection
         :param embedding_function: from ChromaDB docs: "If you later wish to get_collection, you MUST do so with the
@@ -90,7 +92,7 @@ class AbstractAsyncDocumentRepository(ABC):
     async def read(self):
         pass
 
-    async def read_all(self):
+    async def read_all(self, limit: int | None, offset: int | None):
         pass
 
     async def update(self):
@@ -123,8 +125,12 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
     async def read(self):
         raise NotImplementedError
 
-    async def read_all(self):
-        raise NotImplementedError
+    async def read_all(self, limit: int | None, offset: int | None) -> GetResult:
+        return await self.async_collection.get(
+            limit=limit,
+            offset=offset,
+            include=["metadatas", "documents"]
+        )
 
     async def update(self):
         raise NotImplementedError

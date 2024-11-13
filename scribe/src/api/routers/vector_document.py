@@ -5,7 +5,8 @@ from typing import Optional
 
 from src.di_container import Container
 from src.handlers.vector_document import (
-    DocAddModel
+    DocAddCommand,
+    DocReadAllQuery
 )
 
 router = APIRouter(
@@ -25,18 +26,42 @@ async def create_doc(
         urls: Optional[list[str]] = Form(None),
         files: Optional[list[UploadFile]] = None,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
-):
+) -> None:
     if urls is not None:
         urls = urls[0].split(',')
 
     if files is not None:
         files = {file.filename: await file.read() for file in files}
 
-    command = DocAddModel(
+    command = DocAddCommand(
         vec_col_name=vec_col_name,
         doc_processing_cnf_id=doc_processing_cnf_id,
         files=files,
         urls=urls
     )
 
-    return await mediatr.send_async(command)
+    return await mediatr.send_async(command)  # type: ignore
+
+
+@router.get(
+    path='/{vec_col_name}'
+)
+@inject
+async def read_all_doc(
+        vec_col_name: str,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = DocReadAllQuery(
+        vec_col_name=vec_col_name,
+        limit=limit,
+        offset=offset
+    )
+
+    res = await mediatr.send_async(query)
+    print(res)
+    breakpoint()
+
+    return await mediatr.send_async(query)
+
