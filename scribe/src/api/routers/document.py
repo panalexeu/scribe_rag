@@ -1,7 +1,6 @@
-from mediatr import Mediator
-from fastapi import APIRouter, Depends, UploadFile, Form
 from dependency_injector.wiring import inject, Provide
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, UploadFile, Form
+from mediatr import Mediator
 
 from src.di_container import Container
 from src.handlers.document import (

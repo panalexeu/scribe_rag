@@ -6,7 +6,6 @@ from rich import print
 from src.adapters.uow import AbstractUoW
 from src.di_container import Container
 from src.domain.services.load_document_service import LoadDocumentService
-from src.domain.models import VectorDocument
 
 
 class DocAddModel(BaseModel, GenericQuery[...]):
