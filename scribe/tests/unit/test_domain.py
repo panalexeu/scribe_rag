@@ -1,15 +1,17 @@
 from copy import copy
 
 from chromadb.utils.embedding_functions import EmbeddingFunction
-
 from langchain_unstructured.document_loaders import UnstructuredLoader
+from langchain_core.documents.base import Document
+
 from src.adapters.chat_model import AbstractChatModel
 from src.adapters.codecs import FakeCodec
 from src.domain.models import (
     ApiKeyCredential,
     DocProcessingConfig,
     ChatModel,
-    EmbeddingModel
+    EmbeddingModel,
+    VectorDocument
 )
 from src.domain.services.load_document_service import LoadDocumentService
 from src.domain.services import (
@@ -239,3 +241,16 @@ def test_load_document_service_builds_config_with_unique_postprocessors():
 
     res = loader.build_config(doc_proc_cnf=config)
     assert len(res['post_processors']) == 2
+
+
+def test_load_document_service_maps_doc():
+    doc = Document(
+        page_content='hey',
+        metadata={'filename': 'fake.txt'}
+    )
+    res = LoadDocumentService.map_doc(doc)
+
+    assert isinstance(res, VectorDocument)
+    assert doc.page_content == res.page_content
+    assert doc.metadata == res.metadata
+    assert res.id_ is not None

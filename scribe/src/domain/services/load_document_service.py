@@ -19,6 +19,7 @@ from src.domain.models import (
     DocProcessingConfig,
     VectorDocument
 )
+from langchain_core.documents.base import Document
 
 
 class UnsupportedFileFormatError(RuntimeError):
@@ -63,12 +64,9 @@ class LoadDocumentService:
                 **config
             )
             docs = await document_loader.aload()
-            all_docs.extend(list(
-                map(lambda d: VectorDocument(
-                    page_content=d.page_content,
-                    metadata=d.metadata
-                ), docs)
-            ))
+            all_docs.extend(
+                list(map(lambda d: self.map_doc(d), docs))
+            )
 
         # handling files
         if files is not None:
@@ -86,13 +84,7 @@ class LoadDocumentService:
                     raise UnsupportedFileFormatError
 
                 all_docs.extend(
-                    list(
-                        # mapping to VectorDocument
-                        map(lambda d: VectorDocument(
-                            page_content=d.page_content,
-                            metadata=d.metadata
-                        ), docs)
-                    )
+                    list(map(lambda d: self.map_doc(d), docs))
                 )
 
         return all_docs
@@ -136,3 +128,10 @@ class LoadDocumentService:
             config['post_processors'] = list(unique_vals)
 
         return config
+
+    @staticmethod
+    def map_doc(doc: Document) -> VectorDocument:
+        return VectorDocument(
+            page_content=doc.page_content,
+            metadata=doc.metadata
+        )
