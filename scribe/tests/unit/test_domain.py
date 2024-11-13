@@ -65,7 +65,7 @@ def test_doc_proc_cnf_deserializes_postprocessors():
         None
     )
 
-    assert config.deserialized_postprocessors == [Postprocessor.CLEAN.value, Postprocessor.CLEAN_BULLETS.value]
+    assert config.deserialized_postprocessors == [Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS]
 
 
 def test_doc_proc_cnf_sets_up_chunking_params_as_none_if_no_chunking_strategy_provided():

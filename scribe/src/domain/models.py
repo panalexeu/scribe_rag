@@ -73,8 +73,9 @@ class DocProcessingConfig:
             self.overlap_all = False if overlap_all is None else overlap_all
 
     @property
-    def deserialized_postprocessors(self) -> list[str] | None:
-        return json.loads(self.postprocessors) if self.postprocessors is not None else None
+    def deserialized_postprocessors(self) -> list[Postprocessor] | None:
+        return list(map(lambda p: Postprocessor(p), json.loads(self.postprocessors))) \
+            if self.postprocessors is not None else None
 
 
 class ChatModel:
