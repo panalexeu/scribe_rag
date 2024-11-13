@@ -15,11 +15,11 @@ router = APIRouter(
 
 
 @router.post(
-    path='/',
+    path='/{vec_col_name}',
 )
 @inject
 async def create_doc(
-        vec_col_name: str = Form(...),
+        vec_col_name: str,
         doc_processing_cnf_id: int = Form(...),
         urls: Optional[list[str]] = Form(None),
         files: Optional[list[UploadFile]] = None,
