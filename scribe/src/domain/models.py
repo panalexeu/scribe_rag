@@ -72,6 +72,10 @@ class DocProcessingConfig:
             self.overlap = 0 if overlap is None else overlap
             self.overlap_all = False if overlap_all is None else overlap_all
 
+    @property
+    def deserialized_postprocessors(self) -> list[str] | None:
+        return json.loads(self.postprocessors) if self.postprocessors is not None else None
+
 
 class ChatModel:
     api_key_credential: ApiKeyCredential

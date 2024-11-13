@@ -2,8 +2,8 @@ from copy import copy
 
 from chromadb.utils.embedding_functions import EmbeddingFunction
 
-from src.adapters.codecs import FakeCodec
 from src.adapters.chat_model import AbstractChatModel
+from src.adapters.codecs import FakeCodec
 from src.domain.models import (
     ApiKeyCredential,
     DocProcessingConfig,
@@ -24,7 +24,6 @@ from src.enums import (
     ModelProvider,
     EmbeddingModelName
 )
-from src.adapters.codecs import FakeCodec
 
 
 def test_encode_api_key_credential_service():
@@ -53,6 +52,20 @@ def test_doc_proc_cnf_serializes_postprocessors():
     )
 
     assert isinstance(config.postprocessors, str)
+
+
+def test_doc_proc_cnf_deserializes_postprocessors():
+    config = DocProcessingConfig(
+        'fake',
+        [Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS],
+        ChunkingStrategy.BASIC,
+        None,
+        None,
+        None,
+        None
+    )
+
+    assert config.deserialized_postprocessors == [Postprocessor.CLEAN.value, Postprocessor.CLEAN_BULLETS.value]
 
 
 def test_doc_proc_cnf_sets_up_chunking_params_as_none_if_no_chunking_strategy_provided():

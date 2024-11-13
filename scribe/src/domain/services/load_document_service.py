@@ -65,3 +65,13 @@ class LoadDocumentService:
 
         return all_docs
 
+    @staticmethod
+    def build_config(doc_proc_cnf: DocProcessingConfig) -> dict:
+        config = {}
+        if doc_proc_cnf.chunking_strategy is not None:
+            config['chunking_strategy'] = doc_proc_cnf.chunking_strategy
+
+        if doc_proc_cnf.postprocessors is not None:
+            ...
+
+        return config
