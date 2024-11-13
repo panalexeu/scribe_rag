@@ -22,7 +22,7 @@ class UnsupportedFileFormatError(RuntimeError):
 class LoadDocumentService:
     """
     Service that wraps around langchain_core.document_loaders.base.BaseLoader
-    to load documents asynchronously. Assigns hash ids to document.
+    to load documents asynchronously.
     Works with loaders like:
         - langchain_unstructured.document_loaders.UnstructuredLoader;
     """
@@ -55,9 +55,10 @@ class LoadDocumentService:
 
             all_docs.extend(
                 list(
+                    # mapping to VectorDocument
                     map(lambda d: VectorDocument(
-                        d.page_content,
-                        d.metadata
+                        page_content=d.page_content,
+                        metadata=d.metadata
                     ), docs)
                 )
             )

@@ -1,4 +1,5 @@
 import json
+from hashlib import sha224
 
 from src.enums import (
     Postprocessor,
@@ -143,6 +144,9 @@ class VectorDocument:
             page_content: str,
             metadata: dict[str, str | int | float]
     ):
-        self.id_ = 'test'
         self.page_content = page_content
         self.metadata = metadata
+        self.id_ = sha224(self.page_content.encode()).hexdigest()  # 28 byte hash id (sha224)
+
+    def __repr__(self) -> str:
+        return f'VectorDocument<id_={self.id_} page_content={self.page_content} metadata={self.metadata}>'
