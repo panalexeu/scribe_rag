@@ -1,5 +1,6 @@
 import json
 from hashlib import sha224
+from typing import Optional
 
 from src.enums import (
     Postprocessor,
@@ -47,12 +48,12 @@ class DocProcessingConfig:
     def __init__(
             self,
             name: str,
-            postprocessors: list[Postprocessor] | None,
-            chunking_strategy: ChunkingStrategy | None,
-            max_characters: int | None,
-            new_after_n_chars: int | None,
-            overlap: int | None,
-            overlap_all: bool | None
+            postprocessors: Optional[list[Postprocessor]] = None,
+            chunking_strategy: Optional[ChunkingStrategy] = None,
+            max_characters: Optional[int] = None,
+            new_after_n_chars: Optional[int] = None,
+            overlap: Optional[int] = None,
+            overlap_all: Optional[bool] = None
 
     ):
         self.name = name

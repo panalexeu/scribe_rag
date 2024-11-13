@@ -222,3 +222,16 @@ def test_load_document_service_builds_config():
         'overlap': 230,
         'overlap_all': False
     }
+
+
+def test_load_document_service_build_config_with_unique_postprocessors():
+    loader = LoadDocumentService(UnstructuredLoader)
+    config = DocProcessingConfig(
+        'fake',
+        [Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS,
+         Postprocessor.CLEAN, Postprocessor.CLEAN_BULLETS],
+    )
+
+    res = loader.build_config(doc_proc_cnf=config)
+    assert len(res['post_processors']) == 2
+   
