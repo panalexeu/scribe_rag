@@ -51,6 +51,7 @@ class LoadDocumentService:
         :raises UnsupportedFileFormatError:
         """
         config = self.build_config(doc_proc_cnf)
+        
         all_docs: list[VectorDocument] = []
         for filename, bytes_ in files.items():
             wrapped_bytes = io.BytesIO(bytes_)  # <-- BytesIO wrapping around bytes
