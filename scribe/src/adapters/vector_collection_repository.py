@@ -183,7 +183,9 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
                     {
                         'filename': {
                             '$in': doc_names
-                        },
+                        }
+                    },
+                    {
                         'url': {
                             '$in': doc_names
                         }
@@ -204,10 +206,10 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
     def map_get_result(res: GetResult) -> list[VectorChromaDocument]:
         mapped_res: list[VectorChromaDocument] = []
         for id_, document, metadata, embedding in zip(
-                res['ids'],
-                res['documents'],
-                res['metadatas'],
-                res['embeddings']
+                res['ids'][0],
+                res['documents'][0],
+                res['metadatas'][0],
+                res['embeddings'][0]
         ):
             mapped_res.append(
                 VectorChromaDocument(

@@ -10,7 +10,8 @@ from src.handlers.vector_document import (
     DocReadAllQuery,
     DocCountQuery,
     DocDeleteCommand,
-    DocPeekQuery
+    DocPeekQuery,
+    DocQuery
 )
 
 router = APIRouter(
@@ -28,6 +29,12 @@ class VectorDocumentResponseModel(BaseModel):
 
 class VectorDocumentDeleteModel(BaseModel):
     doc_name: str
+
+
+class VectorQueryPostModel(BaseModel):
+    query_string: str
+    doc_names: Optional[list[str]] = None
+    n_results: Optional[int] = None
 
 
 @router.post(
@@ -107,7 +114,8 @@ async def count_doc(
 
 @router.delete(
     path='/{vec_col_name}',
-    response_model=None
+    response_model=None,
+    status_code=status.HTTP_204_NO_CONTENT
 )
 @inject
 async def delete_doc(
@@ -117,3 +125,20 @@ async def delete_doc(
 ):
     command = DocDeleteCommand(vec_col_name=vec_col_name, **item.model_dump())
     return await mediatr.send_async(command)
+
+
+@router.post(
+    path='/{vec_col_name}/query',
+    response_model=list[VectorDocumentResponseModel]
+)
+@inject
+async def query_doc(
+        vec_col_name: str,
+        item: VectorQueryPostModel,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = DocQuery(
+        vec_col_name=vec_col_name,
+        **item.model_dump()
+    )
+    return await mediatr.send_async(query)
