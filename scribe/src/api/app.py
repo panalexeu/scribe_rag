@@ -8,6 +8,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.adapters.repository import ItemNotFoundError
 from src.adapters.vector_collection_repository import (
@@ -45,6 +46,14 @@ app.include_router(chat_model.router)
 app.include_router(embedding_model.router)
 app.include_router(vector_collection.router)
 app.include_router(vector_document.router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],  
+    allow_headers=["*"],
+)
 
 
 @app.get('/')
