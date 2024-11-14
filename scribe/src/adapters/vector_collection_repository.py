@@ -108,6 +108,9 @@ class AbstractAsyncDocumentRepository(ABC):
     async def peek(self):
         pass
 
+    async def query(self, query_string, doc_names, n_results):
+        pass
+
 
 class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
     def __init__(self, async_collection: AsyncCollection):
@@ -162,6 +165,39 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
 
     async def peek(self) -> list[VectorChromaDocument]:
         res = await self.async_collection.peek(limit=3)
+        return self.map_get_result(res)
+
+    async def query(
+            self,
+            query_string: str,
+            doc_names: Optional[list[str]] = None,
+            n_results: Optional[int] = None,
+    ):
+        if n_results is None:
+            n_results = 1
+
+        search_dict = None
+        if doc_names is not None:
+            search_dict = {
+                '$or': [
+                    {
+                        'filename': {
+                            '$in': doc_names
+                        },
+                        'url': {
+                            '$in': doc_names
+                        }
+                    }
+                ]
+            }
+
+        res = await self.async_collection.query(
+            query_texts=query_string,
+            include=['metadatas', 'embeddings', 'documents'],
+            n_results=n_results,
+            where=search_dict
+        )
+
         return self.map_get_result(res)
 
     @staticmethod
