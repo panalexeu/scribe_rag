@@ -71,7 +71,6 @@ class DocReadAllHandler:
     def __init__(
             self,
             doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow],
-            load_document_service: LoadDocumentService = Provide[Container.load_document_service],
             async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
                 Container.async_vector_collection_repository],
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
@@ -79,7 +78,6 @@ class DocReadAllHandler:
             async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
     ):
         self.doc_proc_cnf_uow = doc_proc_cnf_uow
-        self.load_document_service = load_document_service
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
@@ -106,7 +104,6 @@ class DocCountHandler:
     def __init__(
             self,
             doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow],
-            load_document_service: LoadDocumentService = Provide[Container.load_document_service],
             async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
                 Container.async_vector_collection_repository],
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
@@ -114,7 +111,6 @@ class DocCountHandler:
             async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
     ):
         self.doc_proc_cnf_uow = doc_proc_cnf_uow
-        self.load_document_service = load_document_service
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
@@ -139,7 +135,6 @@ class DocDeleteHandler:
     def __init__(
             self,
             doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow],
-            load_document_service: LoadDocumentService = Provide[Container.load_document_service],
             async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
                 Container.async_vector_collection_repository],
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
@@ -147,7 +142,6 @@ class DocDeleteHandler:
             async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
     ):
         self.doc_proc_cnf_uow = doc_proc_cnf_uow
-        self.load_document_service = load_document_service
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
@@ -171,7 +165,6 @@ class DocPeekHandler:
     def __init__(
             self,
             doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow],
-            load_document_service: LoadDocumentService = Provide[Container.load_document_service],
             async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
                 Container.async_vector_collection_repository],
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
@@ -179,7 +172,6 @@ class DocPeekHandler:
             async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
     ):
         self.doc_proc_cnf_uow = doc_proc_cnf_uow
-        self.load_document_service = load_document_service
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
@@ -206,7 +198,6 @@ class DocQueryHandler:
     def __init__(
             self,
             doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow],
-            load_document_service: LoadDocumentService = Provide[Container.load_document_service],
             async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
                 Container.async_vector_collection_repository],
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
@@ -214,7 +205,6 @@ class DocQueryHandler:
             async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
     ):
         self.doc_proc_cnf_uow = doc_proc_cnf_uow
-        self.load_document_service = load_document_service
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
@@ -242,7 +232,6 @@ class DocListDocsHandler:
     def __init__(
             self,
             doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow],
-            load_document_service: LoadDocumentService = Provide[Container.load_document_service],
             async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
                 Container.async_vector_collection_repository],
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
@@ -250,7 +239,6 @@ class DocListDocsHandler:
             async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
     ):
         self.doc_proc_cnf_uow = doc_proc_cnf_uow
-        self.load_document_service = load_document_service
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
