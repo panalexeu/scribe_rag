@@ -1,15 +1,14 @@
-from typing import Sequence, AsyncGenerator
+from typing import Sequence
 
-from pydantic import BaseModel
 from dependency_injector.wiring import inject, Provide
 from mediatr import Mediator, GenericQuery
+from pydantic import BaseModel
 
+from src.adapters.chat_model import AsyncStream
 from src.adapters.uow import AbstractUoW
 from src.di_container import Container
 from src.domain.models import BaseChat
 from src.domain.services.chat_model_builder import ChatModelBuilder, ChatPromptTemplateBuilder
-from src.adapters.codecs import AbstractCodec
-from src.adapters.chat_model import AsyncStream
 
 
 class BaseChatAddCommand(BaseModel, GenericQuery[BaseChat]):
@@ -17,7 +16,7 @@ class BaseChatAddCommand(BaseModel, GenericQuery[BaseChat]):
     desc: str
     chat_model_id: int
     system_prompt_id: int | None
-    doc_proc_cnf_id: int | None
+    vec_col_name: str | None
 
 
 @Mediator.handler

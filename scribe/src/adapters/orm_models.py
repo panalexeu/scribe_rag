@@ -101,7 +101,7 @@ def map_sqlalchemy_models(registry_: registry):
         Column('desc', String, nullable=False),
         Column('chat_model_id', Integer, ForeignKey('chat_model.id'), nullable=False),
         Column('system_prompt_id', Integer, ForeignKey('system_prompt.id'), nullable=True),
-        Column('doc_proc_cnf_id', Integer, ForeignKey('doc_processing_config.id'), nullable=True),
+        Column('vec_col_name', String, nullable=True),
         Column('datetime', DateTime, default=datetime.now)
     )
 
@@ -137,7 +137,6 @@ def map_sqlalchemy_models(registry_: registry):
         base_chat_table,
         properties={
             'system_prompt': relationship(SystemPrompt, uselist=False),
-            'chat_model': relationship(ChatModel, uselist=False),
-            'doc_proc_cnf': relationship(DocProcessingConfig, uselist=False)
+            'chat_model': relationship(ChatModel, uselist=False)
         }
     )

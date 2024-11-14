@@ -1,12 +1,16 @@
 from datetime import datetime
 from typing import Optional
 
-from mediatr import Mediator
+from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, status, Depends
 from fastapi.responses import StreamingResponse
+from mediatr import Mediator
 from pydantic import BaseModel
-from dependency_injector.wiring import inject, Provide
 
+from src.api.routers import (
+    system_prompt,
+    chat_model
+)
 from src.di_container import Container
 from src.handlers.base_chat import (
     BaseChatAddCommand,
@@ -16,12 +20,6 @@ from src.handlers.base_chat import (
     BaseChatDeleteCommand,
     BaseChatCountQuery,
     BaseChatStreamCommand
-)
-
-from src.api.routers import (
-    system_prompt,
-    chat_model,
-    doc_processing_cnf
 )
 
 router = APIRouter(
@@ -36,10 +34,9 @@ class BaseChatResponseModel(BaseModel):
     desc: str
     chat_model_id: int
     chat_model: chat_model.ChatModelResponseModel | None
-    doc_proc_cnf_id: int | None
-    doc_proc_cnf: doc_processing_cnf.DocProcCnfResponseModel | None
     system_prompt_id: int | None
     system_prompt: system_prompt.SystemPromptResponseModel | None
+    vec_col_name: str | None
     datetime: datetime
 
 
@@ -48,7 +45,7 @@ class BaseChatAddModel(BaseModel):
     desc: str
     chat_model_id: int
     system_prompt_id: Optional[int] = None
-    doc_proc_cnf_id: Optional[int] = None
+    vec_col_name: Optional[str] = None
 
 
 class BaseChatPutModel(BaseModel):
@@ -56,7 +53,7 @@ class BaseChatPutModel(BaseModel):
     desc: Optional[str] = None
     system_prompt_id: Optional[int] = None
     chat_model_id: Optional[int] = None
-    doc_proc_cnf_id: Optional[int] = None
+    vec_col_name: Optional[str] = None
 
 
 @router.post(

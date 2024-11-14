@@ -112,7 +112,6 @@ class ChatModel:
 class BaseChat:
     system_prompt: SystemPrompt
     chat_model: ChatModel
-    doc_proc_cnf: DocProcessingConfig
 
     # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - populated by db
 
@@ -122,13 +121,13 @@ class BaseChat:
             desc: str,
             chat_model_id: int,
             system_prompt_id: int | None,
-            doc_proc_cnf_id: int | None,
+            vec_col_name: str | None
     ):
         self.name = name
         self.desc = desc
         self.system_prompt_id = system_prompt_id
         self.chat_model_id = chat_model_id
-        self.doc_proc_cnf_id = doc_proc_cnf_id
+        self.vec_col_name = vec_col_name
 
 
 class EmbeddingModel:
