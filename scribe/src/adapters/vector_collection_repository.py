@@ -195,28 +195,50 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
 
         res = await self.async_collection.query(
             query_texts=query_string,
-            include=['metadatas', 'embeddings', 'documents'],
+            include=['metadatas', 'embeddings', 'documents', 'distances'],
             n_results=n_results,
             where=search_dict
         )
 
-        return self.map_get_result(res)
+        return self.map_query_get_result(res)
 
     @staticmethod
     def map_get_result(res: GetResult) -> list[VectorChromaDocument]:
         mapped_res: list[VectorChromaDocument] = []
         for id_, document, metadata, embedding in zip(
-                res['ids'][0],
-                res['documents'][0],
-                res['metadatas'][0],
-                res['embeddings'][0]
+                res['ids'],
+                res['documents'],
+                res['metadatas'],
+                res['embeddings'],
         ):
             mapped_res.append(
                 VectorChromaDocument(
                     id_=id_,
                     document=document,
                     metadata=metadata,
-                    embedding=embedding
+                    embedding=embedding,
+                )
+            )
+
+        return mapped_res
+
+    @staticmethod
+    def map_query_get_result(res: GetResult) -> list[VectorChromaDocument]:
+        mapped_res: list[VectorChromaDocument] = []
+        for id_, document, metadata, embedding, distance in zip(
+                *res['ids'],
+                *res['documents'],
+                *res['metadatas'],
+                *res['embeddings'],
+                *res['distances']  # type: ignore
+        ):
+            mapped_res.append(
+                VectorChromaDocument(
+                    id_=id_,
+                    document=document,
+                    metadata=metadata,
+                    embedding=embedding,
+                    distance=distance
                 )
             )
 

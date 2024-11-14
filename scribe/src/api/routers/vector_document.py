@@ -22,9 +22,10 @@ router = APIRouter(
 
 class VectorDocumentResponseModel(BaseModel):
     id_: str
+    distance: float | None
+    embedding: str
     document: str
     metadata: dict
-    embedding: str
 
 
 class VectorDocumentDeleteModel(BaseModel):

@@ -3,6 +3,7 @@ Primitive mappings of chroma objects, retrieved from the db, to serializable pyt
 """
 import numpy
 from chromadb.api import Collection
+from typing import Optional
 
 
 class VectorCollection:
@@ -25,12 +26,14 @@ class VectorChromaDocument:
             id_: str,
             document: str,
             metadata: dict[str, list | str | int | float],
-            embedding: numpy.ndarray
+            embedding: numpy.ndarray,
+            distance: Optional[float] = None
     ):
         self.id_ = id_
         self.document = document
         self.metadata = metadata
         self.embedding: str = self.embedding_repr(embedding)
+        self.distance = distance
 
     @staticmethod
     def embedding_repr(embedding: numpy.ndarray) -> str:
