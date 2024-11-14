@@ -7,7 +7,7 @@ from mediatr import Mediator, GenericQuery
 from src.adapters.uow import AbstractUoW
 from src.di_container import Container
 from src.domain.models import BaseChat
-from src.domain.services import ChatModelBuilder, ChatPromptTemplateBuilder
+from src.domain.services.chat_model_builder import ChatModelBuilder, ChatPromptTemplateBuilder
 from src.adapters.codecs import AbstractCodec
 from src.adapters.chat_model import AsyncStream
 
@@ -165,12 +165,10 @@ class BaseChatStreamHandler:
             base_chat_uow: AbstractUoW = Provide[Container.base_chat_uow],
             chat_model_builder_service: ChatModelBuilder = Provide[Container.chat_model_builder_service],
             chat_prompt_template_builder: ChatPromptTemplateBuilder = Provide[Container.chat_prompt_template_builder],
-            codec: AbstractCodec = Provide[Container.codec]
     ):
         self.base_chat_uow = base_chat_uow
         self.chat_model_builder_service = chat_model_builder_service
         self.chat_prompt_template_builder = chat_prompt_template_builder
-        self.codec = codec
 
     def handle(self, request: BaseChatStreamCommand) -> AsyncStream:
         with self.base_chat_uow as uow:
@@ -178,14 +176,11 @@ class BaseChatStreamHandler:
 
         if base_chat.chat_model is None:
             raise InvalidBaseChatObjectError('ChatModel', base_chat.chat_model_id)
-        elif base_chat.chat_model_api_key is None:
-            raise InvalidBaseChatObjectError('ChatModelApiKey', base_chat.chat_model_api_key_id)
-
-        decoded_api_key = self.codec.decode(base_chat.chat_model_api_key.api_key)
+        elif base_chat.chat_model.api_key_credential is None:
+            raise InvalidBaseChatObjectError('ChatModel.ApiKeyCredential', base_chat.chat_model.api_key_credential_id)
 
         built_chat_model = self.chat_model_builder_service.build(
             chat_model=base_chat.chat_model,
-            api_key=decoded_api_key
         )
 
         prompt = self.chat_prompt_template_builder.build(

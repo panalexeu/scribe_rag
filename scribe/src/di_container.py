@@ -30,6 +30,8 @@ from src.domain.models import (
 )
 from src.domain.services import (
     EncodeApiKeyCredentialService,
+)
+from src.domain.services.chat_model_builder import (
     ChatModelBuilder,
     ChatPromptTemplateBuilder
 )
@@ -163,7 +165,8 @@ class Container(DeclarativeContainer):
         codec=codec
     )
     chat_model_builder_service = Factory(
-        ChatModelBuilder
+        ChatModelBuilder,
+        codec
     )
     chat_prompt_template_builder = Factory(
         ChatPromptTemplateBuilder
