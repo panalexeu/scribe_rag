@@ -20,13 +20,13 @@ export default function NavList() {
             <ListItem disablePadding={true}>
                 <ListItemButton
                     onClick = {
-                        () => router.push('api-key')
+                        () => router.push('/api-key')
                     }
                 >
                     <ListItemIcon>
                         <KeyIcon/>
                     </ListItemIcon>
-                    <ListItemText primary={"Api Key Credentials"}/>
+                    <ListItemText primary={"Api Key Credential"}/>
                 </ListItemButton>
             </ListItem>
             <Divider/>

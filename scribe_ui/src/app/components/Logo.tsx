@@ -19,14 +19,14 @@ export default function Logo() {
                 <Tooltip title={'Home'}>
                     <IconButton
                         edge={'start'}
-                        onClick = {
+                        onClick={
                             () => router.push('/')
                         }
                     >
                         <HomeIcon/>
                     </IconButton>
                 </Tooltip>
-
+                
                 <Typography variant={'h5'}>
                     Scribe
                 </Typography>
