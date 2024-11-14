@@ -175,7 +175,7 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
             query_string: str,
             doc_names: Optional[list[str]] = None,
             n_results: Optional[int] = None,
-    ):
+    ) -> list[VectorChromaDocument]:
         if n_results is None:
             n_results = 1
 

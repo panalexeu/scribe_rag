@@ -134,7 +134,9 @@ def delete_base_chat(
 
 
 class BaseChatStreamModel(BaseModel):
-    prompt: str
+    query_string: str
+    doc_names: Optional[list[str]] = None
+    n_results: Optional[int] = None
 
 
 @router.post(
@@ -146,10 +148,10 @@ async def stream(
         item: BaseChatStreamModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    command = BaseChatStreamCommand(id_=id_, prompt=item.prompt)
-    async_generator = mediatr.send(command)
+    command = BaseChatStreamCommand(id_=id_, **item.model_dump())
+    async_generator = await mediatr.send_async(command)
 
     return StreamingResponse(
-        async_generator,
+        async_generator,  # type: ignore
         media_type='text/event-stream'
     )
