@@ -1,29 +1,17 @@
-"use client";
-
-import {useState} from "react";
 import '@fontsource/roboto/500.css'; // default font for whole app
 import {
     CssBaseline,
-    Toolbar,
     AppBar,
-    ThemeProvider,
-    IconButton,
     Drawer,
     Box,
-    Tooltip
-
+    Toolbar
 } from '@mui/material';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
-
-import {darkTheme, lightTheme} from "./theme";
 import NavList from './components/NavList';
 import Logo from './components/Logo';
 
 export default function RootLayout(
     {children}: { children: React.ReactNode }
 ) {
-    const [themeMode, setThemeMode] = useState(lightTheme);
     const drawerWidth = 256;
 
     return (
@@ -34,7 +22,6 @@ export default function RootLayout(
         </head>
 
         <body>
-        <ThemeProvider theme={themeMode}>
             <CssBaseline>
                 {/*APP_BAR*/}
                 <AppBar
@@ -45,15 +32,9 @@ export default function RootLayout(
                         ml: `${drawerWidth}px`
                     }}
                 >
-                    <Toolbar>
-                        <Tooltip title={'Change theme'}>
-                            <IconButton  sx={{marginLeft: 'auto'}}
-                                        onClick={() => themeMode === lightTheme ? setThemeMode(darkTheme) : setThemeMode(lightTheme)}
-                            >
-                                {themeMode === lightTheme ? <DarkModeIcon/> : <LightModeIcon/>}
-                            </IconButton>
-                        </Tooltip>
-                    </Toolbar>
+
+                <Toolbar/>
+
                 </AppBar>
 
                 {/*DRAWER*/}
@@ -81,7 +62,6 @@ export default function RootLayout(
                     {children}
                 </Box>
             </CssBaseline>
-        </ThemeProvider>
         </body>
         </html>
     );

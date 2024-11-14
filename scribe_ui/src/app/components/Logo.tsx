@@ -1,3 +1,5 @@
+'use client';
+
 import {
     Toolbar,
     IconButton,
@@ -6,19 +8,18 @@ import {
     Box,
     Tooltip
 } from "@mui/material";
+import {useRouter} from "next/navigation";
 import HomeIcon from '@mui/icons-material/Home';
-import { useRouter } from 'next/navigation';
 
 export default function Logo() {
     const router = useRouter();
-
     return (
         <Box>
             <Toolbar>
                 <Tooltip title={'Home'}>
                     <IconButton
                         edge={'start'}
-                        onClick={
+                        onClick = {
                             () => router.push('/')
                         }
                     >
