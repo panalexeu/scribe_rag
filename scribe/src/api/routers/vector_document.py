@@ -11,7 +11,8 @@ from src.handlers.vector_document import (
     DocCountQuery,
     DocDeleteCommand,
     DocPeekQuery,
-    DocQuery
+    DocQuery,
+    DocListDocsQuery
 )
 
 router = APIRouter(
@@ -142,4 +143,17 @@ async def query_doc(
         vec_col_name=vec_col_name,
         **item.model_dump()
     )
+    return await mediatr.send_async(query)
+
+
+@router.get(
+    path='/{vec_col_name}/docs',
+    response_model=list[str]
+)
+@inject
+async def list_docs_doc(
+        vec_col_name: str,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = DocListDocsQuery(vec_col_name=vec_col_name)
     return await mediatr.send_async(query)

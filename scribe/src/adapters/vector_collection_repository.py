@@ -111,6 +111,9 @@ class AbstractAsyncDocumentRepository(ABC):
     async def query(self, query_string, doc_names, n_results):
         pass
 
+    async def list_documents(self):
+        pass
+
 
 class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
     def __init__(self, async_collection: AsyncCollection):
@@ -201,6 +204,21 @@ class AsyncChromaDocumentRepository(AbstractAsyncDocumentRepository):
         )
 
         return self.map_query_get_result(res)
+
+    async def list_documents(self) -> list[str]:
+        res = await self.async_collection.get()
+
+        doc_names = set()
+        for item in res['metadatas']:
+            filename = item.get('filename')
+            url = item.get('url')
+
+            if filename:
+                doc_names.add(filename)
+            elif url:
+                doc_names.add(url)
+
+        return list(doc_names)
 
     @staticmethod
     def map_get_result(res: GetResult) -> list[VectorChromaDocument]:
