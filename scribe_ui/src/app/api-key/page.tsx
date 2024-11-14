@@ -1,3 +1,5 @@
 export default function Page() {
-    return <h1>api-key</h1>
+    return (
+        <p>hi</p>
+    );
 }

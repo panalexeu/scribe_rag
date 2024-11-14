@@ -26,7 +26,7 @@ export default function NavList() {
                     <ListItemIcon>
                         <KeyIcon/>
                     </ListItemIcon>
-                    <ListItemText primary={"Api Key Credential"}/>
+                    <ListItemText primary={"api-key"}/>
                 </ListItemButton>
             </ListItem>
             <Divider/>

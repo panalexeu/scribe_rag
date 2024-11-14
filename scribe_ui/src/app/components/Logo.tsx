@@ -26,9 +26,9 @@ export default function Logo() {
                         <HomeIcon/>
                     </IconButton>
                 </Tooltip>
-                
+
                 <Typography variant={'h5'}>
-                    Scribe
+                    scribe
                 </Typography>
             </Toolbar>
             <Divider/>

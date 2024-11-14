@@ -2,15 +2,17 @@
 
 import {
     Box,
-    Toolbar,
     Typography,
     Divider,
     TextField,
     Button,
-    Snackbar
+    Snackbar,
+    Breadcrumbs,
+    Link as MUILink
 } from '@mui/material';
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
+import Link from 'next/link';
 
 import {API_URL} from "@/src/config";
 
@@ -34,8 +36,7 @@ export default function Page() {
                 {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',  // Sending JSON data
-                        'accept': 'application/json',         // Telling the server we expect JSON response
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(
                         {
@@ -64,11 +65,21 @@ export default function Page() {
             alignItems={'flex-start'}
             gap={2}
         >
-            <Toolbar>
+            <Breadcrumbs>
                 <Typography variant={'h6'}>
-                    Add Api Key Credential
+                    <MUILink
+                        component={Link}
+                        href={'/api-key'}
+                        underline={'none'}
+                    >
+                        api-key
+                    </MUILink>
                 </Typography>
-            </Toolbar>
+                <Typography variant={'h6'}>
+                    add
+                </Typography>
+            </Breadcrumbs>
+
             <Divider sx={{width: '100%'}}/>
 
             <Box display={"flex"} gap={2}>
