@@ -242,6 +242,8 @@ def test_sqlalchemy_repo_method_returns_count(fake_session, faker):
         repo = SqlAlchemyRepository[FakeModel](session)
 
         assert repo.count() == 3
+
+
 def test_sqlalchemy_repo_read_raises_exception_if_a_nonexistent_id_is_provided(fake_session, faker):
     with fake_session as session:
         repo = SqlAlchemyRepository[FakeModel](session)
