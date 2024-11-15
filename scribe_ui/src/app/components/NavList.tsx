@@ -8,6 +8,7 @@ import {
     ListItemText,
     Divider,
 } from '@mui/material';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import DescriptionIcon from '@mui/icons-material/Description';
 import KeyIcon from "@mui/icons-material/Key";
 import { useRouter } from 'next/navigation';
@@ -43,6 +44,21 @@ export default function NavList() {
                         <DescriptionIcon/>
                     </ListItemIcon>
                     <ListItemText primary={"sys-prompt"}/>
+                </ListItemButton>
+            </ListItem>
+            <Divider/>
+
+            {/* doc-proc-cnf */}
+            <ListItem disablePadding={true}>
+                <ListItemButton
+                    onClick = {
+                        () => router.push('/doc-proc-cnf')
+                    }
+                >
+                    <ListItemIcon>
+                        <PendingActionsIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary={"doc-proc-cnf"}/>
                 </ListItemButton>
             </ListItem>
             <Divider/>
