@@ -84,7 +84,7 @@ export default function Page() {
 
             <Divider sx={{width: '100%'}}/>
 
-            {/* CONTENT */}
+            {/* MAIN CONTENT */}
             <Box
                 display={"flex"}
                 flexDirection={'column'}
@@ -105,6 +105,7 @@ export default function Page() {
                 <TextField
                     id={'sys-prompt'}
                     label={'sys-prompt'}
+                    value={content}
                     multiline
                     rows={16}
                     variant={'outlined'}
