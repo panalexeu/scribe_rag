@@ -15,7 +15,7 @@ import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 
 import {ApiKeyPostModel} from '../models';
-import {API_URL} from "@/src/config";
+import {API_URL} from "@/src/constants";
 
 export default function Page() {
     const router = useRouter();

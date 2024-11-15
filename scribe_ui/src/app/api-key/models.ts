@@ -9,9 +9,9 @@ export const ApiKeyPutModel = z.object({
     name: z.string().nullable()
 });
 
-export const ApiKeyResponseModel = z.object({
-    id: z.number(),
-    name: z.string(),
-    api_key: z.string(),
-    datetime: z.string()
-})
+export interface ApiKeyResponseModel {
+    id: number,
+    name: string,
+    api_key: string,
+    datetime: string
+}

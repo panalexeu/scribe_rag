@@ -14,8 +14,11 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
-import {API_URL} from "@/src/config";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+
+import {API_URL, PAGE_LIMIT} from "@/src/constants";
+import {ApiKeyResponseModel} from './models';
+import {parseDateTime} from '@/src/utils';
 
 export default function Page() {
     const router = useRouter();
@@ -23,60 +26,53 @@ export default function Page() {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [count, setCount] = useState(null);
     const [currPage, setCurrPage] = useState(1);
-    const [items, setItems] = useState([]);
-    const limit = 8;
+    const [items, setItems] = useState<ApiKeyResponseModel[]>([]);
 
-
-    useEffect(() => {
-        async function fetchApiKeyCount() {
-            try {
-                const response = await fetch(
-                    `${API_URL}/api-key/count`,
-                    {
-                        method: 'GET'
-                    }
-                );
-
-                if (response.status === 200) {
-                    const data = await response.json();
-                    setCount(data);
-                } else {
-                    setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
-                    setOpenSnackbar(true);
+    async function fetchApiKeyCount() {
+        try {
+            const response = await fetch(
+                `${API_URL}/api-key/count`,
+                {
+                    method: 'GET'
                 }
-            } catch (error) {
-                setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            );
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setCount(data);
+            } else {
+                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
                 setOpenSnackbar(true);
             }
+        } catch (error) {
+            setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            setOpenSnackbar(true);
         }
+    }
 
-        async function fetchItems() {
-            const offset = (currPage - 1) * limit;
+    async function fetchItems() {
+        const offset = (currPage - 1) * PAGE_LIMIT;
 
-            try {
-                const response = await fetch(
-                    `${API_URL}/api-key/?limit=${limit}&offset=${offset}`,
-                    {
-                        method: 'GET'
-                    }
-                );
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setItems(data);
-                } else {
-                    setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
-                    setOpenSnackbar(true);
+        try {
+            const response = await fetch(
+                `${API_URL}/api-key/?limit=${PAGE_LIMIT}&offset=${offset}`,
+                {
+                    method: 'GET'
                 }
-            } catch (error) {
-                setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setItems(data);
+            } else {
+                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
                 setOpenSnackbar(true);
             }
+        } catch (error) {
+            setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            setOpenSnackbar(true);
         }
-
-        fetchApiKeyCount();
-        fetchItems();
-    }, []);
+    }
 
     async function handleDelete(id: number) {
         try {
@@ -90,6 +86,7 @@ export default function Page() {
             if (response.status == 204) {
                 setSnackbarMessage(`api key with the id: ${id} was successfully deleted 🥳`);
                 setOpenSnackbar(true);
+                await fetchItems();
             } else {
                 setSnackbarMessage(`Something went wrong 😢, status code: ${response.status}`);
                 setOpenSnackbar(true);
@@ -100,6 +97,11 @@ export default function Page() {
         }
     }
 
+    useEffect(() => {
+        fetchApiKeyCount();
+        fetchItems();
+    }, []);
+
     return (
         <Box
             display={'flex'}
@@ -108,7 +110,7 @@ export default function Page() {
             gap={2}
         >
             {/*TOP PANEL*/}
-            <Box display={'flex'} flexDirection={'row'} width={'100%'}>
+            <Box display={'flex'} width={'100%'}>
                 <Breadcrumbs>
                     <Typography variant={'h6'}>
                         api-key
@@ -138,7 +140,16 @@ export default function Page() {
                         <Box
                             display={'flex'}
                         >
-                            <Typography>{item.name}</Typography>
+                            {/* DATE */}
+                            <Typography color={'textSecondary'}>
+                                {parseDateTime(item.datetime)}
+                            </Typography>
+
+                            {/* NAME */}
+                            <Typography marginLeft={4}>{item.name}</Typography>
+
+                            {/* ACTIONS */}
+                            {/* DELETE */}
                             <Tooltip title={'delete api-key'}>
                                 <IconButton
                                     sx={{ml: 'auto'}}
@@ -148,6 +159,8 @@ export default function Page() {
                                     <DeleteIcon/>
                                 </IconButton>
                             </Tooltip>
+
+                            {/* OPEN */}
                             <Tooltip
                                 title={'open api-key'}
                                 onClick={() => router.push(`/api-key/${item.id}`)}
