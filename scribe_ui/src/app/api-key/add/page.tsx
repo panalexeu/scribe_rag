@@ -14,6 +14,7 @@ import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 
+import {ApiKeyPostModel} from '../models';
 import {API_URL} from "@/src/config";
 
 export default function Page() {
@@ -31,6 +32,11 @@ export default function Page() {
         }
 
         try {
+            const apiKeyPostRequest = ApiKeyPostModel.parse({
+                name: name,
+                api_key: apiKey
+            })
+
             const response = await fetch(
                 `${API_URL}/api-key/`,
                 {
@@ -38,12 +44,7 @@ export default function Page() {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(
-                        {
-                            name: name,
-                            api_key: apiKey
-                        }
-                    )
+                    body: JSON.stringify(apiKeyPostRequest)
                 }
             );
             if (response.status == 201) {
@@ -65,6 +66,7 @@ export default function Page() {
             alignItems={'flex-start'}
             gap={2}
         >
+            {/*TOP PANEL*/}
             <Breadcrumbs>
                 <Typography variant={'h6'}>
                     <MUILink
@@ -82,6 +84,7 @@ export default function Page() {
 
             <Divider sx={{width: '100%'}}/>
 
+            {/* CONTENT */}
             <Box display={"flex"} gap={2}>
                 <TextField
                     id={'name'}
@@ -111,7 +114,7 @@ export default function Page() {
                 submit
             </Button>
 
-            {/* informing snackbar*/}
+            {/* INFO SNACKBAR */}
             <Snackbar
                 open={openSnackbar}
                 message={snackbarMessage}
