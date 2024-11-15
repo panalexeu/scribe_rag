@@ -33,7 +33,7 @@ export interface DocProcCnfResponseModel {
     datetime: string
 }
 
-const Postprocessor = Object.freeze({
+export const Postprocessor = Object.freeze({
     BYTES_STRING_TO_STRING: "bytes_string_to_string",
     CLEAN: "clean",
     CLEAN_BULLETS: "clean_bullets",
@@ -47,7 +47,7 @@ const Postprocessor = Object.freeze({
 
 })
 
-const ChunkingStrategy = Object.freeze({
+export const ChunkingStrategy = Object.freeze({
     BASIC: "basic",
     BY_TITLE: "by_title"
 })
