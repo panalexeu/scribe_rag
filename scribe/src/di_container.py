@@ -97,7 +97,7 @@ class Container(DeclarativeContainer):
     engine = Singleton(
         create_engine,
         url='sqlite:///:memory:',
-        echo=True,
+        echo=False,
         poolclass=StaticPool,
         connect_args={'check_same_thread': False}
     )

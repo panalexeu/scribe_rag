@@ -106,7 +106,7 @@ class SqlAlchemyRepository[T](AbstractRepository):
 
         # resolving attributes to be updated in obj_ based on the provided **kwargs
         for key, value in kwargs.items():
-            if item_dict.get(key) is not None and value is not None:
+            if key in item_dict and value is not None:
                 setattr(item, key, value)
 
         self.session.flush()
