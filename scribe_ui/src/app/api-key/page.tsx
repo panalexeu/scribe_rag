@@ -9,6 +9,7 @@ import {
     IconButton,
     Tooltip,
     Stack,
+    Pagination
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -86,6 +87,7 @@ export default function Page() {
             if (response.status == 204) {
                 setSnackbarMessage(`api key with the id: ${id} was successfully deleted 🥳`);
                 setOpenSnackbar(true);
+                await fetchApiKeyCount();
                 await fetchItems();
             } else {
                 setSnackbarMessage(`Something went wrong 😢, status code: ${response.status}`);
@@ -100,7 +102,7 @@ export default function Page() {
     useEffect(() => {
         fetchApiKeyCount();
         fetchItems();
-    }, []);
+    }, [currPage]);
 
     return (
         <Box
@@ -173,6 +175,16 @@ export default function Page() {
                     ))
                 }
             </Stack>
+
+            {/* Pagination */}
+            <Pagination
+                count={Math.ceil(count / PAGE_LIMIT)}
+                page={currPage}
+                onChange={(_, page) => {
+                    setCurrPage(page)
+                }}
+            />
+
 
             {/* INFO SNACKBAR */}
             <Snackbar
