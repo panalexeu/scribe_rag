@@ -11,6 +11,7 @@ import {
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import DescriptionIcon from '@mui/icons-material/Description';
 import KeyIcon from "@mui/icons-material/Key";
+import DataArrayIcon from '@mui/icons-material/DataArray';
 import { useRouter } from 'next/navigation';
 
 export default function NavList() {
@@ -62,6 +63,22 @@ export default function NavList() {
                 </ListItemButton>
             </ListItem>
             <Divider/>
+
+            {/* embed-model */}
+            <ListItem disablePadding={true}>
+                <ListItemButton
+                    onClick = {
+                        () => router.push('/embed-model')
+                    }
+                >
+                    <ListItemIcon>
+                        <DataArrayIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary={"embed-model"}/>
+                </ListItemButton>
+            </ListItem>
+            <Divider/>
+
 
         </List>
     );
