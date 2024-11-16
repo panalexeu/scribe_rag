@@ -60,22 +60,29 @@ class DocProcessingConfig:
             list(map(lambda x: x.value, postprocessors))
         ) if postprocessors is not None else None
         self.chunking_strategy = chunking_strategy
+        self.max_characters = max_characters
+        self.new_after_n_chars = new_after_n_chars
+        self.overlap = overlap
+        self.overlap_all = overlap_all
 
+        self._normalize_attrs()  # <-- preserving configuration logic
+
+    @property
+    def deserialized_postprocessors(self) -> list[Postprocessor] | None:
+        return list(map(lambda p: Postprocessor(p), json.loads(self.postprocessors))) \
+            if self.postprocessors is not None else None
+
+    def _normalize_attrs(self):
         if self.chunking_strategy is None:
             self.max_characters = None
             self.new_after_n_chars = None
             self.overlap = None
             self.overlap_all = None
         else:
-            self.max_characters = 500 if max_characters is None else max_characters
-            self.new_after_n_chars = self.max_characters if new_after_n_chars is None else new_after_n_chars
-            self.overlap = 0 if overlap is None else overlap
-            self.overlap_all = False if overlap_all is None else overlap_all
-
-    @property
-    def deserialized_postprocessors(self) -> list[Postprocessor] | None:
-        return list(map(lambda p: Postprocessor(p), json.loads(self.postprocessors))) \
-            if self.postprocessors is not None else None
+            self.max_characters = 500 if self.max_characters is None else self.max_characters
+            self.new_after_n_chars = self.max_characters if self.new_after_n_chars is None else self.new_after_n_chars
+            self.overlap = 0 if self.overlap is None else self.overlap
+            self.overlap_all = False if self.overlap_all is None else self.overlap_all
 
 
 class ChatModel:
