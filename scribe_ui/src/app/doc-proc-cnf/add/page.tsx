@@ -47,9 +47,9 @@ export default function Page() {
         try {
             const postRequest = DocProcCnfPostModel.parse({
                 name: name,
-                max_characters: Number(maxChars),
-                new_after_n_chars: Number(newAfterNChars),
-                overlap: Number(overlap),
+                max_characters: !maxChars  ? null : Number(maxChars),
+                new_after_n_chars: !newAfterNChars ? null : Number(newAfterNChars),
+                overlap: !overlap ? null: Number(overlap),
                 overlap_all: overlapAll,
                 postprocessors: postprocessors,
                 chunking_strategy: chunkingStrategy
@@ -114,73 +114,89 @@ export default function Page() {
                 />
             </Box>
 
-            {/* CHARS SETTINGS */}
-            <Box
-                display={"flex"}
-                gap={2}
-            >
-                <TextField
-                    id={'max-chars'}
-                    label={'max-chars'}
-                    variant={'standard'}
-                    type={'number'}
-                    value={maxChars}
-                    onChange={(e) => setMaxChars(e.target.value)}
-                />
-
-                <TextField
-                    id={'new-after-n-chars'}
-                    label={'new-after-n-chars'}
-                    variant={'standard'}
-                    type={'number'}
-                    value={newAfterNChars}
-                    onChange={(e) => setNewAfterNChars(e.target.value)}
-                />
-            </Box>
-
-            {/* OVERLAP SETTINGS*/}
-            <Box
-                display={"flex"}
-                gap={2}
-            >
-                <TextField
-                    id={'overlap'}
-                    label={'overlap'}
-                    variant={'standard'}
-                    type={'number'}
-                    value={overlap}
-                    onChange={(e) => setOverlap(e.target.value)}
-                />
-
-                <FormControlLabel
-                    control={
-                        <Switch checked={overlapAll} onChange={(e) => setOverlapAll(e.target.checked)}/>
-                    }
-                    label="overlap-all"
-                />
-            </Box>
-
             {/* ENUMS */}
             <Box
                 display={"flex"}
                 gap={2}
+                width={'50%'}
             >
                 <Autocomplete
+                    fullWidth={true}
                     value={chunkingStrategy}
                     options={chunkingStrategyEnum}
-                    renderInput={(params) => <TextField {...params} label="chunking-strategy" />}
-                    onChange={(event, newValue) => setChunkingStrategy(newValue)}
+                    renderInput={(params) => <TextField {...params} label="chunking-strategy"/>}
+                    onChange={(_, newValue) => setChunkingStrategy(newValue)}
 
                 />
 
                 <Autocomplete
+                    fullWidth={true}
                     multiple
                     value={postprocessors}
                     options={postprocessorEnum}
-                    onChange={(event, newValue: string[]) => setPostprocessors([...new Set(newValue)])}
+                    onChange={(_, newValue: string[]) => setPostprocessors([...new Set(newValue)])}
                     renderInput={(params) => <TextField {...params} label="postprocessors" />}
                 />
             </Box>
+
+            {/* CONTENT THAT APPEARS AFTER CHUNKING STRATEGY CHOICE*/}
+            { chunkingStrategy && <Box>
+                <Divider/>
+
+                <Typography color={'textSecondary'}>
+                    chunking strategy params
+                </Typography>
+
+
+                {/* CHARS SETTINGS */}
+                <Box
+                    display={"flex"}
+                    gap={2}
+                >
+                    <TextField
+                        id={'max-chars'}
+                        label={'max-chars'}
+                        variant={'standard'}
+                        type={'number'}
+                        value={maxChars}
+                        onChange={(e) => setMaxChars(e.target.value)}
+                    />
+
+                    <TextField
+                        id={'new-after-n-chars'}
+                        label={'new-after-n-chars'}
+                        variant={'standard'}
+                        type={'number'}
+                        value={newAfterNChars}
+                        onChange={(e) => setNewAfterNChars(e.target.value)}
+                    />
+                </Box>
+
+                {/* OVERLAP SETTINGS*/}
+                <Box
+                    display={"flex"}
+                    gap={2}
+                >
+                    <TextField
+                        id={'overlap'}
+                        label={'overlap'}
+                        variant={'standard'}
+                        type={'number'}
+                        value={overlap}
+                        onChange={(e) => setOverlap(e.target.value)}
+                    />
+
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={overlapAll}
+                                onChange={(e) => setOverlapAll(e.target.checked)}
+                            />
+                        }
+                        label="overlap-all"
+                    />
+                </Box>
+            </Box> }
 
             {/* SUBMIT */}
             <Button
