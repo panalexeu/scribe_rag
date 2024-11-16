@@ -133,7 +133,7 @@ export default function Page() {
     useEffect(() => {
         fetchApiKeyCount()
         fetchApiKeyItems()
-    }, [])
+    }, [currPage])
 
     return (
         <Box
