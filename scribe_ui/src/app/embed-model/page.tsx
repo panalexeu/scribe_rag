@@ -83,7 +83,7 @@ export default function Page() {
                 await fetchCount();
                 await fetchItems();
             } else {
-                setSnackbarMessage(`Something went wrong 😢, status code: ${response.status}`);
+                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
                 setOpenSnackbar(true);
             }
         } catch (error) {
