@@ -36,7 +36,7 @@ export default function Page() {
 
 
     const [name, setName] = useState(null);
-    const [apiKeyCredential, setApiKeyCredentialId] = useState<ApiKeyResponseModel>(null);
+    const [apiKeyCredential, setApiKeyCredential] = useState<ApiKeyResponseModel>(null);
     const [apiKeys, setApiKeys] = useState<ApiKeyResponseModel[]>([]);
 
     const embeddingModelNameEnum = Object.values(EmbeddingModelName);
@@ -205,9 +205,10 @@ export default function Page() {
                             </TableRow>
                         </TableHead>
 
+                        {/* TABLE CONTENT */}
                         { apiKeys.map((apiKey) => (
                             <TableRow
-                                onClick={() => {setApiKeyCredentialId(apiKey)}}
+                                onClick={() => {setApiKeyCredential(apiKey)}}
                                 sx={{
                                     cursor: 'pointer',
                                     backgroundColor: apiKeyCredential && apiKeyCredential.id === apiKey.id ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
