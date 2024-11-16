@@ -13,6 +13,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import KeyIcon from "@mui/icons-material/Key";
 import DataArrayIcon from '@mui/icons-material/DataArray';
 import { useRouter } from 'next/navigation';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 
 export default function NavList() {
     const router = useRouter();
@@ -79,6 +80,20 @@ export default function NavList() {
             </ListItem>
             <Divider/>
 
+            {/* chat-model */}
+            <ListItem disablePadding={true}>
+                <ListItemButton
+                    onClick = {
+                        () => router.push('/chat-model')
+                    }
+                >
+                    <ListItemIcon>
+                        <SmartToyIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary={"chat-model"}/>
+                </ListItemButton>
+            </ListItem>
+            <Divider/>
 
         </List>
     );

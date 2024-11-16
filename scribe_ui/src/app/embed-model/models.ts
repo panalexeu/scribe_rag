@@ -21,8 +21,13 @@ export interface EmbeddingModelResponseModel {
 }
 
 export const EmbeddingModelName = Object.freeze({
+    // local
     ALL_MINILM_L6_V2: 'all-MiniLM-L6-v2',
+
+    // open ai
     TEXT_EMBEDDING_3_SMALL: 'text-embedding-3-small',
+
+    // cohere
     EMBED_ENGLISH_LIGHT_V3_0: 'embed-english-light-v3.0',
     EMBED_MULTILINGUAL_LIGHT_V3_0: 'embed-multilingual-light-v3.0'
 })
