@@ -241,7 +241,7 @@ export default function Page() {
                 variant={'standard'}
                 type={'number'}
                 value={temperature}
-                onChange={(e) => setTopP(e.target.value)}
+                onChange={(e) => setTemperature(e.target.value)}
             />
 
 
@@ -269,6 +269,14 @@ export default function Page() {
                     }}
                 >
                     add
+                </Button>
+
+                <Button
+                    onClick={(event) => {
+                        setStopSequences([]);
+                    }}
+                >
+                    clear
                 </Button>
             </Box>
 
