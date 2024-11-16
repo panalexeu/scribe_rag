@@ -23,6 +23,7 @@ import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 
+import {parseDateTime} from "@/src/utils";
 import {ApiKeyResponseModel} from "@/src/app/api-key/models";
 import {EmbeddingModelPostModel, EmbeddingModelName} from '../models';
 import {API_URL, TABLE_PAGE_LIMIT} from "@/src/constants";
@@ -190,21 +191,20 @@ export default function Page() {
             </Typography>
             <TableContainer>
                 <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>
+                                datetime
+                            </TableCell>
+                            <TableCell>
+                                name
+                            </TableCell>
+                            <TableCell>
+                                api-key
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
                     <TableBody>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    datetime
-                                </TableCell>
-                                <TableCell>
-                                    name
-                                </TableCell>
-                                <TableCell>
-                                    api-key
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-
                         {/* TABLE CONTENT */}
                         { apiKeys.map((apiKey) => (
                             <TableRow
@@ -215,7 +215,7 @@ export default function Page() {
                                 }}
                             >
                                 <TableCell>
-                                    {apiKey.datetime}
+                                    {parseDateTime(apiKey.datetime)}
                                 </TableCell>
                                 <TableCell>
                                     {apiKey.name}

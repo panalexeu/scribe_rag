@@ -2,9 +2,6 @@
 
 import {useParams, useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
-import {API_URL, TABLE_PAGE_LIMIT} from "@/src/constants";
-import {EmbeddingModelName, EmbeddingModelPutModel, EmbeddingModelResponseModel} from '../models';
-import {ApiKeyResponseModel} from "@/src/app/api-key/models";
 import {
     Autocomplete,
     Box,
@@ -16,6 +13,12 @@ import {
     Typography
 } from "@mui/material";
 import Link from "next/link";
+
+import {API_URL, TABLE_PAGE_LIMIT} from "@/src/constants";
+import {EmbeddingModelName, EmbeddingModelPutModel, EmbeddingModelResponseModel} from '../models';
+import {ApiKeyResponseModel} from "@/src/app/api-key/models";
+import {parseDateTime} from "@/src/utils";
+
 
 export default function Page() {
     const {id} = useParams();
@@ -205,21 +208,20 @@ export default function Page() {
             </Typography>
             <TableContainer>
                 <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>
+                                datetime
+                            </TableCell>
+                            <TableCell>
+                                name
+                            </TableCell>
+                            <TableCell>
+                                api-key
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
                     <TableBody>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    datetime
-                                </TableCell>
-                                <TableCell>
-                                    name
-                                </TableCell>
-                                <TableCell>
-                                    api-key
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-
                         {/* TABLE CONTENT */}
                         {apiKeys.map((apiKey) => (
                             <TableRow
@@ -232,7 +234,7 @@ export default function Page() {
                                 }}
                             >
                                 <TableCell>
-                                    {apiKey.datetime}
+                                    {parseDateTime(apiKey.datetime)}
                                 </TableCell>
                                 <TableCell>
                                     {apiKey.name}
