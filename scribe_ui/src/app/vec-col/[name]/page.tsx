@@ -113,7 +113,7 @@ export default function Page() {
                     scroll={scroll}
                 >
                     <DialogTitle>metadata</DialogTitle>
-                    <DialogContent>
+                    <DialogContent dividers={true}>
                         <DialogContentText>
                             {JSON.stringify(!vectorCollection ? null : vectorCollection.metadata)}
                         </DialogContentText>
