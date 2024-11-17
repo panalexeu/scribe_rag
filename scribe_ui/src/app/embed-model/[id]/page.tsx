@@ -166,7 +166,7 @@ export default function Page() {
                     </MUILink>
                 </Typography>
                 <Typography variant={'h6'}>
-                    add
+                    {id}
                 </Typography>
             </Breadcrumbs>
 
