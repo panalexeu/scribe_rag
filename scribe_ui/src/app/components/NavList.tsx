@@ -14,6 +14,7 @@ import KeyIcon from "@mui/icons-material/Key";
 import DataArrayIcon from '@mui/icons-material/DataArray';
 import { useRouter } from 'next/navigation';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
+import PolylineIcon from '@mui/icons-material/Polyline';
 
 export default function NavList() {
     const router = useRouter();
@@ -91,6 +92,21 @@ export default function NavList() {
                         <SmartToyIcon/>
                     </ListItemIcon>
                     <ListItemText primary={"chat-model"}/>
+                </ListItemButton>
+            </ListItem>
+            <Divider/>
+
+            {/* vec-col */}
+            <ListItem disablePadding={true}>
+                <ListItemButton
+                    onClick = {
+                        () => router.push('/vec-col')
+                    }
+                >
+                    <ListItemIcon>
+                        <PolylineIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary={"vec-col"}/>
                 </ListItemButton>
             </ListItem>
             <Divider/>
