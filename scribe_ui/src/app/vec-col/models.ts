@@ -18,3 +18,11 @@ export const DistanceFunction = Object.freeze({
     IP: 'ip',
     COSINE: 'cosine'
 })
+
+export interface VectorDocumentResponseModel {
+    id_: string,
+    distance: number | null,
+    embedding: string,
+    document: string,
+    metadata: Object
+}

@@ -15,7 +15,8 @@ import {
     DialogTitle,
     DialogProps, List, ListItem, ListItemText, ListItemIcon,
     IconButton,
-    DialogActions,
+    DialogActions, CardContent, Card,
+    Paper,
     CircularProgress, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TablePagination,
 } from "@mui/material";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -27,7 +28,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import {useState, useEffect} from "react";
 
 import {DocProcCnfResponseModel} from '@/src/app/doc-proc-cnf/models';
-import {VectorCollectionResponseModel} from '../models';
+import {VectorCollectionResponseModel, VectorDocumentResponseModel} from '../models';
 import {API_URL, PAGE_LIMIT, TABLE_PAGE_LIMIT} from "@/src/constants";
 import Link from "next/link";
 import {parseDateTime} from "@/src/utils";
@@ -49,7 +50,29 @@ export default function Page() {
     const [uploading, setUploading] = useState(false);
     const [docProcConfigs, setDocProcConfigs] = useState<DocProcCnfResponseModel[]>([]);
     const [docProcessingConfig, setDocProcessingConfig] = useState(null);
+    const [vecColPeek, setVecColPeek] = useState<VectorDocumentResponseModel[]>([]);
 
+    async function fetchVectorCollectionPeek() {
+        try {
+            const response = await fetch(
+                `${API_URL}/vec-doc/${name}/peek`,
+                {
+                    method: 'GET'
+                }
+            );
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setVecColPeek(data);
+            } else {
+                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
+                setOpenSnackbar(true);
+            }
+        } catch (error) {
+            setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            setOpenSnackbar(true);
+        }
+    }
 
     async function fetchDocProcCnfCount() {
         try {
@@ -170,6 +193,11 @@ export default function Page() {
             if (response.status === 201) {
                 setSnackbarMessage(`docs were successfully uploaded 🥳`);
                 setOpenSnackbar(true);
+
+                // emptying selected files, and refetching the peek
+                setSelectedUrls([]);
+                setSelectedFiles([]);
+                fetchVectorCollectionPeek();
             } else {
                 setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
                 setOpenSnackbar(true);
@@ -186,6 +214,7 @@ export default function Page() {
         fetchDocProcCnfCount()
         fetchDocProcCnfItems()
         fetchVectorCollection()
+        fetchVectorCollectionPeek()
     }, []);
 
     return (
@@ -259,82 +288,174 @@ export default function Page() {
 
             <Divider sx={{width: '100%'}}/>
 
-            {/* DOC PROC CNF*/}
-            <Box>
+            {/* DOC PROC CNF AND DATA PEEK*/}
+            <Box
+                display={'flex'}
+                flexDirection={'row'}
+                gap={2}
+                sx={{width: '100%'}}
+            >
+                {/* DOC PROC CNF */}
                 <Box
-                    display={'flex'}
-                    gap={2}
+                    sx={{width: '50%'}}
                 >
-                    <Typography>
-                        doc-proc-cnf
-                    </Typography>
+                    <Box
+                        display={'flex'}
+                        gap={2}
+                    >
+                        <Typography>
+                            doc-proc-cnf
+                        </Typography>
 
-                    <TextField
-                        id={'doc-proc-cnf'}
-                        variant={'outlined'}
-                        label={'doc-proc-cnf'}
-                        value={!docProcessingConfig ? '' : docProcessingConfig.name}
-                        inputProps={{readOnly: true,}}
+                        <TextField
+                            id={'doc-proc-cnf'}
+                            variant={'outlined'}
+                            label={'doc-proc-cnf'}
+                            value={!docProcessingConfig ? '' : docProcessingConfig.name}
+                            inputProps={{readOnly: true,}}
+                        />
+                    </Box>
+
+                    {/* TABLE */}
+                    <TableContainer>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>
+                                        datetime
+                                    </TableCell>
+                                    <TableCell>
+                                        name
+                                    </TableCell>
+                                    <TableCell>
+                                        link
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {/* TABLE CONTENT */}
+                                {docProcConfigs.map((docProcCnf) => (
+                                    <TableRow
+                                        onClick={() => {
+                                            setDocProcessingConfig(docProcCnf)
+                                        }}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            backgroundColor: docProcessingConfig && docProcessingConfig.id === docProcCnf.id ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+                                        }}
+                                    >
+                                        <TableCell>
+                                            {parseDateTime(docProcCnf.datetime)}
+                                        </TableCell>
+                                        <TableCell>
+                                            {docProcCnf.name}
+                                        </TableCell>
+                                        <TableCell>
+                                            <MUILink
+                                                component={Link}
+                                                href={`/doc-proc-cnf/${docProcCnf.id}`}
+                                                underline={'none'}
+                                            >
+                                                <OpenInNewIcon/>
+                                            </MUILink>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                                }
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        page={currPage - 1}
+                        count={count}
+                        onPageChange={(_, newPage) => {
+                            setCurrPage(newPage + 1)
+                        }}
+                        rowsPerPage={TABLE_PAGE_LIMIT}
+                        rowsPerPageOptions={[]}
                     />
                 </Box>
 
-                <TableContainer>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    datetime
-                                </TableCell>
-                                <TableCell>
-                                    name
-                                </TableCell>
-                                <TableCell>
-                                    link
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {/* TABLE CONTENT */}
-                            {docProcConfigs.map((docProcCnf) => (
-                                <TableRow
-                                    onClick={() => {
-                                        setDocProcessingConfig(docProcCnf)
-                                    }}
+                {/* DATA PEEK */}
+                <Box
+                    sx={{
+                        width: '50%',
+                        overflow: 'hidden',
+                    }}
+                    display="flex"
+                    flexDirection="column"
+                    gap={2}
+                    maxHeight={416}
+                >
+                    {/* TOP PANEL */}
+                    <Box
+                        display={'flex'}
+                        gap={1}
+                    >
+                        <Typography>
+                            vec-col data-peek
+                        </Typography>
+
+                        <MUILink
+                            component={Link}
+                            href={`/vec-col/${name}/explore`}
+                            underline={'none'}
+                        >
+                            <OpenInNewIcon/>
+                        </MUILink>
+                    </Box>
+
+                    <Paper
+                        sx={{
+                            flex: 1,
+                            overflow: 'hidden',
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}
+                        variant="outlined"
+                    >
+                        <Box
+                            sx={{
+                                padding: 1,
+                                overflowY: 'auto',
+                                maxHeight: '100%',
+                            }}
+                        >
+                            {vecColPeek.map((peek, index) => (
+                                <Card
+                                    key={index}
+                                    variant="outlined"
                                     sx={{
-                                        cursor: 'pointer',
-                                        backgroundColor: docProcessingConfig && docProcessingConfig.id === docProcCnf.id ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+                                        padding: 1,
+                                        overflowX: 'auto'
                                     }}
                                 >
-                                    <TableCell>
-                                        {parseDateTime(docProcCnf.datetime)}
-                                    </TableCell>
-                                    <TableCell>
-                                        {docProcCnf.name}
-                                    </TableCell>
-                                    <TableCell>
-                                        <MUILink
-                                            component={Link}
-                                            href={`/doc-proc-cnf/${docProcCnf.id}`}
-                                            underline={'none'}
-                                        >
-                                            <OpenInNewIcon/>
-                                        </MUILink>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                            }
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    page={currPage - 1}
-                    count={count}
-                    onPageChange={(_, newPage) => {
-                        setCurrPage(newPage + 1)
-                    }}
-                    rowsPerPage={TABLE_PAGE_LIMIT}
-                    rowsPerPageOptions={[]}
-                />
+                                    <CardContent>
+                                        <Typography>
+                                            ID: <strong>{peek.id_}</strong>
+                                        </Typography>
+
+                                        <Typography >
+                                            <strong>Embedding:</strong> {peek.embedding}
+                                        </Typography>
+
+                                        <Typography >
+                                            <strong>Document:</strong> {peek.document}
+                                        </Typography>
+
+                                        <Typography >
+                                            <strong>Metadata:</strong>
+                                            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                                                {JSON.stringify(peek.metadata, null, 2)}
+                                            </pre>
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </Box>
+                    </Paper>
+                </Box>
+
 
             </Box>
 
