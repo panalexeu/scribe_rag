@@ -16,8 +16,9 @@ import {
     DialogProps, List, ListItem, ListItemText, ListItemIcon,
     IconButton,
     DialogActions,
-    CircularProgress
+    CircularProgress, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TablePagination,
 } from "@mui/material";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import LinkIcon from '@mui/icons-material/Link';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
@@ -25,9 +26,11 @@ import {useParams} from "next/navigation";
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import {useState, useEffect} from "react";
 
+import {DocProcCnfResponseModel} from '@/src/app/doc-proc-cnf/models';
 import {VectorCollectionResponseModel} from '../models';
-import {API_URL, TABLE_PAGE_LIMIT} from "@/src/constants";
+import {API_URL, PAGE_LIMIT, TABLE_PAGE_LIMIT} from "@/src/constants";
 import Link from "next/link";
+import {parseDateTime} from "@/src/utils";
 
 export default function Page() {
     const {name} = useParams();
@@ -35,6 +38,8 @@ export default function Page() {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [urlDialog, setUrlDialog] = useState(false);
     const [scroll, setScroll] = useState<DialogProps['scroll']>('paper');
+    const [count, setCount] = useState(null);
+    const [currPage, setCurrPage] = useState(1);
 
     const [vectorCollection, setVectorCollection] = useState<VectorCollectionResponseModel>(null)
 
@@ -42,6 +47,55 @@ export default function Page() {
     const [selectedUrls, setSelectedUrls] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [uploading, setUploading] = useState(false);
+    const [docProcConfigs, setDocProcConfigs] = useState<DocProcCnfResponseModel[]>([]);
+    const [docProcessingConfig, setDocProcessingConfig] = useState(null);
+
+
+    async function fetchDocProcCnfCount() {
+        try {
+            const response = await fetch(
+                `${API_URL}/doc-proc-cnf/count`,
+                {
+                    method: 'GET'
+                }
+            );
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setCount(data);
+            } else {
+                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
+                setOpenSnackbar(true);
+            }
+        } catch (error) {
+            setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            setOpenSnackbar(true);
+        }
+    }
+
+    async function fetchDocProcCnfItems() {
+        const offset = (currPage - 1) * PAGE_LIMIT;
+
+        try {
+            const response = await fetch(
+                `${API_URL}/doc-proc-cnf/?limit=${PAGE_LIMIT}&offset=${offset}`,
+                {
+                    method: 'GET'
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setDocProcConfigs(data);
+            } else {
+                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
+                setOpenSnackbar(true);
+            }
+        } catch (error) {
+            setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            setOpenSnackbar(true);
+        }
+    }
 
     async function fetchVectorCollection() {
         try {
@@ -80,6 +134,12 @@ export default function Page() {
     }
 
     const handleUpload = async () => {
+        if (!docProcessingConfig) {
+            setSnackbarMessage(`provide doc-proc-cnf! 😡`);
+            setOpenSnackbar(true);
+            return;
+        }
+
         if (selectedFiles.length === 0 && selectedUrls.length == 0) {
             setSnackbarMessage(`add files/urls to upload 😡`);
             setOpenSnackbar(true);
@@ -92,7 +152,7 @@ export default function Page() {
         const formData = new FormData();
         if (selectedFiles.length > 0) selectedFiles.forEach((file) => formData.append('files', file));
         if (selectedUrls.length > 0) selectedUrls.forEach((url) => formData.append('urls', url));
-        formData.set('doc_processing_cnf_id', '1') // <- mock
+        formData.set('doc_processing_cnf_id', docProcessingConfig.id)
 
         // sending request
         try {
@@ -123,6 +183,8 @@ export default function Page() {
     }
 
     useEffect(() => {
+        fetchDocProcCnfCount()
+        fetchDocProcCnfItems()
         fetchVectorCollection()
     }, []);
 
@@ -196,6 +258,85 @@ export default function Page() {
             </Box>
 
             <Divider sx={{width: '100%'}}/>
+
+            {/* DOC PROC CNF*/}
+            <Box>
+                <Box
+                    display={'flex'}
+                    gap={2}
+                >
+                    <Typography>
+                        doc-proc-cnf
+                    </Typography>
+
+                    <TextField
+                        id={'doc-proc-cnf'}
+                        variant={'outlined'}
+                        label={'doc-proc-cnf'}
+                        value={!docProcessingConfig ? '' : docProcessingConfig.name}
+                        inputProps={{readOnly: true,}}
+                    />
+                </Box>
+
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    datetime
+                                </TableCell>
+                                <TableCell>
+                                    name
+                                </TableCell>
+                                <TableCell>
+                                    link
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {/* TABLE CONTENT */}
+                            {docProcConfigs.map((docProcCnf) => (
+                                <TableRow
+                                    onClick={() => {
+                                        setDocProcessingConfig(docProcCnf)
+                                    }}
+                                    sx={{
+                                        cursor: 'pointer',
+                                        backgroundColor: docProcessingConfig && docProcessingConfig.id === docProcCnf.id ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+                                    }}
+                                >
+                                    <TableCell>
+                                        {parseDateTime(docProcCnf.datetime)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {docProcCnf.name}
+                                    </TableCell>
+                                    <TableCell>
+                                        <MUILink
+                                            component={Link}
+                                            href={`/doc-proc-cnf/${docProcCnf.id}`}
+                                            underline={'none'}
+                                        >
+                                            <OpenInNewIcon/>
+                                        </MUILink>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                            }
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    page={currPage - 1}
+                    count={count}
+                    onPageChange={(_, newPage) => {
+                        setCurrPage(newPage + 1)
+                    }}
+                    rowsPerPage={TABLE_PAGE_LIMIT}
+                    rowsPerPageOptions={[]}
+                />
+
+            </Box>
 
             {/* UPLOAD A DOCUMENT */}
             <Box

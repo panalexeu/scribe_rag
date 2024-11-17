@@ -199,10 +199,13 @@ export default function Page() {
                 />
             </Box>
 
+            <Divider sx={{width: '100%'}}/>
+
             {/* EMBEDDING MODELS TABLE */}
             <Typography variant={'h6'}>
                 embed-model
             </Typography>
+
             <TableContainer>
                 <Table>
                     <TableHead>
