@@ -15,6 +15,7 @@ import {
     DialogTitle,
     DialogProps, List, ListItem, ListItemText, ListItemIcon,
     IconButton,
+    DialogActions,
     CircularProgress
 } from "@mui/material";
 import LinkIcon from '@mui/icons-material/Link';
@@ -37,6 +38,7 @@ export default function Page() {
 
     const [vectorCollection, setVectorCollection] = useState<VectorCollectionResponseModel>(null)
 
+    const [selectedUrlInput, setSelectedUrlInput] = useState(null);
     const [selectedUrls, setSelectedUrls] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [uploading, setUploading] = useState(false);
@@ -78,8 +80,8 @@ export default function Page() {
     }
 
     const handleUpload = async () => {
-        if (selectedFiles.length === 0) {
-            setSnackbarMessage(`add files to upload!`);
+        if (selectedFiles.length === 0 && selectedUrls.length == 0) {
+            setSnackbarMessage(`add files/urls to upload 😡`);
             setOpenSnackbar(true);
             return;
         }
@@ -88,9 +90,9 @@ export default function Page() {
 
         // handling form
         const formData = new FormData();
-        selectedFiles.forEach((file) => formData.append('files', file));
-        // mocks
-        formData.set('doc_processing_cnf_id', '1')
+        if (selectedFiles.length > 0) selectedFiles.forEach((file) => formData.append('files', file));
+        if (selectedUrls.length > 0) selectedUrls.forEach((url) => formData.append('urls', url));
+        formData.set('doc_processing_cnf_id', '1') // <- mock
 
         // sending request
         try {
@@ -213,7 +215,32 @@ export default function Page() {
 
                 <Dialog
                     open={urlDialog}
+                    onClose={() => setUrlDialog(false)}
+                    scroll={scroll}
+                    fullWidth={true}
                 >
+                    <DialogTitle>
+                        add url
+                    </DialogTitle>
+
+                    <DialogContent
+                        dividers={true}
+                    >
+                        <TextField
+                            label={'url'}
+                            variant={'standard'}
+                            fullWidth={true}
+                            value={selectedUrlInput}
+                            onChange={(e) => setSelectedUrlInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && selectedUrlInput) {
+                                    setSelectedUrls((prevUrls) => [...prevUrls, selectedUrlInput]);
+                                    setSelectedUrlInput(null);
+                                }
+                            }}
+                            placeholder={'enter url and press ENTER'}
+                        />
+                    </DialogContent>
                 </Dialog>
 
 
@@ -232,7 +259,7 @@ export default function Page() {
             </Box>
 
             {/* UPLOADED URLS/FILES BOX */}
-            {selectedFiles.length > 0 && (
+            {(selectedFiles.length > 0 || selectedUrls.length > 0) && (
                 <Box
                     sx={{border: '1px dashed grey', borderRadius: '4px'}}
                     display={'flex'}
@@ -262,8 +289,6 @@ export default function Page() {
                                 </ListItem>
                             )
                         )}
-
-                        <Divider/>
 
                         {/* URLS */}
                         {selectedUrls.map((url, index) => (
