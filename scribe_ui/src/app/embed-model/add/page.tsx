@@ -17,7 +17,6 @@ import {
     TableHead,
     TablePagination,
     TableRow,
-    Paper
 } from '@mui/material';
 import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
