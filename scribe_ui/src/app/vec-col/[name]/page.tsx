@@ -6,9 +6,17 @@ import {
     Link as MUILink,
     Snackbar,
     Typography,
-    Box
+    Box,
+    TextField,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    DialogProps
 } from "@mui/material";
-import {useRouter, useParams} from "next/navigation";
+import {useParams} from "next/navigation";
 import {useState, useEffect} from "react";
 
 import {VectorCollectionResponseModel} from '../models';
@@ -17,12 +25,12 @@ import Link from "next/link";
 
 export default function Page() {
     const {name} = useParams();
-    const router = useRouter();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [metadataDialog, setMetadataDialog] = useState(false);
+    const [scroll, setScroll] = useState<DialogProps['scroll']>('paper');
 
     const [vectorCollection, setVectorCollection] = useState<VectorCollectionResponseModel>(null)
-    const [distanceFunction, setDistanceFunction] = useState(null);
 
     async function fetchVectorCollection() {
         try {
@@ -76,7 +84,58 @@ export default function Page() {
             <Divider sx={{width: '100%'}}/>
 
             {/* MAIN CONTENT */}
+            {/* NAME AND METADATA DIALOG */}
+            <Box
+                display={"flex"}
+                gap={2}
+                width={'50%'}
+            >
+                {/* NAME */}
+                <TextField
+                    id={'name'}
+                    label={'name'}
+                    value={!vectorCollection ? '' : vectorCollection.name}
+                    variant={'standard'}
+                    inputProps={{readOnly: true,}}
+                    sx={{width: '50%'}}
+                />
 
+                {/* METADATA DIALOG */}
+                <Button
+                    onClick={() => setMetadataDialog(true)}
+                >
+                    metadata
+                </Button>
+
+                <Dialog
+                    open={metadataDialog}
+                    onClose={() => setMetadataDialog(false)}
+                    scroll={scroll}
+                >
+                    <DialogTitle>metadata</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            {JSON.stringify(!vectorCollection ? null : vectorCollection.metadata)}
+                        </DialogContentText>
+                    </DialogContent>
+                </Dialog>
+            </Box>
+
+            {/* SELECTED EMBEDDING FUNCTION */}
+            <Box
+                display={"flex"}
+                gap={2}
+                width={'50%'}
+                flexDirection={'column'}
+            >
+                <TextField
+                    id={'embed-func'}
+                    variant={'outlined'}
+                    label={'embed-func'}
+                    value={!vectorCollection ? '' : vectorCollection.embedding_function}
+                    inputProps={{readOnly: true,}}
+                />
+            </Box>
 
             {/* INFO SNACKBAR */}
             <Snackbar

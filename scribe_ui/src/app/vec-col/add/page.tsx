@@ -16,21 +16,16 @@ import {
     TableContainer,
     TableHead,
     TablePagination,
-    TableRow, Tooltip, IconButton, Stack, Pagination,
+    TableRow,
 } from '@mui/material';
 import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 
 import {parseDateTime} from "@/src/utils";
-import {EmbeddingModelPostModel, EmbeddingModelResponseModel} from '@/src/app/embed-model/models';
+import {EmbeddingModelResponseModel} from '@/src/app/embed-model/models';
 import {DistanceFunction, VectorCollectionPostModel} from "../models";
 import {API_URL, PAGE_LIMIT, TABLE_PAGE_LIMIT} from "@/src/constants";
-import {ApiKeyResponseModel} from "@/src/app/api-key/models";
-import AddIcon from "@mui/icons-material/Add";
-import KeyIcon from "@mui/icons-material/Key";
-import DeleteIcon from "@mui/icons-material/Delete";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 export default function Page() {
     const router = useRouter();
@@ -194,9 +189,9 @@ export default function Page() {
 
                 {/* SELECTED EMBEDDING MODEL */}
                 <TextField
-                    id={'api-key'}
+                    id={'embed-model'}
                     variant={'outlined'}
-                    label={'api key'}
+                    label={'embed-model'}
                     value={ !embeddingModel? '' : embeddingModel.name  }
                     inputProps={{readOnly: true,}}
                     fullWidth={true}
