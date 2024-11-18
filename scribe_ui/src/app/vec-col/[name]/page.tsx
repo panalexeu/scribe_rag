@@ -17,7 +17,7 @@ import {
     IconButton,
     DialogActions, CardContent, Card,
     Paper,
-    CircularProgress, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TablePagination,
+    CircularProgress, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TablePagination, Tooltip,
 } from "@mui/material";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import LinkIcon from '@mui/icons-material/Link';
@@ -29,7 +29,7 @@ import {useState, useEffect} from "react";
 
 import {DocProcCnfResponseModel} from '@/src/app/doc-proc-cnf/models';
 import {VectorCollectionResponseModel, VectorDocumentResponseModel} from '../models';
-import {API_URL, PAGE_LIMIT, TABLE_PAGE_LIMIT} from "@/src/constants";
+import {API_URL, TABLE_PAGE_LIMIT} from "@/src/constants";
 import Link from "next/link";
 import {parseDateTime} from "@/src/utils";
 
@@ -97,11 +97,11 @@ export default function Page() {
     }
 
     async function fetchDocProcCnfItems() {
-        const offset = (currPage - 1) * PAGE_LIMIT;
+        const offset = (currPage - 1) * TABLE_PAGE_LIMIT;
 
         try {
             const response = await fetch(
-                `${API_URL}/doc-proc-cnf/?limit=${PAGE_LIMIT}&offset=${offset}`,
+                `${API_URL}/doc-proc-cnf/?limit=${TABLE_PAGE_LIMIT}&offset=${offset}`,
                 {
                     method: 'GET'
                 }
@@ -211,11 +211,14 @@ export default function Page() {
     }
 
     useEffect(() => {
-        fetchDocProcCnfCount()
-        fetchDocProcCnfItems()
         fetchVectorCollection()
         fetchVectorCollectionPeek()
     }, []);
+
+    useEffect(() => {
+        fetchDocProcCnfCount()
+        fetchDocProcCnfItems()
+    }, [currPage])
 
     return (
         <Box
@@ -396,13 +399,15 @@ export default function Page() {
                             vec-col data-peek
                         </Typography>
 
-                        <MUILink
-                            component={Link}
-                            href={`/vec-col/${name}/explore`}
-                            underline={'none'}
-                        >
-                            <OpenInNewIcon/>
-                        </MUILink>
+                        <Tooltip title={'explore vec-col in detail'}>
+                            <MUILink
+                                component={Link}
+                                href={`/vec-col/${name}/explore`}
+                                underline={'none'}
+                            >
+                                <OpenInNewIcon/>
+                            </MUILink>
+                        </Tooltip>
                     </Box>
 
                     <Paper
