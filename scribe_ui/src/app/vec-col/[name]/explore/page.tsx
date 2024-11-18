@@ -17,12 +17,17 @@ import Link from "next/link";
 import {useParams} from "next/navigation";
 import {useState, useEffect} from 'react';
 import {API_URL} from "@/src/constants";
+import SearchIcon from '@mui/icons-material/Search'; // Import the Search icon
+import { TextField, InputAdornment } from "@mui/material"; // Import required MUI components
+
 
 export default function Page() {
     const {name} = useParams();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
+    const [nResults, setNResults] = useState<number>(1);
+    const [query, setQuery] = useState('');
     const [docs, setDocs] = useState<string[]>([]);
     const [vecColDocsCount, setVecColDocsCount] = useState(0);
 
@@ -147,11 +152,61 @@ export default function Page() {
             <Divider sx={{width: '100%'}}/>
 
             {/* MAIN CONTENT */}
+            {/* QUERY PLAYGROUND */}
+            <Box
+                display={'flex'}
+                flexDirection={'column'}
+                alignItems={'flex-start'}
+                gap={1}
+                sx={{width: '50%'}}
+            >
+                <Typography>
+                    query-playground
+                </Typography>
+
+                <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    gap={1}
+                >
+
+                    <TextField
+                        variant="outlined"
+                        size="small"
+                        placeholder="Search..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        sx={{width: '85%'}}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={() => console.log("Searching for:", query)}>
+                                        <SearchIcon />
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }}
+                    />
+
+                    <TextField
+                        type="number"
+                        variant="outlined"
+                        size="small"
+                        label={'n-results'}
+                        value={nResults}
+                        onChange={(e) => setNResults(Number(e.target.value))}
+                        sx={{width: '15%'}}
+                    />
+                </Box>
+            </Box>
+
+            <Divider sx={{width: '100%'}}/>
+
+            {/* DOCUMENTS LIST */}
             <Box
                 display={'flex'}
                 flexDirection={'column'}
             >
-                {/* DOCUMENTS LIST */}
                 <Box
                     display={'flex'}
                     flexDirection={'column'}
