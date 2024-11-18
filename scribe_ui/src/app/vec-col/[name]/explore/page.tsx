@@ -20,9 +20,33 @@ import {API_URL} from "@/src/constants";
 
 export default function Page() {
     const {name} = useParams();
-    const [docs, setDocs] = useState<string[]>([]);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+
+    const [docs, setDocs] = useState<string[]>([]);
+    const [vecColDocsCount, setVecColDocsCount] = useState(0);
+
+    async function fetchVectorDocsCount() {
+        try {
+            const response = await fetch(
+                `${API_URL}/vec-doc/${name}/count`,
+                {
+                    method: 'GET'
+                }
+            );
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setVecColDocsCount(data);
+            } else {
+                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
+                setOpenSnackbar(true);
+            }
+        } catch (error) {
+            setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            setOpenSnackbar(true);
+        }
+    }
 
     async function fetchDocs() {
         try {
@@ -68,6 +92,7 @@ export default function Page() {
                 setSnackbarMessage(`document with the name: ${docToRemove} was successfully removed from the vec-col: ${name} 🥳`);
                 setOpenSnackbar(true);
                 await fetchDocs();
+                await fetchVectorDocsCount();
             } else {
                 setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
                 setOpenSnackbar(true);
@@ -81,6 +106,7 @@ export default function Page() {
 
     useEffect(() => {
         fetchDocs();
+        fetchVectorDocsCount();
     }, []);
 
     return (
@@ -132,7 +158,7 @@ export default function Page() {
                     gap={2}
                 >
                     <Typography>
-                        docs
+                        docs: {vecColDocsCount}
                     </Typography>
 
                     {docs.length > 0 && (

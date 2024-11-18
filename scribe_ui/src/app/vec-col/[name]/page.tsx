@@ -51,6 +51,29 @@ export default function Page() {
     const [docProcConfigs, setDocProcConfigs] = useState<DocProcCnfResponseModel[]>([]);
     const [docProcessingConfig, setDocProcessingConfig] = useState(null);
     const [vecColPeek, setVecColPeek] = useState<VectorDocumentResponseModel[]>([]);
+    const [vecColDocsCount, setVecColDocsCount] = useState(0);
+
+    async function fetchVectorDocsCount() {
+        try {
+            const response = await fetch(
+                `${API_URL}/vec-doc/${name}/count`,
+                {
+                    method: 'GET'
+                }
+            );
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setVecColDocsCount(data);
+            } else {
+                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
+                setOpenSnackbar(true);
+            }
+        } catch (error) {
+            setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            setOpenSnackbar(true);
+        }
+    }
 
     async function fetchVectorCollectionPeek() {
         try {
@@ -198,6 +221,7 @@ export default function Page() {
                 setSelectedUrls([]);
                 setSelectedFiles([]);
                 fetchVectorCollectionPeek();
+                fetchVectorDocsCount();
             } else {
                 setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
                 setOpenSnackbar(true);
@@ -213,6 +237,7 @@ export default function Page() {
     useEffect(() => {
         fetchVectorCollection()
         fetchVectorCollectionPeek()
+        fetchVectorDocsCount()
     }, []);
 
     useEffect(() => {
@@ -396,7 +421,7 @@ export default function Page() {
                         gap={1}
                     >
                         <Typography>
-                            vec-col data-peek
+                            vec-col data-peek, docs: {vecColDocsCount}
                         </Typography>
 
                         <Tooltip title={'explore vec-col in detail'}>
