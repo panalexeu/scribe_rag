@@ -52,8 +52,6 @@ export default function Page() {
             doc_name: docToRemove
         }
 
-        console.log(JSON.stringify(request));
-
         try {
             const response = await fetch(
                 `${API_URL}/vec-doc/${name}`,
