@@ -200,6 +200,8 @@ export default function Page() {
         if (selectedUrls.length > 0) selectedUrls.forEach((url) => formData.append('urls', url));
         formData.set('doc_processing_cnf_id', docProcessingConfig.id)
 
+        console.log(JSON.stringify(formData));
+
         // sending request
         try {
             for (let [key, value] of formData.entries()) {
@@ -527,7 +529,7 @@ export default function Page() {
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' && selectedUrlInput) {
                                     setSelectedUrls((prevUrls) => [...prevUrls, selectedUrlInput]);
-                                    setSelectedUrlInput(null);
+                                    setSelectedUrlInput('');
                                 }
                             }}
                             placeholder={'enter url and press ENTER'}
