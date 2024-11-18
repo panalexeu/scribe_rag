@@ -10,15 +10,17 @@ import {
     List,
     ListItem,
     ListItemText,
-    IconButton
+    IconButton, Card, CardContent, Paper
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Link from "next/link";
 import {useParams} from "next/navigation";
 import {useState, useEffect} from 'react';
 import {API_URL} from "@/src/constants";
-import SearchIcon from '@mui/icons-material/Search'; // Import the Search icon
-import { TextField, InputAdornment } from "@mui/material"; // Import required MUI components
+import SearchIcon from '@mui/icons-material/Search';
+import { TextField, InputAdornment } from "@mui/material";
+
+import {VectorDocumentResponseModel} from '@/src/app/vec-col/models';
 
 
 export default function Page() {
@@ -30,6 +32,54 @@ export default function Page() {
     const [query, setQuery] = useState('');
     const [docs, setDocs] = useState<string[]>([]);
     const [vecColDocsCount, setVecColDocsCount] = useState(0);
+    const [queryResults, setQueryResults] = useState<VectorDocumentResponseModel[]>([]);
+
+    async function fetchQuery() {
+        if (!query) {
+            setSnackbarMessage('provide search query! 😡');
+            setOpenSnackbar(true);
+            return;
+        } else if (docs.length == 0) {
+            setSnackbarMessage('vec-col is empty! 😡');
+            setOpenSnackbar(true);
+            return;
+        } else if (nResults < 1) {
+            setSnackbarMessage('number of results should be at least 1! 😡');
+            setOpenSnackbar(true);
+            return;
+        }
+
+        const request = {
+            query_string: query,
+            doc_names: docs,
+            n_results: nResults
+        }
+
+        try {
+            const response = await fetch(
+                `${API_URL}/vec-doc/${name}/query`,
+                {
+                    method: 'post',
+                    body: JSON.stringify(request),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                }
+            );
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setQueryResults(data);
+            } else {
+                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
+                setOpenSnackbar(true);
+            }
+        } catch (error) {
+            setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            setOpenSnackbar(true);
+        }
+    }
+
 
     async function fetchVectorDocsCount() {
         try {
@@ -158,7 +208,8 @@ export default function Page() {
                 flexDirection={'column'}
                 alignItems={'flex-start'}
                 gap={1}
-                sx={{width: '50%'}}
+                sx={{width: '75%'}}
+                maxHeight={640}
             >
                 <Typography>
                     query-playground
@@ -180,7 +231,7 @@ export default function Page() {
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
-                                    <IconButton onClick={() => console.log("Searching for:", query)}>
+                                    <IconButton onClick={() => fetchQuery()}>
                                         <SearchIcon />
                                     </IconButton>
                                 </InputAdornment>
@@ -198,6 +249,64 @@ export default function Page() {
                         sx={{width: '15%'}}
                     />
                 </Box>
+
+                {/* QUERY SEARCH RESULTS */}
+                { (queryResults.length > 0) && (
+                    <Paper
+                        sx={{
+                            flex: 1,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width: '100%',
+                            overflow: 'hidden',
+                        }}
+                        variant="outlined"
+                    >
+                        <Box
+                            sx={{
+                                padding: 1,
+                                overflowY: 'auto',
+                                maxHeight: '100%',
+                            }}
+                        >
+                            {queryResults.map((query, index) => (
+                                <Card
+                                    key={index}
+                                    variant="outlined"
+                                    sx={{
+                                        padding: 1,
+                                        overflowX: 'auto'
+                                    }}
+                                >
+                                    <CardContent>
+                                        <Typography>
+                                            ID: <strong>{query.id_}</strong>
+                                        </Typography>
+
+                                        <Typography >
+                                            <strong>Distance:</strong> {query.distance}
+                                        </Typography>
+
+                                        <Typography >
+                                            <strong>Embedding:</strong> {query.embedding}
+                                        </Typography>
+
+                                        <Typography >
+                                            <strong>Document:</strong> {query.document}
+                                        </Typography>
+
+                                        <Typography >
+                                            <strong>Metadata:</strong>
+                                            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                                                    {JSON.stringify(query.metadata, null, 2)}
+                                                </pre>
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </Box>
+                    </Paper>
+                    )}
             </Box>
 
             <Divider sx={{width: '100%'}}/>
