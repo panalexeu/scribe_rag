@@ -52,6 +52,7 @@ async def create_doc(
         files: Optional[list[UploadFile]] = None,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ) -> None:
+    # handle case when urls are provided from interactive docs page
     if urls is not None and len(urls) == 1:
         urls = urls[0].split(',')
 
