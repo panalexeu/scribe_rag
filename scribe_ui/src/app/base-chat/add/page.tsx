@@ -374,11 +374,13 @@ export default function Page() {
                     flexDirection={'row'}
                     gap={2}
                 >
+                    {/* Tables */}
                     <SysPromptTable
                         sysPrompts={sysPrompts}
                         count={sysPromptCount}
                         currPage={sysPromptPage}
                         setCurrPage={setSysPromptPage}
+                        selectedItem={sysPrompt}
                         setSelectedItem={setSelectedSysPrompt}
                     />
                     <ChatModelTable
@@ -386,6 +388,7 @@ export default function Page() {
                         count={chatModelCount}
                         currPage={chatModelPage}
                         setCurrPage={setChatModelPage}
+                        selectedItem={chatModel}
                         setSelectedItem={setSelectedChatModel}
                     />
                     <VecColTable
@@ -393,6 +396,7 @@ export default function Page() {
                         count={vecColCount}
                         currPage={vecColPage}
                         setCurrPage={setVecColPage}
+                        selectedItem={vecCol}
                         setSelectedItem={setSelectedVecCol}
                     />
                 </Box>

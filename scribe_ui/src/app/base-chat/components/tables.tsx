@@ -9,7 +9,6 @@ import {
     TablePagination,
     TableRow,
     Link as MUILink,
-
 } from '@mui/material';
 import {parseDateTime} from "@/src/utils";
 import {TABLE_PAGE_LIMIT} from "@/src/constants";
@@ -22,6 +21,7 @@ export function SysPromptTable(
         count,
         currPage,
         setCurrPage,
+        selectedItem,
         setSelectedItem,
     }) {
     return (
@@ -41,7 +41,7 @@ export function SysPromptTable(
                                 onClick={() => setSelectedItem(sysPrompt)}
                                 sx={{
                                     cursor: 'pointer',
-                                    backgroundColor: sysPrompt.id === setSelectedItem.id ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+                                    backgroundColor: sysPrompt.id === selectedItem?.id ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
                                 }}
                             >
                                 <TableCell>{parseDateTime(sysPrompt.datetime)}</TableCell>
@@ -76,6 +76,7 @@ export function ChatModelTable(
         count,
         currPage,
         setCurrPage,
+        selectedItem,
         setSelectedItem,
     }) {
     return (
@@ -95,7 +96,7 @@ export function ChatModelTable(
                                 onClick={() => setSelectedItem(chatModel)}
                                 sx={{
                                     cursor: 'pointer',
-                                    backgroundColor: chatModel.id === setSelectedItem.id ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+                                    backgroundColor: chatModel.id === selectedItem?.id ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
                                 }}
                             >
                                 <TableCell>{parseDateTime(chatModel.datetime)}</TableCell>
@@ -123,12 +124,14 @@ export function ChatModelTable(
     );
 }
 
+// VecColTable
 export function VecColTable(
     {
         vectorCollections,
         count,
         currPage,
         setCurrPage,
+        selectedItem,
         setSelectedItem,
     }) {
     return (
@@ -148,7 +151,7 @@ export function VecColTable(
                                 onClick={() => setSelectedItem(vecCol)}
                                 sx={{
                                     cursor: 'pointer',
-                                    backgroundColor: vecCol.name === setSelectedItem.name ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+                                    backgroundColor: vecCol.name === selectedItem?.name ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
                                 }}
                             >
                                 <TableCell>
