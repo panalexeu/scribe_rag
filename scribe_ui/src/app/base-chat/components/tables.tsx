@@ -8,10 +8,12 @@ import {
     TableHead,
     TablePagination,
     TableRow,
-    Typography,
+    Link as MUILink,
+
 } from '@mui/material';
 import {parseDateTime} from "@/src/utils";
 import {TABLE_PAGE_LIMIT} from "@/src/constants";
+import Link from "next/link";
 
 // SysPromptTable
 export function SysPromptTable(
@@ -43,7 +45,14 @@ export function SysPromptTable(
                                 }}
                             >
                                 <TableCell>{parseDateTime(sysPrompt.datetime)}</TableCell>
-                                <TableCell>{sysPrompt.name}</TableCell>
+                                <TableCell>
+                                    <MUILink
+                                        component={Link}
+                                        href={`/sys-prompt/${sysPrompt.id}`}
+                                    >
+                                        {sysPrompt.name}
+                                    </MUILink>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -90,7 +99,14 @@ export function ChatModelTable(
                                 }}
                             >
                                 <TableCell>{parseDateTime(chatModel.datetime)}</TableCell>
-                                <TableCell>{chatModel.name}</TableCell>
+                                <TableCell>
+                                    <MUILink
+                                        component={Link}
+                                        href={`/chat-model/${chatModel.id}`}
+                                    >
+                                        {chatModel.name}
+                                    </MUILink>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -135,7 +151,14 @@ export function VecColTable(
                                     backgroundColor: vecCol.name === setSelectedItem.name ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
                                 }}
                             >
-                                <TableCell>{vecCol.name}</TableCell>
+                                <TableCell>
+                                    <MUILink
+                                        component={Link}
+                                        href={`/vec-col/${vecCol.name}`}
+                                    >
+                                        {vecCol.name}
+                                    </MUILink>
+                                </TableCell>
                                 <TableCell>{vecCol.embedding_function}</TableCell>
                             </TableRow>
                         ))}
