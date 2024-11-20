@@ -1,6 +1,6 @@
 'use client';
 
-import {ChatModelResponseModel} from './model';
+import {ChatModelResponseModel} from './models';
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import {API_URL, PAGE_LIMIT} from "@/src/constants";

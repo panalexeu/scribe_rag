@@ -16,7 +16,7 @@ import {
 import Link from "next/link";
 import {useRouter} from 'next/navigation';
 
-import {ChatModelPostModel, ChatModelName} from '../model';
+import {ChatModelPostModel, ChatModelName} from '../models';
 import {useEffect, useState} from "react";
 import {API_URL, TABLE_PAGE_LIMIT} from "@/src/constants";
 import {parseDateTime} from "@/src/utils";
