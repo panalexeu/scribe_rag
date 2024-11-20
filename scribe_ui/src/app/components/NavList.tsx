@@ -12,9 +12,10 @@ import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import DescriptionIcon from '@mui/icons-material/Description';
 import KeyIcon from "@mui/icons-material/Key";
 import DataArrayIcon from '@mui/icons-material/DataArray';
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PolylineIcon from '@mui/icons-material/Polyline';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 
 export default function NavList() {
     const router = useRouter();
@@ -24,7 +25,7 @@ export default function NavList() {
             {/* api-key */}
             <ListItem disablePadding={true}>
                 <ListItemButton
-                    onClick = {
+                    onClick={
                         () => router.push('/api-key')
                     }
                 >
@@ -39,7 +40,7 @@ export default function NavList() {
             {/* sys-prompt */}
             <ListItem disablePadding={true}>
                 <ListItemButton
-                    onClick = {
+                    onClick={
                         () => router.push('/sys-prompt')
                     }
                 >
@@ -54,7 +55,7 @@ export default function NavList() {
             {/* doc-proc-cnf */}
             <ListItem disablePadding={true}>
                 <ListItemButton
-                    onClick = {
+                    onClick={
                         () => router.push('/doc-proc-cnf')
                     }
                 >
@@ -69,7 +70,7 @@ export default function NavList() {
             {/* embed-model */}
             <ListItem disablePadding={true}>
                 <ListItemButton
-                    onClick = {
+                    onClick={
                         () => router.push('/embed-model')
                     }
                 >
@@ -84,7 +85,7 @@ export default function NavList() {
             {/* chat-model */}
             <ListItem disablePadding={true}>
                 <ListItemButton
-                    onClick = {
+                    onClick={
                         () => router.push('/chat-model')
                     }
                 >
@@ -99,7 +100,7 @@ export default function NavList() {
             {/* vec-col */}
             <ListItem disablePadding={true}>
                 <ListItemButton
-                    onClick = {
+                    onClick={
                         () => router.push('/vec-col')
                     }
                 >
@@ -107,6 +108,21 @@ export default function NavList() {
                         <PolylineIcon/>
                     </ListItemIcon>
                     <ListItemText primary={"vec-col"}/>
+                </ListItemButton>
+            </ListItem>
+            <Divider/>
+
+            {/* base-chat */}
+            <ListItem disablePadding={true}>
+                <ListItemButton
+                    onClick={
+                        () => router.push('/base-chat')
+                    }
+                >
+                    <ListItemIcon>
+                        <ChatBubbleIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary={"base-chat"}/>
                 </ListItemButton>
             </ListItem>
             <Divider/>
