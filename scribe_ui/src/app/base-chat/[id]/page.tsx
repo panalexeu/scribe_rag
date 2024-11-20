@@ -34,7 +34,11 @@ export default function Page() {
     const [sysPromptCount, setSysPromptCount] = useState(0);
     const [sysPrompts, setSysPrompts] = useState<SysPromptResponseModel[]>([]);
 
-    async function fetchVecCol(name: string) {
+    async function fetchVecCol(name: string | null) {
+        if (!name) {
+            return;
+        }
+
         try {
             const response = await fetch(
                 `${API_URL}/vec-col/${name}`,
