@@ -14,7 +14,7 @@ export default function Loading() {
             height={'100%'}
         >
             <CircularProgress
-                size={100}
+                size={64}
             />
         </Box>
     );
