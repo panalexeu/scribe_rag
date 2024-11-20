@@ -8,7 +8,7 @@ import Link from "next/link";
 import {useState, useEffect} from "react";
 import ClearIcon from '@mui/icons-material/Clear';
 
-import {BaseChatPostModel, BaseChatResponseModel} from "@/src/app/base-chat/models";
+import {BaseChatPutModel, BaseChatResponseModel} from "@/src/app/base-chat/models";
 import {SysPromptResponseModel} from "@/src/app/sys-prompt/models";
 import {ChatModelResponseModel} from "@/src/app/chat-model/models";
 import {VectorCollectionResponseModel} from "@/src/app/vec-col/models";
@@ -249,7 +249,7 @@ export default function Page() {
         }
 
         try {
-            const request = BaseChatPostModel.parse({
+            const request = BaseChatPutModel.parse({
                 name: name,
                 desc: desc,
                 chat_model_id: chatModel.id,
@@ -258,16 +258,16 @@ export default function Page() {
             });
 
             const response = await fetch(
-                `${API_URL}/base-chat/`,
+                `${API_URL}/base-chat/${id}`,
                 {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(request)
                 }
             );
-            if (response.status == 201) {
+            if (response.status == 200) {
                 router.push('/base-chat');
             } else {
                 setSnackbarMessage(`smth went wrong 😢, status code: ${response.status}`);
