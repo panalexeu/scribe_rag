@@ -32,3 +32,10 @@ export interface BaseChatResponseModel {
     vec_col_name: string | null,
     datetime: string
 }
+
+
+export const BaseChatStreamModel = z.object({
+    query_string: z.string(),
+    doc_names: z.array(z.string()).nullable(),
+    n_results: z.number().nullable()
+})

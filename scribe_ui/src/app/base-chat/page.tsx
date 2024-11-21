@@ -21,6 +21,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import DeleteIcon from "@mui/icons-material/Delete";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import PolylineIcon from '@mui/icons-material/Polyline';
+import ChatIcon from '@mui/icons-material/Chat';
 
 import {BaseChatResponseModel} from "@/src/app/base-chat/models";
 import {parseDateTime} from "@/src/utils";
@@ -215,6 +216,16 @@ export default function Page() {
                                         onClick={() => handleDelete(item.id)}
                                     >
                                         <DeleteIcon/>
+                                    </IconButton>
+                                </Tooltip>
+
+                                {/* TALK WITH YOUR DOCS*/}
+                                <Tooltip title={'talk with your docs!'}>
+                                    <IconButton
+                                        size={'small'}
+                                        onClick={() => router.push(`/base-chat/${item.id}/stream`)}
+                                    >
+                                        <ChatIcon/>
                                     </IconButton>
                                 </Tooltip>
 
