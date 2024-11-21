@@ -1,4 +1,5 @@
 import io
+import logging
 from typing import Type
 
 from langchain_unstructured.document_loaders import UnstructuredLoader
@@ -23,7 +24,7 @@ from langchain_core.documents.base import Document
 
 
 class UnsupportedFileFormatError(RuntimeError):
-    supported_formats = ['.odt', '.md', 'text files']
+    supported_formats = ['.odt', '.md', 'text files', '.pdf', '.html']
 
     def __init__(self):
         super().__init__(
@@ -83,7 +84,8 @@ class LoadDocumentService:
 
                 try:
                     docs = await document_loader.aload()
-                except ImportError:
+                except ImportError as e:
+                    logging.log(logging.ERROR, str(e))
                     raise UnsupportedFileFormatError
 
                 all_docs.extend(
