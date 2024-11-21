@@ -54,7 +54,7 @@ class LangchainChatModel(AbstractChatModel):
             docs_context: list[VectorChromaDocument] | None
     ) -> AsyncStream:
         if docs_context:
-            yield f'event: docs\ndata: {json.dumps([doc.__dict__ for doc in docs_context])}'
+            yield f'event: docs\ndata: {json.dumps([doc.__dict__ for doc in docs_context])}\n\n'
 
         async for chunk in iterator:
             yield f'event: response\ndata: {chunk.content}\n\n'
