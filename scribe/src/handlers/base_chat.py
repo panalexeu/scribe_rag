@@ -221,4 +221,8 @@ class BaseChatStreamHandler:
             docs=retrieved_docs
         )
 
-        return built_chat_model.async_stream(prompt, input=request.query_string)
+        return built_chat_model.async_stream(
+            prompt,
+            input=request.query_string,
+            docs_context=retrieved_docs
+        )

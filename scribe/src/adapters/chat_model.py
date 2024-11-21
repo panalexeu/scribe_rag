@@ -1,9 +1,12 @@
+import json
 from abc import ABC
 from typing import AsyncGenerator, AsyncIterator
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables.base import Runnable
 from langchain_core.messages.ai import AIMessageChunk
+
+from src.adapters.chroma_models import VectorChromaDocument
 
 AsyncStream = AsyncGenerator[str, None]
 
@@ -16,7 +19,7 @@ class AbstractChatModel(ABC):
     def invoke(self, prompt):
         pass
 
-    def async_stream(self, prompt, **kwargs) -> AsyncStream:
+    def async_stream(self, prompt, docs_context: list = None, **kwargs) -> AsyncStream:
         pass
 
     async def async_invoke(self, prompt):
@@ -30,24 +33,31 @@ class LangchainChatModel(AbstractChatModel):
     ):
         self.chat_model = chat_model
 
-    @staticmethod
-    async def langchain_async_generator_wrapper(iterator: AsyncIterator[AIMessageChunk]) \
-            -> AsyncStream:
-        async for chunk in iterator:
-            yield f"data: {chunk.content}\n\n"  # yield f"data: {chunk.content}\n\n" - is the right sse standard
-
     def async_stream(
             self,
             prompt: ChatPromptTemplate,
+            docs_context: list[VectorChromaDocument] = None,
             **kwargs
     ) -> AsyncStream:
         """
+        :param docs_context: list of VectorChromaDocument returned in a stream for additional verbosity
         :param prompt: ChatPromptTemplate.
         :param kwargs: Keyword arguments that will be passed to the ChatPromptTemplate.
         """
         chain = prompt | self.chat_model
 
-        return self.langchain_async_generator_wrapper(chain.astream(kwargs))
+        return self.langchain_async_generator_wrapper(chain.astream(kwargs), docs_context)
+
+    @staticmethod
+    async def langchain_async_generator_wrapper(
+            iterator: AsyncIterator[AIMessageChunk],
+            docs_context: list[VectorChromaDocument] | None
+    ) -> AsyncStream:
+        if docs_context:
+            yield f'event: docs\ndata: {json.dumps([doc.__dict__ for doc in docs_context])}'
+
+        async for chunk in iterator:
+            yield f'event: response\ndata: {chunk.content}\n\n'
 
     def stream(self, input_: str):
         raise NotImplementedError
