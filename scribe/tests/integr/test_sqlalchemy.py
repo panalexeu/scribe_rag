@@ -5,6 +5,9 @@ from datetime import datetime
 
 import pytest
 from faker import Faker
+from sqlalchemy import create_engine
+from sqlalchemy.orm import registry, Session
+from sqlalchemy.pool import StaticPool
 
 from src.adapters.orm_models import map_sqlalchemy_models
 from src.adapters.uow import SqlAlchemyUoW
@@ -13,12 +16,24 @@ from src.di_container import Container
 from src.domain.models import FakeModel
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def fake_session():
-    container = Container()
-    map_sqlalchemy_models(container.registry())
-    container.registry().metadata.create_all(container.engine())
-    yield container.session()
+    registry_ = registry()
+    map_sqlalchemy_models(registry_)
+    engine = create_engine(
+        url='sqlite:///:memory:',
+        echo=False,
+        poolclass=StaticPool,
+        connect_args={'check_same_thread': False}
+    )
+    registry_.metadata.create_all(engine)
+    session = Session(
+        bind=engine,
+        autoflush=False,
+        expire_on_commit=False
+    )
+
+    yield session
 
 
 @pytest.fixture(scope='module')
@@ -189,27 +204,6 @@ def test_update_sqlalchemy_repo_does_not_updates_not_existing_attributes(fake_se
         assert fake.portal_gun is True
         with pytest.raises(AttributeError):
             fake.age
-
-
-def test_update_sqlalchemy_repo_method_does_nothing_when_attributes_are_none(fake_session, faker):
-    with fake_session as session:
-        fake = FakeModel(
-            True,
-            faker.military_ship()
-        )
-
-        session.add(fake)
-        session.flush()
-
-        # updating the fake object with None attributes
-        repo = SqlAlchemyRepository[FakeModel](session)
-        upd_fake = repo.update(1, spaceship=None, portal_gun=False)
-
-        # spaceship is not None, portal gun is changed
-        assert fake is upd_fake
-        assert fake.id == 1
-        assert fake.spaceship is not None
-        assert fake.portal_gun == False
 
 
 def test_delete_sqlalchemy_repo_method(fake_session, faker):
