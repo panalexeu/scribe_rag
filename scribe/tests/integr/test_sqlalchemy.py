@@ -18,22 +18,10 @@ from src.domain.models import FakeModel
 
 @pytest.fixture(scope='session')
 def fake_session():
-    registry_ = registry()
-    map_sqlalchemy_models(registry_)
-    engine = create_engine(
-        url='sqlite:///:memory:',
-        echo=False,
-        poolclass=StaticPool,
-        connect_args={'check_same_thread': False}
-    )
-    registry_.metadata.create_all(engine)
-    session = Session(
-        bind=engine,
-        autoflush=False,
-        expire_on_commit=False
-    )
-
-    yield session
+    container = Container()
+    map_sqlalchemy_models(container.registry())
+    container.registry().metadata.create_all(container.engine())
+    yield container.session()
 
 
 @pytest.fixture(scope='module')
