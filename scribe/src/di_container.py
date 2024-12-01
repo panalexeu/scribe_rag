@@ -8,6 +8,7 @@ from mediatr import Mediator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import registry, Session
 from sqlalchemy.pool import StaticPool
+from dotenv import load_dotenv
 
 from src.adapters.async_vector_client import ChromaAsyncVectorClient
 from src.adapters.codecs import FernetCodec
@@ -92,11 +93,25 @@ class Container(DeclarativeContainer):
     registry = Singleton(
         registry
     )
+
+    # determining sqlite db to use based on the environment
+    load_dotenv()
+    env_scribe_db = os.getenv('SCRIBE_DB')
+    # if the 'dev' type is provided => in-memory is passed
+    # if the 'prod' type is provided => in-file is passed
+    match env_scribe_db:
+        case 'dev':
+            db_url = 'sqlite:///:memory:'
+        case 'prod':
+            db_url = 'sqlite:///scribe.db'
+        case _:
+            db_url = 'sqlite:///scribe.db'
+
     # Use StaticPool to share a single connection across threads, enabling multithreaded access
     # to a :memory: database in SQLAlchemy with check_same_thread=False.
     engine = Singleton(
         create_engine,
-        url='sqlite:///scribe.db',  # 'sqlite:///:memory:',
+        url=db_url,
         echo=False,
         poolclass=StaticPool,
         connect_args={'check_same_thread': False}
