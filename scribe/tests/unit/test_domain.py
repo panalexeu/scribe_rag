@@ -4,7 +4,7 @@ from chromadb.utils.embedding_functions import EmbeddingFunction
 from langchain_unstructured.document_loaders import UnstructuredLoader
 from langchain_core.documents.base import Document
 
-from src.adapters.chat_model import AbstractChatModel
+from src.adapters.chat_model import LangchainChatModel
 from src.adapters.codecs import FakeCodec
 from src.domain.models import (
     ApiKeyCredential,
@@ -14,10 +14,9 @@ from src.domain.models import (
     VectorDocument
 )
 from src.domain.services.load_document_service import LoadDocumentService
-from src.domain.services import (
-    EncodeApiKeyCredentialService,
-    ChatModelBuilder,
-)
+from src.domain.services import EncodeApiKeyCredentialService
+from src.domain.services.chat_model_builder import ChatModelBuilder
+
 from src.domain.services.embedding_model_builder import (
     EmbeddingModelBuilder
 )
@@ -176,8 +175,14 @@ def test_chat_model_builder_builds_models():
         None,
         None
     )
+    model.api_key_credential = ApiKeyCredential(
+        'fake-name',
+        'fake-key'
+    )
 
-    assert isinstance(ChatModelBuilder.build(model, 'fake-key'), AbstractChatModel)
+    codec = FakeCodec('fake-key')
+
+    assert isinstance(ChatModelBuilder(codec).build(model), LangchainChatModel)
 
 
 def test_embedding_model_builder_correctly_assigns_provider():

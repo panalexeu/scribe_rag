@@ -14,4 +14,4 @@ test_integr:
 	pytest tests/integr -v
 
 test_async:
-	pytest tests/async
+	pytest tests/documents

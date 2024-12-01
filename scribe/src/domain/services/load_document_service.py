@@ -15,12 +15,14 @@ from unstructured.cleaners.core import (
     remove_punctuation,
     replace_unicode_quotes
 )
+from langchain_core.documents.base import Document
+from unstructured.partition.common import UnsupportedFileFormatError as UnstructuredUnsupportedFileFormatError
+
 from src.enums import Postprocessor
 from src.domain.models import (
     DocProcessingConfig,
     VectorDocument
 )
-from langchain_core.documents.base import Document
 
 
 class UnsupportedFileFormatError(RuntimeError):
@@ -43,7 +45,7 @@ class LoadDocumentService:
     def __init__(self, doc_loader: Type[UnstructuredLoader]):
         self.doc_loader = doc_loader
 
-    # TODO make the loop truly async
+    # TODO make the loop truly documents
     async def load_async(
             self,
             files: dict[str, bytes] | None,
@@ -84,7 +86,7 @@ class LoadDocumentService:
 
                 try:
                     docs = await document_loader.aload()
-                except ImportError as e:
+                except (ImportError, UnstructuredUnsupportedFileFormatError) as e:
                     logging.log(logging.ERROR, str(e))
                     raise UnsupportedFileFormatError
 
