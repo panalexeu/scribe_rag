@@ -29,11 +29,11 @@ def bootstrap():
     map_sqlalchemy_models(container.registry())
     container.registry().metadata.create_all(container.engine())
 
-    # starting chroma db
-    global CHROMA_PROCESS
-    chroma_start_cmd = ['chroma', 'run', '--port', '8001']
-    CHROMA_PROCESS = subprocess.Popen(chroma_start_cmd)
-    logging.info(f'Started ChromaDB process [{CHROMA_PROCESS.pid}]')
+    # # starting chroma db
+    # global CHROMA_PROCESS
+    # chroma_start_cmd = ['chroma', 'run', '--port', '8001']
+    # CHROMA_PROCESS = subprocess.Popen(chroma_start_cmd)
+    # logging.info(f'Started ChromaDB process [{CHROMA_PROCESS.pid}]')
 
 
 def shutdown():
@@ -41,16 +41,17 @@ def shutdown():
     Terminates ChromaDB process. Clears ChromaDB directory (in-memory behaviour simulation).
     """
 
-    # terminating chroma db process
-    if CHROMA_PROCESS and CHROMA_PROCESS.poll() is None:
-        CHROMA_PROCESS.terminate()
-        CHROMA_PROCESS.wait()
-        logging.info(f'ChromaDB process was successfully terminated [{CHROMA_PROCESS.pid}]')
-
-    # cleaning up chroma db directory
-    parent_dir = os.path.dirname(__file__)
-    parent_parent_dir = os.path.dirname(parent_dir)
-    db_path = os.path.join(parent_parent_dir, 'chroma_data')
-    if os.path.exists(db_path):
-        shutil.rmtree(db_path)
-        logging.info(f'Cleared ChromaDB \'{db_path}\' directory')
+    # # terminating chroma db process
+    # if CHROMA_PROCESS and CHROMA_PROCESS.poll() is None:
+    #     CHROMA_PROCESS.terminate()
+    #     CHROMA_PROCESS.wait()
+    #     logging.info(f'ChromaDB process was successfully terminated [{CHROMA_PROCESS.pid}]')
+    #
+    # # cleaning up chroma db directory
+    # parent_dir = os.path.dirname(__file__)
+    # parent_parent_dir = os.path.dirname(parent_dir)
+    # db_path = os.path.join(parent_parent_dir, 'chroma_data')
+    # if os.path.exists(db_path):
+    #     shutil.rmtree(db_path)
+    #     logging.info(f'Cleared ChromaDB \'{db_path}\' directory')
+    pass

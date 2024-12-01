@@ -96,7 +96,7 @@ class Container(DeclarativeContainer):
     # to a :memory: database in SQLAlchemy with check_same_thread=False.
     engine = Singleton(
         create_engine,
-        url='sqlite:///:memory:',
+        url='sqlite:///scribe.db',  # 'sqlite:///:memory:',
         echo=False,
         poolclass=StaticPool,
         connect_args={'check_same_thread': False}
