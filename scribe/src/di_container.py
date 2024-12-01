@@ -105,7 +105,7 @@ class Container(DeclarativeContainer):
         case 'prod':
             db_url = 'sqlite:///scribe.db'
         case _:
-            db_url = 'sqlite:///scribe.db'
+            db_url = 'sqlite:///:memory:'
 
     # Use StaticPool to share a single connection across threads, enabling multithreaded access
     # to a :memory: database in SQLAlchemy with check_same_thread=False.

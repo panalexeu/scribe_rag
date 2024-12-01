@@ -34,6 +34,7 @@ def test_embed_model_updates(client):
     res = client.put(
         url='/embed-model/1',
         json={
+            'name': 'all-MiniLM-L6-v2',
             'api_key_credential_id': 1
         }
     )

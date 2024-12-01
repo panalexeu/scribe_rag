@@ -40,7 +40,9 @@ def test_base_chat_updates(client):
     res = client.put(
         '/base-chat/1',
         json={
-            "desc": "stringer"
+            "name": "string",
+            "desc": "stringer",
+            "chat_model_id": 1
         }
     )
 

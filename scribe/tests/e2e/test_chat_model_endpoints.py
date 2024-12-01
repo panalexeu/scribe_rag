@@ -43,7 +43,8 @@ def test_chat_model_updates(client):
     res = client.put(
         url='/chat-model/1',
         json={
-            'name': 'command'
+            'name': 'command',
+            'api_key_credential_id': 1
         }
     )
 
