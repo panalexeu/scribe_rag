@@ -6,6 +6,10 @@ To clone the project, run:
 git clone https://github.com/panalexeu/scribe_rag.git
 ```
 
+## overview
+
+Scribe is a locally hosted RAG web app that supports language and embedding models from multiple providers.
+
 ## server part
 
 ### dependencies
