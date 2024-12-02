@@ -1,5 +1,4 @@
 from .conftest import client, fake_chdb
-from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 
 def test_vec_doc_add(client, fake_chdb):
