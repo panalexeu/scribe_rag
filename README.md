@@ -1,4 +1,4 @@
-## project
+## Scribe
 
 To clone the project, run:
 
