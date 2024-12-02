@@ -2,19 +2,31 @@ from .conftest import client
 
 
 def test_base_chat_adds(client):
-    # setup
+    # chat-model depends on api-key
+    client.post(
+        url='/api-key/',
+        json={
+            'name': 'test',
+            'key': 'fake'
+        }
+    )
+    # base-chat depends on chat-model
+    client.post(
+        url='/chat-model/',
+        json={
+            "name": "gpt-4o-mini",
+            "api_key_credential_id": 1,
+        }
+    )
+
     res = client.post(
         '/base-chat/',
         json={
             "name": "string",
             "desc": "string",
-            "chat_model_id": 1,
-            "doc_proc_cnf_id": None,
-            "system_prompt_id": None,
+            "chat_model_id": 1
         }
     )
-
-    print(res)
 
     assert res.status_code == 201
 
