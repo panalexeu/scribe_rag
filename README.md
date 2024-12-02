@@ -49,3 +49,27 @@ To run the server, envs must be provided in the .env file:
 ### additional notes
 
 Makefile stores commands to test and run the server
+
+## ui-part
+
+The UI is fully written in JS/TypeScript and depends on the `npm` package manager. Hence `npm` is a must to run UI.
+
+### start-up
+
+run:
+
+```
+cd ./scribe_ui
+```
+
+then:
+
+```
+npm install
+```
+
+to install all dependent packages. after that you can start UI with the:
+
+```
+npm run dev
+```
