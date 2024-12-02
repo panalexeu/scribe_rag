@@ -15,7 +15,7 @@ def doc_loader():
 
 @pytest.fixture(scope='session')
 def fake_files():
-    path = './tests/documents/test_files'
+    path = './tests/test_files'
     file_content = {}
     with os.scandir(path) as scan:
         for entry in scan:
@@ -58,7 +58,7 @@ async def test_unsupported_type_error_is_raised_in_doc_loader_service_if_invalid
         doc_loader,
         doc_proc_cnf
 ):
-    path = './tests/documents/test_files'
+    path = './tests/test_files'
     name = 'lorem-ipsum.odp'
 
     file_content = {}
