@@ -9,6 +9,7 @@ from fastapi.exceptions import HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from src.adapters.repository import ItemNotFoundError
 from src.adapters.vector_collection_repository import (
@@ -54,6 +55,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+instrumentator = Instrumentator().instrument(app)
+instrumentator.expose(app)
 
 
 @app.get('/')
