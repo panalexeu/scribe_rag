@@ -1,5 +1,5 @@
 from langchain_anthropic.chat_models import ChatAnthropic
-from langchain_cohere.llms import Cohere
+from langchain_cohere import ChatCohere
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai.chat_models.base import ChatOpenAI
 
@@ -39,8 +39,8 @@ class ChatModelBuilder:
                 )
                 return LangchainChatModel(model)
             case ModelProvider.COHERE:
-                model = Cohere(
-                    # model=chat_model.name.value, TODO fix this issue
+                model = ChatCohere(
+                    model=chat_model.name.value,
                     temperature=chat_model.temperature,
                     p=chat_model.top_p,
                     base_url=chat_model.base_url,

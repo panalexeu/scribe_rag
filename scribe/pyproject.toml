@@ -32,6 +32,8 @@ sentence-transformers = "^3.3.0"
 pi-heif = "^0.20.0"
 pytest-cov = "^6.0.0"
 prometheus-fastapi-instrumentator = "^7.0.0"
+openai = "^1.56.0"
+cohere = "^5.13.0"
 
 [build-system]
 requires = ["poetry-core"]
