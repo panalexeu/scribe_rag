@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 import shutil
 import time
@@ -14,6 +15,11 @@ from src.bootstrap import bootstrap
 
 @pytest.fixture(scope='module')
 def client():
+    # checking for the SCRIBE_DB configuration to be 'dev'
+    if status := os.getenv('SCRIBE_DB'):
+        if status != 'dev':
+            raise Exception('Change or provide the env SCRIBE_DB status as \'dev\'')
+
     client = TestClient(app)
     bootstrap()  # <-- bootstrap here, because TestClient doesn't capture defined lifespan
     yield client
@@ -24,10 +30,10 @@ def client():
 def fake_chdb():
     print('Starting fake ChromaDB...')
     process = subprocess.Popen([
-            "chroma", "run",
-            "--path", "./chroma_fake",
-            "--port", "8001"
-        ],
+        "chroma", "run",
+        "--path", "./chroma_fake",
+        "--port", "8001"
+    ],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE
     )

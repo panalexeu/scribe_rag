@@ -1,23 +1,26 @@
 """
 Consider this test module as the place to experiment with a sqlalchemy orm related things, encapsulated in tests.
 """
+import os
 from datetime import datetime
 
 import pytest
 from faker import Faker
-from sqlalchemy import create_engine
-from sqlalchemy.orm import registry, Session
-from sqlalchemy.pool import StaticPool
 
 from src.adapters.orm_models import map_sqlalchemy_models
-from src.adapters.uow import SqlAlchemyUoW
 from src.adapters.repository import SqlAlchemyRepository, ItemNotFoundError
+from src.adapters.uow import SqlAlchemyUoW
 from src.di_container import Container
 from src.domain.models import FakeModel
 
 
 @pytest.fixture(scope='session')
 def fake_session():
+    # checking for the SCRIBE_DB configuration to be 'dev'
+    if status := os.getenv('SCRIBE_DB'):
+        if status != 'dev':
+            raise Exception('Change or provide the env SCRIBE_DB status as \'dev\'')
+
     container = Container()
     map_sqlalchemy_models(container.registry())
     container.registry().metadata.create_all(container.engine())

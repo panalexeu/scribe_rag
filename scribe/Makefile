@@ -20,4 +20,4 @@ test:
 	pytest -p no:warnings
 
 test_ver:
-	pytest -vs -p no:warnings --tb=long
+	pytest -vs -p no:warnings
