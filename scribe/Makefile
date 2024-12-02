@@ -1,4 +1,7 @@
 all:
+	./start.sh
+
+server:
 	fastapi dev src/api/app.py
 
 chroma:
