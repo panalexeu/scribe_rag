@@ -5,19 +5,19 @@ chroma:
 	chroma run --port 8001
 
 test_unit:
-	pytest tests/unit -v
+	pytest tests/unit
 
 test_integr:
-	pytest tests/integr -v
+	pytest tests/integr
 
 test_docs:
-	pytest tests/documents -v
+	pytest tests/documents
 
 test_e2e:
-	./e2e_script.sh
+	pytest tests/e2e
 
 test:
-	make test_unit
-	make test_integr
-	make test_docs
-	make test_e2e
+	pytest -p no:warnings
+
+test_ver:
+	pytest -vs -p no:warnings --tb=long

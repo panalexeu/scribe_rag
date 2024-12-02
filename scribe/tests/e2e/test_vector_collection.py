@@ -1,7 +1,7 @@
-from .conftest import client
+from .conftest import client, fake_chdb
 
 
-def test_vec_col_add(client):
+def test_vec_col_add(client, fake_chdb):
     # vec-col depends on embed-model
     client.post(
         url='/embed-model/',
@@ -23,7 +23,7 @@ def test_vec_col_add(client):
     assert res.status_code == 201
 
 
-def test_vec_col_read(client):
+def test_vec_col_read(client, fake_chdb):
     res = client.get(
         '/vec-col/string'
     )
@@ -31,7 +31,7 @@ def test_vec_col_read(client):
     assert res.status_code == 200
 
 
-def test_vec_col_read_all(client):
+def test_vec_col_read_all(client, fake_chdb):
     res = client.get(
         '/vec-col/'
     )
@@ -40,7 +40,7 @@ def test_vec_col_read_all(client):
     assert res.status_code == 200
 
 
-def test_vec_col_deletes(client):
+def test_vec_col_deletes(client, fake_chdb):
     res = client.delete(
         '/vec-col/string'
     )
@@ -48,7 +48,7 @@ def test_vec_col_deletes(client):
     assert res.status_code == 204
 
 
-def test_vec_col_counts(client):
+def test_vec_col_counts(client, fake_chdb):
     res = client.get(
         '/vec-col/count'
     )
