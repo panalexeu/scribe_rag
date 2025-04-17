@@ -44,7 +44,7 @@ class EmbeddingModelBuilder:
     @staticmethod
     def determine_model_provider(name: EmbeddingModelName) -> ModelProvider:
         if name in [
-            EmbeddingModelName.TEXT_EMBEDDING_3_SMALL
+            EmbeddingModelName.TEXT_EMBEDDING_3_SMALL,
         ]:
             return ModelProvider.OPENAI
         elif name in [
@@ -53,6 +53,7 @@ class EmbeddingModelBuilder:
         ]:
             return ModelProvider.COHERE
         elif name in [
-            EmbeddingModelName.ALL_MINILM_L6_V2
+            EmbeddingModelName.ALL_MINILM_L6_V2,
+            EmbeddingModelName.XLM_ROBERTA_UA_DISTILLED
         ]:
             return ModelProvider.LOCAL

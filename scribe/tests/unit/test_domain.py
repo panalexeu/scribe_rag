@@ -199,11 +199,12 @@ def test_embedding_model_builder_correctly_assigns_provider():
 
 def test_embedding_model_builder_builds_models():
     model = EmbeddingModel(
-        name=EmbeddingModelName.ALL_MINILM_L6_V2,
+        name=EmbeddingModelName.XLM_ROBERTA_UA_DISTILLED,
         api_key_credential_id=0
     )
 
     assert isinstance(EmbeddingModelBuilder(FakeCodec('fake-key')).build(model), EmbeddingFunction)
+
 
 
 def test_load_document_service_builds_config():
