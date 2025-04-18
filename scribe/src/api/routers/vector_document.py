@@ -70,18 +70,18 @@ async def create_doc(
 
 
 @router.get(
-    path='/{vec_col_name}',
+    path='/{id_}',
     response_model=list[VectorDocumentResponseModel]
 )
 @inject
 async def read_all_doc(
-        vec_col_name: str,
+        id_: int,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = DocReadAllQuery(
-        vec_col_name=vec_col_name,
+        id_=id_,
         limit=limit,
         offset=offset
     )

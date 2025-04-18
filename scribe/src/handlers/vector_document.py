@@ -59,8 +59,6 @@ class DocAddHandler:
             ef = self.embedding_model_builder_service.build(vec_col_obj.embedding_model)
             collection = await vector_collection_repo.read(vec_col_obj.name, ef)
 
-            async_doc_repo = self.async_document_repository(collection)  # type: ignore
-
         with self.doc_proc_cnf_uow as uow:
             doc_proc_cnf = uow.repository.read(request.doc_processing_cnf_id)
 
@@ -70,11 +68,12 @@ class DocAddHandler:
             doc_proc_cnf=doc_proc_cnf
         )
 
+        async_doc_repo = self.async_document_repository(collection)  # type: ignore
         return await async_doc_repo.add(loaded_docs)
 
 
 class DocReadAllQuery(BaseModel, GenericQuery[list[VectorChromaDocument]]):
-    vec_col_name: str
+    id_: int
     limit: int | None
     offset: int | None
 
@@ -89,17 +88,22 @@ class DocReadAllHandler:
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
                 Container.async_vector_document_repository],
             async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
+            domain_vector_collection_uow: AbstractUoW = Provide[Container.domain_vector_collection_uow],
     ):
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
+        self.domain_vector_collection_uow = domain_vector_collection_uow
 
     async def handle(self, request: DocReadAllQuery) -> list[VectorChromaDocument]:
-        async_vec_db_client = await self.async_vector_db_client.async_init()
-        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
-        collection = await vector_collection_repo.read(request.vec_col_name)
-        async_doc_repo = self.async_document_repository(collection)  # type: ignore
+        with self.domain_vector_collection_uow as uow:
+            vec_col_obj = uow.repository.read(request.id_)
 
+            async_vec_db_client = await self.async_vector_db_client.async_init()
+            vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
+            collection = await vector_collection_repo.read(vec_col_obj.name)
+
+        async_doc_repo = self.async_document_repository(collection)  # type: ignore
         return await async_doc_repo.read_all(
             limit=request.limit,
             offset=request.offset
