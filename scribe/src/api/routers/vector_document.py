@@ -40,13 +40,13 @@ class VectorQueryPostModel(BaseModel):
 
 
 @router.post(
-    path='/{vec_col_name}',
+    path='/{id_}',
     status_code=status.HTTP_201_CREATED,
     response_model=None
 )
 @inject
 async def create_doc(
-        vec_col_name: str,
+        id_: int,
         doc_processing_cnf_id: int = Form(...),
         urls: Optional[list[str]] = Form(None),
         files: Optional[list[UploadFile]] = None,
@@ -60,7 +60,7 @@ async def create_doc(
         files = {file.filename: await file.read() for file in files}
 
     command = DocAddCommand(
-        vec_col_name=vec_col_name,
+        id_=id_,
         doc_processing_cnf_id=doc_processing_cnf_id,
         files=files,
         urls=urls
