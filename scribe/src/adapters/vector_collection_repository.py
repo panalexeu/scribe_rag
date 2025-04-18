@@ -66,7 +66,7 @@ class AsyncChromaVectorCollectionRepository(AbstractAsyncVectorCollectionReposit
         :raises CollectionNamerError:
         """
         try:
-            return await self.client.get_collection(name=name)
+            return await self.client.get_collection(name=name, embedding_function=embedding_function)
         except InvalidCollectionException:
             raise CollectionNotFoundError(name)
 

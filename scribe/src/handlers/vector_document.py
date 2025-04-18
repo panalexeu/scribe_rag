@@ -54,10 +54,9 @@ class DocAddHandler:
 
             # retrieve vec col from vector db
             async_vec_db_client = await self.async_vector_db_client.async_init()
-
             vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
             ef = self.embedding_model_builder_service.build(vec_col_obj.embedding_model)
-            collection = await vector_collection_repo.read(vec_col_obj.name, ef)
+            collection = await vector_collection_repo.read(vec_col_obj.name, embedding_function=ef)
 
         with self.doc_proc_cnf_uow as uow:
             doc_proc_cnf = uow.repository.read(request.doc_processing_cnf_id)
