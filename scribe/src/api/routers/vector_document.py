@@ -148,13 +148,13 @@ async def query_doc(
 
 
 @router.get(
-    path='/{vec_col_name}/docs',
+    path='/{id_}/docs',
     response_model=list[str]
 )
 @inject
 async def list_docs_doc(
-        vec_col_name: str,
+        id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    query = DocListDocsQuery(vec_col_name=vec_col_name)
+    query = DocListDocsQuery(id_=id_)
     return await mediatr.send_async(query)
