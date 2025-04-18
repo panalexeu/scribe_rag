@@ -10,20 +10,18 @@ from faker import Faker
 from src.adapters.orm_models import map_sqlalchemy_models
 from src.adapters.repository import SqlAlchemyRepository, ItemNotFoundError
 from src.adapters.uow import SqlAlchemyUoW
-from src.di_container import Container
 from src.domain.models import FakeModel
 
 
 @pytest.fixture(scope='session')
 def fake_session():
-    # checking for the SCRIBE_DB configuration to be 'dev'
-    if status := os.getenv('SCRIBE_DB'):
-        if status != 'dev':
-            raise Exception('Change or provide the env SCRIBE_DB status as \'dev\'')
+    os.environ['SCRIBE_DB'] = 'dev'
 
+    from src.di_container import Container  # importing container here to rewrite envs
     container = Container()
     map_sqlalchemy_models(container.registry())
     container.registry().metadata.create_all(container.engine())
+
     yield container.session()
 
 

@@ -24,12 +24,14 @@ from src.domain.models import (
     DocProcessingConfig,
     BaseChat,
     ChatModel,
-    EmbeddingModel
+    EmbeddingModel,
+    VectorCollection
 )
 from src.enums import (
     ChatModelName,
     ChunkingStrategy,
-    EmbeddingModelName
+    EmbeddingModelName,
+    DistanceFunction
 )
 
 
@@ -114,6 +116,16 @@ def map_sqlalchemy_models(registry_: registry):
         Column('datetime', DateTime, default=datetime.now)
     )
 
+    vector_collection_table = Table(
+        'vector_collection',
+        registry_.metadata,
+        Column('id', Integer, primary_key=True),
+        Column('name', String, nullable=False),
+        Column('embedding_model_id', Integer, ForeignKey('embedding_model.id'), nullable=False),
+        Column('distance_func', Enum(DistanceFunction), nullable=False),
+        Column('datetime', DateTime, default=datetime.now)
+    )
+
     registry_.map_imperatively(ApiKeyCredential, api_key_credential_table)
     registry_.map_imperatively(FakeModel, fake_table)
     registry_.map_imperatively(SystemPrompt, system_prompt_table)
@@ -138,5 +150,12 @@ def map_sqlalchemy_models(registry_: registry):
         properties={
             'system_prompt': relationship(SystemPrompt, uselist=False),
             'chat_model': relationship(ChatModel, uselist=False)
+        }
+    )
+    registry_.map_imperatively(
+        VectorCollection,
+        vector_collection_table,
+        properties={
+            'embedding_model': relationship(EmbeddingModel, uselist=False)
         }
     )

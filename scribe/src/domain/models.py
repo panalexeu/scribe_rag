@@ -119,7 +119,6 @@ class ChatModel:
 class BaseChat:
     system_prompt: SystemPrompt
     chat_model: ChatModel
-
     # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - populated by db
 
     def __init__(
@@ -147,6 +146,21 @@ class EmbeddingModel:
     ):
         self.name = name
         self.api_key_credential_id = api_key_credential_id
+
+
+class VectorCollection:
+    embedding_model: EmbeddingModel
+    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - populated by db
+
+    def __init__self(
+            self,
+            name: str,
+            distance_func: DistanceFunction,
+            embedding_model_id: int
+    ):
+        self.name = name
+        self.distance_func = distance_func
+        self.embedding_model_id = embedding_model_id
 
 
 class VectorDocument:

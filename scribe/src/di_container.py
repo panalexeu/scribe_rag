@@ -28,6 +28,7 @@ from src.domain.models import (
     BaseChat,
     ChatModel,
     EmbeddingModel,
+    VectorCollection
 )
 from src.domain.services import (
     EncodeApiKeyCredentialService,
@@ -167,6 +168,11 @@ class Container(DeclarativeContainer):
     embedding_model_uow = Factory(
         SqlAlchemyUoW,
         repository=SqlAlchemyRelationRepository[EmbeddingModel],
+        session=session
+    )
+    domain_vector_collection_uow = Factory(
+        SqlAlchemyUoW,
+        repository=SqlAlchemyRelationRepository[VectorCollection],
         session=session
     )
 
