@@ -155,10 +155,12 @@ class VectorCollection:
     def __init__self(
             self,
             name: str,
-            distance_func: DistanceFunction
+            distance_func: DistanceFunction,
+            embedding_model_id: int
     ):
         self.name = name
         self.distance_func = distance_func
+        self.embedding_model_id = embedding_model_id
 
 
 class VectorDocument:

@@ -6,17 +6,17 @@ from pydantic import BaseModel
 
 from src.enums import DistanceFunction
 from src.adapters.async_vector_client import AbstractAsyncClient
-from src.adapters.chroma_models import VectorCollection
 from src.adapters.uow import AbstractUoW
 from src.adapters.vector_collection_repository import AbstractAsyncVectorCollectionRepository
 from src.di_container import Container
 from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
+from src.domain.models import VectorCollection
 
 
 class VecCollectionAddCommand(BaseModel, GenericQuery[VectorCollection]):
     name: str
     embedding_model_id: int
-    distance_func: DistanceFunction | None
+    distance_func: DistanceFunction
 
 
 @Mediator.handler
@@ -24,34 +24,32 @@ class VecCollectionAddHandler:
     @inject
     def __init__(
             self,
-            embedding_model_uow: AbstractUoW = Provide[Container.embedding_model_uow],
-            embedding_model_builder: EmbeddingModelBuilder = Provide[Container.embedding_model_builder],
             async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
                 Container.async_vector_collection_repository],
-            async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client]
+            async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
+            domain_vector_collection_uow: AbstractUoW = Provide[Container.domain_vector_collection_uow]
     ):
-        self.embedding_model_uow = embedding_model_uow
-        self.embedding_model_builder = embedding_model_builder
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_vector_db_client = async_vector_db_client
+        self.domain_vector_collection_uow = domain_vector_collection_uow
 
     async def handle(self, request: VecCollectionAddCommand) -> VectorCollection:
-        # retrieving values from non vector db
-        with self.embedding_model_uow as uow:
-            embedding_model = uow.repository.read(request.embedding_model_id)
+        # to rollback domain db changes if vector db storing fails
+        with self.domain_vector_collection_uow as uow:
+            # storing vector col in domain db
+            vec_col_obj = VectorCollection(**request.model_dump())  # type: ignore
+            uow.repository.add(vec_col_obj)
+            uow.commit()
 
-        # initializing documents vector db collection and repo
-        async_vec_db_client = await self.async_vector_db_client.async_init()
-        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
-        embedding_func = self.embedding_model_builder.build(embedding_model)
+            # initializing vector db collection and repo
+            async_vec_db_client = await self.async_vector_db_client.async_init()
+            vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
+            await vector_collection_repo.add(
+                name=request.name,
+                metadata={'hnswspace': request.distance_func.value}
+            )
 
-        raw_collection = await vector_collection_repo.add(
-            name=request.name,
-            embedding_function=embedding_func,
-            metadata={'hnswspace': request.distance_func.value} if request.distance_func is not None else None
-        )
-
-        return VectorCollection(raw_collection)
+            return vec_col_obj
 
 
 class VecCollectionReadQuery(BaseModel, GenericQuery[VectorCollection]):
