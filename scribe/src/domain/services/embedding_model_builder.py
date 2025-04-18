@@ -1,4 +1,4 @@
-import chromadb.utils.embedding_functions as embedding_functions
+from  chromadb.utils import embedding_functions
 
 from src.adapters.codecs import AbstractCodec
 from src.domain.models import EmbeddingModel
