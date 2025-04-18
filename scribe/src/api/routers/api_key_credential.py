@@ -80,8 +80,8 @@ def read_api_key(
 )
 @inject
 def read_all_api_key(
-        limit: int,
-        offset: int,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = ApiKeyReadAllQuery(limit, offset)
