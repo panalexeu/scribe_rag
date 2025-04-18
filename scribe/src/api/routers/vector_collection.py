@@ -65,6 +65,17 @@ async def delete_vec_col(
 
 
 @router.get(
+    '/count'
+)
+@inject
+def count_vec_col(
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+) -> int:
+    query = VecCollectionCountQuery()
+    return mediatr.send(query)
+
+
+@router.get(
     '/{id_}',
     response_model=VectorCollectionResponseModel
 )
@@ -88,15 +99,4 @@ def read_all_vec_col(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = VecCollectionReadAllQuery(limit=limit, offset=offset)
-    return mediatr.send(query)
-
-
-@router.get(
-    '/count'
-)
-@inject
-def count_vec_col(
-        mediatr: Mediator = Depends(Provide[Container.mediatr])
-) -> int:
-    query = VecCollectionCountQuery()
     return mediatr.send(query)
