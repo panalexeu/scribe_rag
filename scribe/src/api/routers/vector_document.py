@@ -103,15 +103,15 @@ async def count_doc(
 
 
 @router.get(
-    path='/{vec_col_name}/peek',
+    path='/{id_}/peek',
     response_model=list[VectorDocumentResponseModel]
 )
 @inject
-async def count_doc(
-        vec_col_name: str,
+async def peek_doc(
+        id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    query = DocPeekQuery(vec_col_name=vec_col_name)
+    query = DocPeekQuery(id_=id_)
     return await mediatr.send_async(query)
 
 
