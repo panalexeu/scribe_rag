@@ -13,6 +13,7 @@ from src.adapters.vector_collection_repository import (
 )
 from src.di_container import Container
 from src.domain.models import BaseChat
+from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
 from src.domain.services.chat_model_builder import ChatModelBuilder, ChatPromptTemplateBuilder
 
 
@@ -178,6 +179,7 @@ class BaseChatStreamHandler:
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
                 Container.async_vector_document_repository],
             async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
+            embedding_model_builder_service: EmbeddingModelBuilder = Provide[Container.embedding_model_builder]
     ):
         self.base_chat_uow = base_chat_uow
         self.chat_model_builder_service = chat_model_builder_service
@@ -185,6 +187,7 @@ class BaseChatStreamHandler:
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
+        self.embedding_model_builder_service = embedding_model_builder_service
 
     async def handle(self, request: BaseChatStreamCommand) -> AsyncStream:
         # retrieving base chat
@@ -199,10 +202,13 @@ class BaseChatStreamHandler:
 
         # retrieving documents from vector collection
         retrieved_docs = None
-        if base_chat.vec_col_name is not None:
+        if base_chat.vec_col:
             async_vec_db_client = await self.async_vector_db_client.async_init()
+
             vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
-            collection = await vector_collection_repo.read(base_chat.vec_col_name)
+            ef = self.embedding_model_builder_service.build(base_chat.vec_col.embedding_model)
+            collection = await vector_collection_repo.read(base_chat.vec_col.name, embedding_function=ef)
+
             async_doc_repo = self.async_document_repository(collection)  # type: ignore
 
             # querying the collection
