@@ -210,7 +210,7 @@ class DocDeleteHandler:
 
 
 class DocQuery(BaseModel, GenericQuery[list[VectorChromaDocument]]):
-    vec_col_name: str
+    id_: int
     query_string: str
     doc_names: list[str] | None
     n_results: int | None
@@ -226,17 +226,25 @@ class DocQueryHandler:
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
                 Container.async_vector_document_repository],
             async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
+            domain_vector_collection_uow: AbstractUoW = Provide[Container.domain_vector_collection_uow],
+            embedding_model_builder_service: EmbeddingModelBuilder = Provide[Container.embedding_model_builder]
     ):
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
+        self.domain_vector_collection_uow = domain_vector_collection_uow
+        self.embedding_model_builder_service = embedding_model_builder_service
 
     async def handle(self, request: DocQuery) -> list[VectorChromaDocument]:
-        async_vec_db_client = await self.async_vector_db_client.async_init()
-        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
-        collection = await vector_collection_repo.read(request.vec_col_name)
-        async_doc_repo = self.async_document_repository(collection)  # type: ignore
+        with self.domain_vector_collection_uow as uow:
+            vec_col_obj = uow.repository.read(request.id_)
 
+            async_vec_db_client = await self.async_vector_db_client.async_init()
+            vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
+            ef = self.embedding_model_builder_service.build(vec_col_obj.embedding_model)
+            collection = await vector_collection_repo.read(name=vec_col_obj.name, embedding_function=ef)
+
+        async_doc_repo = self.async_document_repository(collection)  # type: ignore
         return await async_doc_repo.query(
             query_string=request.query_string,
             doc_names=request.doc_names,

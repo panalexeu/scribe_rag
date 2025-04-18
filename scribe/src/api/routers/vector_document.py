@@ -131,17 +131,17 @@ async def delete_doc(
 
 
 @router.post(
-    path='/{vec_col_name}/query',
+    path='/{id_}/query',
     response_model=list[VectorDocumentResponseModel]
 )
 @inject
 async def query_doc(
-        vec_col_name: str,
+        id_: int,
         item: VectorQueryPostModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = DocQuery(
-        vec_col_name=vec_col_name,
+        id_=id_,
         **item.model_dump()
     )
     return await mediatr.send_async(query)
