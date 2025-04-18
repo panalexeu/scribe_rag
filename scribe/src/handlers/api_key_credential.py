@@ -63,8 +63,8 @@ class ApiKeyReadHandler:
 class ApiKeyReadAllQuery(GenericQuery[Sequence[ApiKeyCredential]]):
     def __init__(
             self,
-            limit: int,
-            offset: int,
+            limit: int | None,
+            offset: int | None,
             **kwargs
     ):
         self.limit = limit

@@ -40,13 +40,13 @@ class VectorQueryPostModel(BaseModel):
 
 
 @router.post(
-    path='/{vec_col_name}',
+    path='/{id_}',
     status_code=status.HTTP_201_CREATED,
     response_model=None
 )
 @inject
 async def create_doc(
-        vec_col_name: str,
+        id_: int,
         doc_processing_cnf_id: int = Form(...),
         urls: Optional[list[str]] = Form(None),
         files: Optional[list[UploadFile]] = None,
@@ -60,7 +60,7 @@ async def create_doc(
         files = {file.filename: await file.read() for file in files}
 
     command = DocAddCommand(
-        vec_col_name=vec_col_name,
+        id_=id_,
         doc_processing_cnf_id=doc_processing_cnf_id,
         files=files,
         urls=urls
@@ -70,18 +70,18 @@ async def create_doc(
 
 
 @router.get(
-    path='/{vec_col_name}',
+    path='/{id_}',
     response_model=list[VectorDocumentResponseModel]
 )
 @inject
 async def read_all_doc(
-        vec_col_name: str,
+        id_: int,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = DocReadAllQuery(
-        vec_col_name=vec_col_name,
+        id_=id_,
         limit=limit,
         offset=offset
     )
@@ -90,71 +90,71 @@ async def read_all_doc(
 
 
 @router.get(
-    path='/{vec_col_name}/count',
+    path='/{id_}/count',
     response_model=int
 )
 @inject
 async def count_doc(
-        vec_col_name: str,
+        id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    query = DocCountQuery(vec_col_name=vec_col_name)
+    query = DocCountQuery(id_=id_)
     return await mediatr.send_async(query)
 
 
 @router.get(
-    path='/{vec_col_name}/peek',
+    path='/{id_}/peek',
     response_model=list[VectorDocumentResponseModel]
 )
 @inject
-async def count_doc(
-        vec_col_name: str,
+async def peek_doc(
+        id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    query = DocPeekQuery(vec_col_name=vec_col_name)
+    query = DocPeekQuery(id_=id_)
     return await mediatr.send_async(query)
 
 
 @router.delete(
-    path='/{vec_col_name}',
+    path='/{id_}',
     response_model=None,
     status_code=status.HTTP_204_NO_CONTENT
 )
 @inject
 async def delete_doc(
-        vec_col_name: str,
+        id_: int,
         item: VectorDocumentDeleteModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    command = DocDeleteCommand(vec_col_name=vec_col_name, **item.model_dump())
+    command = DocDeleteCommand(id_=id_, doc_name=item.doc_name)
     return await mediatr.send_async(command)
 
 
 @router.post(
-    path='/{vec_col_name}/query',
+    path='/{id_}/query',
     response_model=list[VectorDocumentResponseModel]
 )
 @inject
 async def query_doc(
-        vec_col_name: str,
+        id_: int,
         item: VectorQueryPostModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
     query = DocQuery(
-        vec_col_name=vec_col_name,
+        id_=id_,
         **item.model_dump()
     )
     return await mediatr.send_async(query)
 
 
 @router.get(
-    path='/{vec_col_name}/docs',
+    path='/{id_}/docs',
     response_model=list[str]
 )
 @inject
 async def list_docs_doc(
-        vec_col_name: str,
+        id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    query = DocListDocsQuery(vec_col_name=vec_col_name)
+    query = DocListDocsQuery(id_=id_)
     return await mediatr.send_async(query)
