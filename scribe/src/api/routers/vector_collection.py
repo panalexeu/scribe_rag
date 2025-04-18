@@ -90,13 +90,13 @@ async def read_all_vec_col(
 
 
 @router.delete(
-    '/{name}',
+    '/{id_}',
     status_code=status.HTTP_204_NO_CONTENT
 )
 @inject
 async def delete_vec_col(
-        name: str,
+        id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    command = VecCollectionDeleteCommand(name=name)
+    command = VecCollectionDeleteCommand(id_=id_)
     return await mediatr.send_async(command)
