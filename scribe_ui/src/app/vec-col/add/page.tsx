@@ -115,8 +115,13 @@ export default function Page() {
                     body: JSON.stringify(postRequest)
                 }
             );
+
             if (response.status == 201) {
                 router.push('/vec-col');
+            } else if (response.status == 400) {
+                // TODO add collection name validation on UI side
+                setSnackbarMessage(`irrelevant collection name was provided`); // check response detail field for more info
+                setOpenSnackbar(true);
             } else {
                 setSnackbarMessage(`smth went wrong 😢, status code: ${response.status}`);
                 setOpenSnackbar(true);

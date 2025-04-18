@@ -23,6 +23,7 @@ export interface EmbeddingModelResponseModel {
 export const EmbeddingModelName = Object.freeze({
     // local
     ALL_MINILM_L6_V2: 'all-MiniLM-L6-v2',
+    XLM_ROBERTA_UA_DISTILLED: 'panalexeu/xlm-roberta-ua-distilled',
 
     // open ai
     TEXT_EMBEDDING_3_SMALL: 'text-embedding-3-small',
