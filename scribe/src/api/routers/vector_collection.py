@@ -62,15 +62,15 @@ async def count_vec_col(
 
 
 @router.get(
-    '/{name}',
+    '/{id_}',
     response_model=VectorCollectionResponseModel
 )
 @inject
 async def read_vec_col(
-        name: str,
+        id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    query = VecCollectionReadQuery(name=name)
+    query = VecCollectionReadQuery(id_=id_)
     return await mediatr.send_async(query)
 
 

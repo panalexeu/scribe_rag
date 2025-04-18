@@ -53,7 +53,7 @@ class VecCollectionAddHandler:
 
 
 class VecCollectionReadQuery(BaseModel, GenericQuery[VectorCollection]):
-    name: str
+    id_: int
 
 
 @Mediator.handler
@@ -61,20 +61,13 @@ class VecCollectionReadHandler:
     @inject
     def __init__(
             self,
-            async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
-                Container.async_vector_collection_repository],
-            async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client]
+            domain_vector_collection_uow: AbstractUoW = Provide[Container.domain_vector_collection_uow]
     ):
-        self.async_vector_collection_repository = async_vector_collection_repository
-        self.async_vector_db_client = async_vector_db_client
+        self.domain_vector_collection_uow = domain_vector_collection_uow
 
     async def handle(self, request: VecCollectionReadQuery) -> VectorCollection:
-        async_vec_db_client = await self.async_vector_db_client.async_init()
-        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
-
-        raw_collection = await vector_collection_repo.read(request.name)
-
-        return VectorCollection(raw_collection)
+        with self.domain_vector_collection_uow as uow:
+            return uow.repository.read(request.id_)
 
 
 class VecCollectionReadAllQuery(BaseModel, GenericQuery[Sequence[VectorCollection]]):
