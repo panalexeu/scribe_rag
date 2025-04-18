@@ -30,6 +30,7 @@ class VectorCollectionPostModel(BaseModel):
 
 
 class VectorCollectionResponseModel(BaseModel):
+    id: int
     name: str
     embedding_model: EmbeddingModelResponseModel
     distance_func: DistanceFunction

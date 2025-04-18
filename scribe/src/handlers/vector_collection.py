@@ -80,20 +80,13 @@ class VecCollectionReadAllHandler:
     @inject
     def __init__(
             self,
-            async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
-                Container.async_vector_collection_repository],
-            async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client]
+            domain_vector_collection_uow: AbstractUoW = Provide[Container.domain_vector_collection_uow]
     ):
-        self.async_vector_collection_repository = async_vector_collection_repository
-        self.async_vector_db_client = async_vector_db_client
+        self.domain_vector_collection_uow = domain_vector_collection_uow
 
     async def handle(self, request: VecCollectionReadAllQuery) -> Sequence[VectorCollection]:
-        async_vec_db_client = await self.async_vector_db_client.async_init()
-        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
-
-        raw_collections = await vector_collection_repo.read_all(**request.model_dump())
-
-        return list(map(lambda c: VectorCollection(c), raw_collections))
+        with self.domain_vector_collection_uow as uow:
+            return uow.repository.read_all(**request.model_dump())  # type: ignore
 
 
 class VecCollectionDeleteCommand(BaseModel, GenericQuery[None]):
