@@ -21,7 +21,7 @@ class BaseChatAddCommand(BaseModel, GenericQuery[BaseChat]):
     desc: str
     chat_model_id: int
     system_prompt_id: int | None
-    vec_col_name: str | None
+    vec_col_id: int | None
 
 
 @Mediator.handler

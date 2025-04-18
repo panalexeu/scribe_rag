@@ -9,7 +9,8 @@ from pydantic import BaseModel
 
 from src.api.routers import (
     system_prompt,
-    chat_model
+    chat_model,
+    vector_collection
 )
 from src.di_container import Container
 from src.handlers.base_chat import (
@@ -36,7 +37,8 @@ class BaseChatResponseModel(BaseModel):
     chat_model: chat_model.ChatModelResponseModel | None
     system_prompt_id: int | None
     system_prompt: system_prompt.SystemPromptResponseModel | None
-    vec_col_name: str | None
+    vec_col_id: int | None
+    vec_col: vector_collection.VectorCollectionResponseModel | None
     datetime: datetime
 
 
@@ -45,7 +47,7 @@ class BaseChatAddModel(BaseModel):
     desc: str
     chat_model_id: int
     system_prompt_id: Optional[int] = None
-    vec_col_name: Optional[str] = None
+    vec_col_id: Optional[int] = None
 
 
 class BaseChatPutModel(BaseModel):
@@ -53,7 +55,7 @@ class BaseChatPutModel(BaseModel):
     desc: Optional[str] = None
     system_prompt_id: Optional[int] = None
     chat_model_id: Optional[int] = None
-    vec_col_name: Optional[str] = None
+    vec_col_id: Optional[int] = None
 
 
 @router.post(
