@@ -4,13 +4,12 @@ from dependency_injector.wiring import inject, Provide
 from mediatr import Mediator, GenericQuery
 from pydantic import BaseModel
 
-from src.enums import DistanceFunction
 from src.adapters.async_vector_client import AbstractAsyncClient
 from src.adapters.uow import AbstractUoW
 from src.adapters.vector_collection_repository import AbstractAsyncVectorCollectionRepository
 from src.di_container import Container
-from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
 from src.domain.models import VectorCollection
+from src.enums import DistanceFunction
 
 
 class VecCollectionAddCommand(BaseModel, GenericQuery[VectorCollection]):
@@ -39,7 +38,6 @@ class VecCollectionAddHandler:
             # storing vector col in domain db
             vec_col_obj = VectorCollection(**request.model_dump())  # type: ignore
             uow.repository.add(vec_col_obj)
-            uow.commit()
 
             # initializing vector db collection and repo
             async_vec_db_client = await self.async_vector_db_client.async_init()
@@ -49,44 +47,9 @@ class VecCollectionAddHandler:
                 metadata={'hnswspace': request.distance_func.value}
             )
 
+            uow.commit()
+
             return vec_col_obj
-
-
-class VecCollectionReadQuery(BaseModel, GenericQuery[VectorCollection]):
-    id_: int
-
-
-@Mediator.handler
-class VecCollectionReadHandler:
-    @inject
-    def __init__(
-            self,
-            domain_vector_collection_uow: AbstractUoW = Provide[Container.domain_vector_collection_uow]
-    ):
-        self.domain_vector_collection_uow = domain_vector_collection_uow
-
-    async def handle(self, request: VecCollectionReadQuery) -> VectorCollection:
-        with self.domain_vector_collection_uow as uow:
-            return uow.repository.read(request.id_)
-
-
-class VecCollectionReadAllQuery(BaseModel, GenericQuery[Sequence[VectorCollection]]):
-    limit: int | None
-    offset: int | None
-
-
-@Mediator.handler
-class VecCollectionReadAllHandler:
-    @inject
-    def __init__(
-            self,
-            domain_vector_collection_uow: AbstractUoW = Provide[Container.domain_vector_collection_uow]
-    ):
-        self.domain_vector_collection_uow = domain_vector_collection_uow
-
-    async def handle(self, request: VecCollectionReadAllQuery) -> Sequence[VectorCollection]:
-        with self.domain_vector_collection_uow as uow:
-            return uow.repository.read_all(**request.model_dump())  # type: ignore
 
 
 class VecCollectionDeleteCommand(BaseModel, GenericQuery[None]):
@@ -122,6 +85,43 @@ class VecCollectionDeleteHandler:
             uow.commit()
 
 
+class VecCollectionReadQuery(BaseModel, GenericQuery[VectorCollection]):
+    id_: int
+
+
+@Mediator.handler
+class VecCollectionReadHandler:
+    @inject
+    def __init__(
+            self,
+            domain_vector_collection_uow: AbstractUoW = Provide[Container.domain_vector_collection_uow]
+    ):
+        self.domain_vector_collection_uow = domain_vector_collection_uow
+
+    def handle(self, request: VecCollectionReadQuery) -> VectorCollection:
+        with self.domain_vector_collection_uow as uow:
+            return uow.repository.read(request.id_)
+
+
+class VecCollectionReadAllQuery(BaseModel, GenericQuery[Sequence[VectorCollection]]):
+    limit: int | None
+    offset: int | None
+
+
+@Mediator.handler
+class VecCollectionReadAllHandler:
+    @inject
+    def __init__(
+            self,
+            domain_vector_collection_uow: AbstractUoW = Provide[Container.domain_vector_collection_uow]
+    ):
+        self.domain_vector_collection_uow = domain_vector_collection_uow
+
+    def handle(self, request: VecCollectionReadAllQuery) -> Sequence[VectorCollection]:
+        with self.domain_vector_collection_uow as uow:
+            return uow.repository.read_all(**request.model_dump())  # type: ignore
+
+
 class VecCollectionCountQuery(GenericQuery[int]):
     pass
 
@@ -135,6 +135,6 @@ class VecCollectionCountHandler:
     ):
         self.domain_vector_collection_uow = domain_vector_collection_uow
 
-    async def handle(self, request: VecCollectionCountQuery) -> int:
+    def handle(self, request: VecCollectionCountQuery) -> int:
         with self.domain_vector_collection_uow as uow:
             return uow.repository.count()

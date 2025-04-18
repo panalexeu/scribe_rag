@@ -51,44 +51,6 @@ async def create_vec_col(
     return await mediatr.send_async(command)
 
 
-@router.get(
-    '/count'
-)
-@inject
-async def count_vec_col(
-        mediatr: Mediator = Depends(Provide[Container.mediatr])
-) -> int:
-    query = VecCollectionCountQuery()
-    return await mediatr.send_async(query)
-
-
-@router.get(
-    '/{id_}',
-    response_model=VectorCollectionResponseModel
-)
-@inject
-async def read_vec_col(
-        id_: int,
-        mediatr: Mediator = Depends(Provide[Container.mediatr])
-):
-    query = VecCollectionReadQuery(id_=id_)
-    return await mediatr.send_async(query)
-
-
-@router.get(
-    '/',
-    response_model=list[VectorCollectionResponseModel]
-)
-@inject
-async def read_all_vec_col(
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-        mediatr: Mediator = Depends(Provide[Container.mediatr])
-):
-    query = VecCollectionReadAllQuery(limit=limit, offset=offset)
-    return await mediatr.send_async(query)
-
-
 @router.delete(
     '/{id_}',
     status_code=status.HTTP_204_NO_CONTENT
@@ -100,3 +62,41 @@ async def delete_vec_col(
 ):
     command = VecCollectionDeleteCommand(id_=id_)
     return await mediatr.send_async(command)
+
+
+@router.get(
+    '/{id_}',
+    response_model=VectorCollectionResponseModel
+)
+@inject
+def read_vec_col(
+        id_: int,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = VecCollectionReadQuery(id_=id_)
+    return mediatr.send(query)
+
+
+@router.get(
+    '/',
+    response_model=list[VectorCollectionResponseModel]
+)
+@inject
+def read_all_vec_col(
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+):
+    query = VecCollectionReadAllQuery(limit=limit, offset=offset)
+    return mediatr.send(query)
+
+
+@router.get(
+    '/count'
+)
+@inject
+def count_vec_col(
+        mediatr: Mediator = Depends(Provide[Container.mediatr])
+) -> int:
+    query = VecCollectionCountQuery()
+    return mediatr.send(query)
