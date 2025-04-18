@@ -32,7 +32,7 @@ class VectorCollectionPostModel(BaseModel):
 class VectorCollectionResponseModel(BaseModel):
     id: int
     name: str
-    embedding_model: EmbeddingModelResponseModel
+    embedding_model: EmbeddingModelResponseModel | None
     distance_func: DistanceFunction
     datetime: datetime
 
