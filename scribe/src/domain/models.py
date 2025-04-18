@@ -116,25 +116,6 @@ class ChatModel:
         return json.loads(self.stop_sequences) if self.stop_sequences is not None else None
 
 
-class BaseChat:
-    system_prompt: SystemPrompt
-    chat_model: ChatModel
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - populated by db
-
-    def __init__(
-            self,
-            name: str,
-            desc: str,
-            chat_model_id: int,
-            system_prompt_id: int | None,
-            vec_col_name: str | None
-    ):
-        self.name = name
-        self.desc = desc
-        self.system_prompt_id = system_prompt_id
-        self.chat_model_id = chat_model_id
-        self.vec_col_name = vec_col_name
-
 
 class EmbeddingModel:
     api_key_credential: ApiKeyCredential
@@ -186,3 +167,24 @@ class VectorDocument:
 
     def __repr__(self) -> str:
         return f"VectorDocument<id_={self.id_} page_content='{self.page_content}' metadata={self.metadata}>"
+
+
+class BaseChat:
+    chat_model: ChatModel
+    system_prompt: SystemPrompt | None
+    vec_col: VectorCollection | None
+    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ - populated by db
+
+    def __init__(
+            self,
+            name: str,
+            desc: str,
+            chat_model_id: int,
+            system_prompt_id: int | None,
+            vec_col_id: int | None
+    ):
+        self.name = name
+        self.desc = desc
+        self.system_prompt_id = system_prompt_id
+        self.chat_model_id = chat_model_id
+        self.vec_col_id = vec_col_id

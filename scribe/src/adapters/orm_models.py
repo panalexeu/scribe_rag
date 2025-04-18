@@ -95,18 +95,6 @@ def map_sqlalchemy_models(registry_: registry):
         Column('datetime', DateTime, default=datetime.now)
     )
 
-    base_chat_table = Table(
-        'base_chat',
-        registry_.metadata,
-        Column('id', Integer, primary_key=True),
-        Column('name', String, nullable=False),
-        Column('desc', String, nullable=False),
-        Column('chat_model_id', Integer, ForeignKey('chat_model.id'), nullable=False),
-        Column('system_prompt_id', Integer, ForeignKey('system_prompt.id'), nullable=True),
-        Column('vec_col_name', String, nullable=True),
-        Column('datetime', DateTime, default=datetime.now)
-    )
-
     embedding_model_table = Table(
         'embedding_model',
         registry_.metadata,
@@ -123,6 +111,18 @@ def map_sqlalchemy_models(registry_: registry):
         Column('name', String, nullable=False),
         Column('embedding_model_id', Integer, ForeignKey('embedding_model.id'), nullable=False),
         Column('distance_func', Enum(DistanceFunction), nullable=False),
+        Column('datetime', DateTime, default=datetime.now)
+    )
+
+    base_chat_table = Table(
+        'base_chat',
+        registry_.metadata,
+        Column('id', Integer, primary_key=True),
+        Column('name', String, nullable=False),
+        Column('desc', String, nullable=False),
+        Column('chat_model_id', Integer, ForeignKey('chat_model.id'), nullable=False),
+        Column('system_prompt_id', Integer, ForeignKey('system_prompt.id'), nullable=True),
+        Column('vec_col_id', Integer, ForeignKey('vector_collection.id'), nullable=True),
         Column('datetime', DateTime, default=datetime.now)
     )
 
@@ -144,18 +144,21 @@ def map_sqlalchemy_models(registry_: registry):
             'api_key_credential': relationship(ApiKeyCredential, uselist=False)
         }
     )
-    registry_.map_imperatively(
-        BaseChat,
-        base_chat_table,
-        properties={
-            'system_prompt': relationship(SystemPrompt, uselist=False),
-            'chat_model': relationship(ChatModel, uselist=False)
-        }
-    )
+
     registry_.map_imperatively(
         VectorCollection,
         vector_collection_table,
         properties={
             'embedding_model': relationship(EmbeddingModel, uselist=False)
+        }
+    )
+
+    registry_.map_imperatively(
+        BaseChat,
+        base_chat_table,
+        properties={
+            'system_prompt': relationship(SystemPrompt, uselist=False),
+            'chat_model': relationship(ChatModel, uselist=False),
+            'vec_col': relationship(VectorCollection, uselist=False)
         }
     )
