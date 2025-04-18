@@ -90,15 +90,15 @@ async def read_all_doc(
 
 
 @router.get(
-    path='/{vec_col_name}/count',
+    path='/{id_}/count',
     response_model=int
 )
 @inject
 async def count_doc(
-        vec_col_name: str,
+        id_: int,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    query = DocCountQuery(vec_col_name=vec_col_name)
+    query = DocCountQuery(id_=id_)
     return await mediatr.send_async(query)
 
 

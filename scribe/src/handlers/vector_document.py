@@ -110,7 +110,7 @@ class DocReadAllHandler:
 
 
 class DocCountQuery(BaseModel, GenericQuery[int]):
-    vec_col_name: str
+    id_: int
 
 
 @Mediator.handler
@@ -123,17 +123,22 @@ class DocCountHandler:
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
                 Container.async_vector_document_repository],
             async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
+            domain_vector_collection_uow: AbstractUoW = Provide[Container.domain_vector_collection_uow]
     ):
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
+        self.domain_vector_collection_uow = domain_vector_collection_uow
 
     async def handle(self, request: DocCountQuery) -> int:
-        async_vec_db_client = await self.async_vector_db_client.async_init()
-        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
-        collection = await vector_collection_repo.read(request.vec_col_name)
-        async_doc_repo = self.async_document_repository(collection)  # type: ignore
+        with self.domain_vector_collection_uow as uow:
+            vec_col_obj = uow.repository.read(request.id_)
 
+            async_vec_db_client = await self.async_vector_db_client.async_init()
+            vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
+            collection = await vector_collection_repo.read(vec_col_obj.name)
+
+        async_doc_repo = self.async_document_repository(collection)  # type: ignore
         return await async_doc_repo.count()
 
 
