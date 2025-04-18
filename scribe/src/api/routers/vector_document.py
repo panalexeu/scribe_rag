@@ -116,17 +116,17 @@ async def peek_doc(
 
 
 @router.delete(
-    path='/{vec_col_name}',
+    path='/{id_}',
     response_model=None,
     status_code=status.HTTP_204_NO_CONTENT
 )
 @inject
 async def delete_doc(
-        vec_col_name: str,
+        id_: int,
         item: VectorDocumentDeleteModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    command = DocDeleteCommand(vec_col_name=vec_col_name, **item.model_dump())
+    command = DocDeleteCommand(id_=id_, doc_name=item.doc_name)
     return await mediatr.send_async(command)
 
 

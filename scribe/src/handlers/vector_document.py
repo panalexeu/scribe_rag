@@ -142,35 +142,6 @@ class DocCountHandler:
         return await async_doc_repo.count()
 
 
-class DocDeleteCommand(BaseModel, GenericQuery[None]):
-    vec_col_name: str
-    doc_name: str
-
-
-@Mediator.handler
-class DocDeleteHandler:
-    @inject
-    def __init__(
-            self,
-            async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
-                Container.async_vector_collection_repository],
-            async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
-                Container.async_vector_document_repository],
-            async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
-    ):
-        self.async_vector_collection_repository = async_vector_collection_repository
-        self.async_document_repository = async_vector_document_repository
-        self.async_vector_db_client = async_vector_db_client
-
-    async def handle(self, request: DocDeleteCommand) -> None:
-        async_vec_db_client = await self.async_vector_db_client.async_init()
-        vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
-        collection = await vector_collection_repo.read(request.vec_col_name)
-        async_doc_repo = self.async_document_repository(collection)  # type: ignore
-
-        return await async_doc_repo.delete(request.doc_name)
-
-
 class DocPeekQuery(BaseModel, GenericQuery[list[VectorChromaDocument]]):
     id_: int
 
@@ -202,6 +173,40 @@ class DocPeekHandler:
 
         async_doc_repo = self.async_document_repository(collection)  # type: ignore
         return await async_doc_repo.peek()
+
+
+class DocDeleteCommand(BaseModel, GenericQuery[None]):
+    id_: int
+    doc_name: str
+
+
+@Mediator.handler
+class DocDeleteHandler:
+    @inject
+    def __init__(
+            self,
+            async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
+                Container.async_vector_collection_repository],
+            async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
+                Container.async_vector_document_repository],
+            async_vector_db_client: AbstractAsyncClient = Provide[Container.async_vector_db_client],
+            domain_vector_collection_uow: AbstractUoW = Provide[Container.domain_vector_collection_uow]
+    ):
+        self.async_vector_collection_repository = async_vector_collection_repository
+        self.async_document_repository = async_vector_document_repository
+        self.async_vector_db_client = async_vector_db_client
+        self.domain_vector_collection_uow = domain_vector_collection_uow
+
+    async def handle(self, request: DocDeleteCommand) -> None:
+        with self.domain_vector_collection_uow as uow:
+            vec_col_obj = uow.repository.read(request.id_)
+
+            async_vec_db_client = await self.async_vector_db_client.async_init()
+            vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
+            collection = await vector_collection_repo.read(vec_col_obj.name)
+
+        async_doc_repo = self.async_document_repository(collection)  # type: ignore
+        return await async_doc_repo.delete(request.doc_name)
 
 
 class DocQuery(BaseModel, GenericQuery[list[VectorChromaDocument]]):
