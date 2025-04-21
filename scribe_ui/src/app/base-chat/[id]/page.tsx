@@ -34,32 +34,6 @@ export default function Page() {
     const [sysPromptCount, setSysPromptCount] = useState(0);
     const [sysPrompts, setSysPrompts] = useState<SysPromptResponseModel[]>([]);
 
-    async function fetchVecCol(name: string | null) {
-        if (!name) {
-            return;
-        }
-
-        try {
-            const response = await fetch(
-                `${API_URL}/vec-col/${name}`,
-                {
-                    method: 'GET'
-                }
-            );
-
-            if (response.status === 200) {
-                const data: VectorCollectionResponseModel = await response.json();
-                setSelectedVecCol(data);
-            } else {
-                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
-                setOpenSnackbar(true);
-            }
-        } catch (error) {
-            setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
-            setOpenSnackbar(true);
-        }
-    }
-
     async function fetchBaseChat() {
         try {
             const response = await fetch(
@@ -75,7 +49,7 @@ export default function Page() {
                 setDesc(data.desc);
                 setSelectedSysPrompt(data.system_prompt);
                 setSelectedChatModel(data.chat_model);
-                await fetchVecCol(data.vec_col_name);
+                setSelectedVecCol(data.vec_col);
             } else {
                 setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
                 setOpenSnackbar(true);
@@ -258,7 +232,7 @@ export default function Page() {
                 desc: desc,
                 chat_model_id: chatModel.id,
                 system_prompt_id: !sysPrompt ? null : sysPrompt.id,
-                vec_col_name: !vecCol ? null : vecCol.name
+                vec_col_id: !vecCol ? null : vecCol.id
             });
 
             const response = await fetch(
