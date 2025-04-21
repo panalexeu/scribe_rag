@@ -171,7 +171,7 @@ export default function Page() {
             <Breadcrumbs>
                 <Typography variant={'h6'}>
                     <MUILink component={Link} href={'/base-chat'} underline={'none'}>
-                        Base Chat
+                        base-chat
                     </MUILink>
                 </Typography>
                 <Typography variant={'h6'}>
@@ -180,7 +180,7 @@ export default function Page() {
                     </MUILink>
                 </Typography>
                 <Typography variant={'h6'}>
-                    Stream
+                    stream
                 </Typography>
             </Breadcrumbs>
 
