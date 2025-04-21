@@ -25,4 +25,11 @@ class ChatPromptTemplateBuilder:
 
     @staticmethod
     def format_context(docs: list[VectorChromaDocument]) -> str:
+        """
+        Removes '{', '}' in documents, to not ruin LangChain prompt template formatting.
+        After that concatenates documents into one string separated with '\n'.
+        """
+        for doc in docs:
+            doc.document = doc.document.replace('{', '').replace('}', '')
+
         return '\n'.join(list(map(lambda d: d.document, docs)))

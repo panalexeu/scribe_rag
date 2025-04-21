@@ -1,8 +1,10 @@
 from copy import copy
 
+import numpy
 from chromadb.utils.embedding_functions import EmbeddingFunction
 from langchain_unstructured.document_loaders import UnstructuredLoader
 from langchain_core.documents.base import Document
+from langchain_core.prompts import ChatPromptTemplate
 
 from src.adapters.chat_model import LangchainChatModel
 from src.adapters.codecs import FakeCodec
@@ -16,6 +18,8 @@ from src.domain.models import (
 from src.domain.services.load_document_service import LoadDocumentService
 from src.domain.services import EncodeApiKeyCredentialService
 from src.domain.services.chat_model_builder import ChatModelBuilder
+from src.domain.services.chat_prompt_template_builder import ChatPromptTemplateBuilder
+from src.adapters.chroma_models import VectorChromaDocument
 
 
 from src.domain.services.embedding_model_builder import (
@@ -268,3 +272,48 @@ def test_vector_document_normalizes_metadata():
 
     assert isinstance(res['fake-list'], str)
     assert res['val'] == 'just-a-val'
+
+
+def test_chat_prompt_template_builder_formats_context():
+    vector_docs = [
+        VectorChromaDocument(
+            'fake',
+            '{Hello}',
+            metadata=dict(fake='fake'),
+            embedding=numpy.array([1, 2, 3])
+        ),
+        VectorChromaDocument(
+            'fake',
+            'world!',
+            metadata=dict(fake='fake'),
+            embedding=numpy.array([1, 2, 3])
+        ),
+    ]
+
+    res = ChatPromptTemplateBuilder.format_context(vector_docs)
+
+    assert res == 'Hello\nworld!'
+
+
+def test_chat_prompt_template_builder_builds_prompt():
+    vector_docs = [
+        VectorChromaDocument(
+            'fake',
+            '{Hello}',
+            metadata=dict(fake='fake'),
+            embedding=numpy.array([1, 2, 3])
+        ),
+        VectorChromaDocument(
+            'fake',
+            'world!',
+            metadata=dict(fake='fake'),
+            embedding=numpy.array([1, 2, 3])
+        ),
+    ]
+
+    res = ChatPromptTemplateBuilder.build(
+        'fake',
+        vector_docs
+    )
+
+    assert isinstance(res, ChatPromptTemplate)
