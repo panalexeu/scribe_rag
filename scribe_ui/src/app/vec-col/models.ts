@@ -8,6 +8,7 @@ export const VectorCollectionPostModel = z.object({
 })
 
 export interface VectorCollectionResponseModel {
+    id: number,
     name: string,
     embedding_model: EmbeddingModelResponseModel | null,
     distance_func: string,

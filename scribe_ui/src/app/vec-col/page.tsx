@@ -186,7 +186,7 @@ export default function Page() {
                             {/* OPEN */}
                             <Tooltip
                                 title={'open vec-col'}
-                                onClick={() => router.push(`/vec-col/${item.name}`)}
+                                onClick={() => router.push(`/vec-col/${item.id}`)}
                             >
                                 <IconButton size={'small'}>
                                     <OpenInNewIcon/>

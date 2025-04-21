@@ -13,11 +13,26 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    DialogProps, List, ListItem, ListItemText, ListItemIcon,
+    DialogProps,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemIcon,
     IconButton,
-    DialogActions, CardContent, Card,
+    DialogActions,
+    CardContent,
+    Card,
     Paper,
-    CircularProgress, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TablePagination, Tooltip,
+    CircularProgress,
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    TablePagination,
+    Tooltip,
+    InputAdornment,
 } from "@mui/material";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import LinkIcon from '@mui/icons-material/Link';
@@ -34,7 +49,7 @@ import Link from "next/link";
 import {parseDateTime} from "@/src/utils";
 
 export default function Page() {
-    const {name} = useParams();
+    const {id} = useParams();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [urlDialog, setUrlDialog] = useState(false);
@@ -56,7 +71,7 @@ export default function Page() {
     async function fetchVectorDocsCount() {
         try {
             const response = await fetch(
-                `${API_URL}/vec-doc/${name}/count`,
+                `${API_URL}/vec-doc/${id}/count`,
                 {
                     method: 'GET'
                 }
@@ -78,7 +93,7 @@ export default function Page() {
     async function fetchVectorCollectionPeek() {
         try {
             const response = await fetch(
-                `${API_URL}/vec-doc/${name}/peek`,
+                `${API_URL}/vec-doc/${id}/peek`,
                 {
                     method: 'GET'
                 }
@@ -146,7 +161,7 @@ export default function Page() {
     async function fetchVectorCollection() {
         try {
             const response = await fetch(
-                `${API_URL}/vec-col/${name}`,
+                `${API_URL}/vec-col/${id}`,
                 {
                     method: 'GET'
                 }
@@ -208,7 +223,7 @@ export default function Page() {
                 console.log(`${key}: ${value}`);
             }
             const response = await fetch(
-                `${API_URL}/vec-doc/${name}`,
+                `${API_URL}/vec-doc/${id}`,
                 {
                     method: 'POST',
                     body: formData
@@ -266,7 +281,7 @@ export default function Page() {
                     </MUILink>
                 </Typography>
                 <Typography variant={'h6'}>
-                    {name}
+                    {id}
                 </Typography>
             </Breadcrumbs>
 
@@ -289,12 +304,12 @@ export default function Page() {
                     sx={{width: '50%'}}
                 />
 
-                {/* METADATA */}
+                {/* DISTANCE */}
                 <TextField
-                    id={'metadata'}
+                    id={'distance-func'}
                     variant={'outlined'}
-                    label={'metadata'}
-                    value={JSON.stringify(!vectorCollection ? null : vectorCollection.metadata)}
+                    label={'distance-func'}
+                    value={!vectorCollection ? '' : vectorCollection.distance_func}
                     inputProps={{readOnly: true,}}
                     sx={{width: '50%'}}
                 />
@@ -311,8 +326,21 @@ export default function Page() {
                     id={'embed-func'}
                     variant={'outlined'}
                     label={'embed-func'}
-                    value={!vectorCollection ? '' : vectorCollection.embedding_function}
-                    inputProps={{readOnly: true,}}
+                    value={!vectorCollection || !vectorCollection.embedding_model ?
+                            '' : vectorCollection.embedding_model.name}
+                    InputProps={{
+                        readOnly: true,
+                        endAdornment: (
+                            <MUILink
+                                component={Link}
+                                href={!vectorCollection || !vectorCollection.embedding_model ?
+                                        '/' : `/embed-model/${vectorCollection.embedding_model.id}`}
+                                underline={'none'}
+                            >
+                                <OpenInNewIcon/>
+                            </MUILink>
+                        )
+                    }}
                 />
             </Box>
 
@@ -429,7 +457,7 @@ export default function Page() {
                         <Tooltip title={'explore vec-col in detail'}>
                             <MUILink
                                 component={Link}
-                                href={`/vec-col/${name}/explore`}
+                                href={`/vec-col/${id}/explore`}
                                 underline={'none'}
                             >
                                 <OpenInNewIcon/>
