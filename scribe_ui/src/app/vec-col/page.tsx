@@ -80,10 +80,10 @@ export default function Page() {
         }
     }
 
-    async function handleDelete(name: string) {
+    async function handleDelete(id: number) {
         try {
             const response = await fetch(
-                `${API_URL}/vec-col/${name}`,
+                `${API_URL}/vec-col/${id}`,
                 {
                     method: 'DELETE'
                 }
@@ -177,7 +177,7 @@ export default function Page() {
                                 <IconButton
                                     sx={{ml: 'auto'}}
                                     size={'small'}
-                                    onClick={() => handleDelete(item.name)}
+                                    onClick={() => handleDelete(item.id)}
                                 >
                                     <DeleteIcon/>
                                 </IconButton>
