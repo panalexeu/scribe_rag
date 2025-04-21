@@ -1,5 +1,5 @@
 import {z} from 'zod';
-
+import {EmbeddingModelResponseModel} from '@/src/app/embed-model/models';
 
 export const VectorCollectionPostModel = z.object({
     name: z.string(),
@@ -9,8 +9,9 @@ export const VectorCollectionPostModel = z.object({
 
 export interface VectorCollectionResponseModel {
     name: string,
-    embedding_function: string,
-    metadata: Object
+    embedding_model: EmbeddingModelResponseModel | null,
+    distance_func: string,
+    datetime: string
 }
 
 export const DistanceFunction = Object.freeze({

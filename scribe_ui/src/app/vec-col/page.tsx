@@ -2,8 +2,6 @@
 
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
-import {API_URL, PAGE_LIMIT} from "@/src/constants";
-import {VectorCollectionResponseModel} from "./models";
 import DataArrayIcon from '@mui/icons-material/DataArray';
 import {
     Box,
@@ -16,9 +14,16 @@ import {
     Tooltip,
     Typography
 } from "@mui/material";
+import Link from 'next/link';
+import {Link as MUILink} from '@mui/material';
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+
+import {API_URL, PAGE_LIMIT} from "@/src/constants";
+import {parseDateTime} from "@/src/utils";
+import {VectorCollectionResponseModel} from "./models";
+
 
 export default function Page() {
     const router = useRouter();
@@ -63,6 +68,7 @@ export default function Page() {
 
             if (response.ok) {
                 const data = await response.json();
+                console.log(data);
                 setItems(data);
             } else {
                 setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
@@ -141,16 +147,28 @@ export default function Page() {
                         <Box
                             display={'flex'}
                         >
+                            {/* DATETIME */}
+                            <Typography>
+                                {parseDateTime(item.datetime)}
+                            </Typography>
+
                             {/* NAME */}
                             <Typography marginLeft={4}>{item.name}</Typography>
 
-                            {/* EMBEDDING MODEL CREATED*/}
-                            <DataArrayIcon sx={{marginLeft: 4, color: "text.secondary"}} />
+                            {/* EMBEDDING MODEL*/}
+                            <DataArrayIcon sx={{marginLeft: 4}} />
                             <Typography
                                 marginLeft={1}
-                                color={'textSecondary'}
                             >
-                                {item.embedding_function}
+                                {
+                                    !item.embedding_model ? 'null':
+                                    <MUILink
+                                        component={Link}
+                                        href={`/embed-model/${item.embedding_model.id}`}
+                                    >
+                                        {item.embedding_model.name}
+                                    </MUILink>
+                                }
                             </Typography>
 
                             {/* ACTIONS */}
