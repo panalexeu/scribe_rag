@@ -25,7 +25,7 @@ def test_vec_col_add(client, fake_chdb):
 
 def test_vec_col_read(client, fake_chdb):
     res = client.get(
-        '/vec-col/string'
+        '/vec-col/1'
     )
 
     assert res.status_code == 200
@@ -42,7 +42,7 @@ def test_vec_col_read_all(client, fake_chdb):
 
 def test_vec_col_deletes(client, fake_chdb):
     res = client.delete(
-        '/vec-col/string'
+        '/vec-col/1'
     )
 
     assert res.status_code == 204
