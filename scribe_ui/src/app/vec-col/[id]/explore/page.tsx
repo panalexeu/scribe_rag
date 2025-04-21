@@ -24,7 +24,7 @@ import {VectorDocumentResponseModel} from '@/src/app/vec-col/models';
 
 
 export default function Page() {
-    const {name} = useParams();
+    const {id} = useParams();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -57,7 +57,7 @@ export default function Page() {
 
         try {
             const response = await fetch(
-                `${API_URL}/vec-doc/${name}/query`,
+                `${API_URL}/vec-doc/${id}/query`,
                 {
                     method: 'post',
                     body: JSON.stringify(request),
@@ -84,7 +84,7 @@ export default function Page() {
     async function fetchVectorDocsCount() {
         try {
             const response = await fetch(
-                `${API_URL}/vec-doc/${name}/count`,
+                `${API_URL}/vec-doc/${id}/count`,
                 {
                     method: 'GET'
                 }
@@ -106,7 +106,7 @@ export default function Page() {
     async function fetchDocs() {
         try {
             const response = await fetch(
-                `${API_URL}/vec-doc/${name}/docs`,
+                `${API_URL}/vec-doc/${id}/docs`,
                 {
                     method: 'GET'
                 }
@@ -133,7 +133,7 @@ export default function Page() {
 
         try {
             const response = await fetch(
-                `${API_URL}/vec-doc/${name}`,
+                `${API_URL}/vec-doc/${id}`,
                 {
                     method: 'DELETE',
                     headers: {
@@ -144,7 +144,7 @@ export default function Page() {
             );
 
             if (response.status === 204) {
-                setSnackbarMessage(`document with the name: ${docToRemove} was successfully removed from the vec-col: ${name} 🥳`);
+                setSnackbarMessage(`document with the name: ${docToRemove} was successfully removed from the vec-col 🥳`);
                 setOpenSnackbar(true);
                 await fetchDocs();
                 await fetchVectorDocsCount();
@@ -186,10 +186,10 @@ export default function Page() {
                 <Typography variant={'h6'}>
                     <MUILink
                         component={Link}
-                        href={`/vec-col/${name}`}
+                        href={`/vec-col/${id}`}
                         underline={'none'}
                     >
-                        {name}
+                        {id}
                     </MUILink>
                 </Typography>
 
