@@ -34,9 +34,9 @@ from src.domain.services import (
     EncodeApiKeyCredentialService,
 )
 from src.domain.services.chat_model_builder import (
-    ChatModelBuilder,
-    ChatPromptTemplateBuilder
+    ChatModelBuilder
 )
+from src.domain.services.chat_prompt_template_builder import ChatPromptTemplateBuilder
 from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
 from src.domain.services.load_document_service import LoadDocumentService
 from src.system.dir import get_scribe_dir_path, read_scribe_key

@@ -14,7 +14,8 @@ from src.adapters.vector_collection_repository import (
 from src.di_container import Container
 from src.domain.models import BaseChat
 from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
-from src.domain.services.chat_model_builder import ChatModelBuilder, ChatPromptTemplateBuilder
+from src.domain.services.chat_model_builder import ChatModelBuilder
+from src.domain.services.chat_prompt_template_builder import ChatPromptTemplateBuilder
 
 
 class BaseChatAddCommand(BaseModel, GenericQuery[BaseChat]):

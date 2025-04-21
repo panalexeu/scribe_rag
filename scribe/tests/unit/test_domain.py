@@ -17,6 +17,7 @@ from src.domain.services.load_document_service import LoadDocumentService
 from src.domain.services import EncodeApiKeyCredentialService
 from src.domain.services.chat_model_builder import ChatModelBuilder
 
+
 from src.domain.services.embedding_model_builder import (
     EmbeddingModelBuilder
 )
@@ -204,7 +205,6 @@ def test_embedding_model_builder_builds_models():
     )
 
     assert isinstance(EmbeddingModelBuilder(FakeCodec('fake-key')).build(model), EmbeddingFunction)
-
 
 
 def test_load_document_service_builds_config():

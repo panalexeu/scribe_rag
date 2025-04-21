@@ -1,13 +1,11 @@
 from langchain_anthropic.chat_models import ChatAnthropic
 from langchain_cohere import ChatCohere
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai.chat_models.base import ChatOpenAI
 
 from src.adapters.chat_model import AbstractChatModel, LangchainChatModel
 from src.domain.models import ChatModel
 from src.enums import ChatModelName, ModelProvider
 from src.adapters.codecs import AbstractCodec
-from src.adapters.chroma_models import VectorChromaDocument
 
 
 class ChatModelBuilder:
@@ -86,28 +84,3 @@ class ChatModelBuilder:
             ChatModelName.CLAUDE_3_SONNET_20240229
         ]:
             return ModelProvider.ANTHROPIC
-
-
-class ChatPromptTemplateBuilder:
-
-    @staticmethod
-    def build(
-            system_prompt: str | None,
-            docs: list[VectorChromaDocument] | None
-    ) -> ChatPromptTemplate:
-        context = None
-        if docs is not None:
-            context = ChatPromptTemplateBuilder.format_context(docs)
-
-        return ChatPromptTemplate(
-            messages=[
-                ('system', 'You are a helpful AI-assistant.'),
-                ('system', f'Context: {context}'),
-                ('human', f'Preferences: {system_prompt}'),
-                ('human', '{input}')
-            ]
-        )
-
-    @staticmethod
-    def format_context(docs: list[VectorChromaDocument]) -> str:
-        return '\n'.join(list(map(lambda d: d.document, docs)))
