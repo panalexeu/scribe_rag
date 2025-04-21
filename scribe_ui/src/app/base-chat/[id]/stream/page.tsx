@@ -22,7 +22,7 @@ import PolylineIcon from "@mui/icons-material/Polyline";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SendIcon from '@mui/icons-material/Send';
-import {VectorDocumentResponseModel} from "@/src/app/vec-col/models";
+import {VectorCollectionResponseModel, VectorDocumentResponseModel} from "@/src/app/vec-col/models";
 import {SysPromptResponseModel} from '@/src/app/sys-prompt/models';
 import {ChatModelResponseModel} from "@/src/app/chat-model/models";
 import {BaseChatResponseModel, BaseChatStreamModel} from '@/src/app/base-chat/models';
@@ -36,7 +36,7 @@ export default function Page() {
     const [desc, setDesc] = useState('');
     const [sysPrompt, setSysPrompt] = useState<SysPromptResponseModel>(null);
     const [chatModel, setChatModel] = useState<ChatModelResponseModel>(null);
-    const [vecColName, setVecColName] = useState<string>(null);
+    const [vecCol, setVecCol] = useState<VectorCollectionResponseModel>(null);
 
     const [contextDocs, setContextDocs] = useState<VectorDocumentResponseModel[]>([]);
     const [llmResponse, setLLMResponse] = useState<string>('');
@@ -55,7 +55,7 @@ export default function Page() {
                 setDesc(data.desc);
                 setSysPrompt(data.system_prompt);
                 setChatModel(data.chat_model);
-                setVecColName(data.vec_col_name);
+                setVecCol(data.vec_col);
             } else {
                 setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
                 setOpenSnackbar(true);
@@ -215,9 +215,9 @@ export default function Page() {
                     <Box display={'flex'} alignItems={'center'} gap={1}>
                         <PolylineIcon/>
                         <Typography variant={'body1'}>
-                            {vecColName ? (
-                                <MUILink component={Link} href={`/vec-col/${vecColName}`}>
-                                    {vecColName}
+                            {vecCol ? (
+                                <MUILink component={Link} href={`/vec-col/${vecCol.id}`}>
+                                    {vecCol.name}
                                 </MUILink>
                             ) : 'null'}
                         </Typography>
