@@ -88,6 +88,18 @@ export default function Page() {
         }
     }
 
+    function validateInput(input: string): void {
+        // length check
+        if (input.length < 3 || input.length > 63) {
+            throw new Error("Expected collection name contains 3-63 characters");
+        // alphanumeric check
+        } else if (!/^[a-zA-Z0-9._-]+$/.test(input)) {
+            throw new Error("Expected collection contains only alphanumeric characters");
+        // two dots check
+        } else if (input.includes("..")) {
+            throw new Error("Expected collection name doesn't contain two consecutive dots");
+        }
+    }
 
     async function handleSubmit() {
         if (!name || !distanceFunction || !embeddingModel) {
@@ -97,13 +109,14 @@ export default function Page() {
         }
 
         try {
+            const formatName = name.trim().replace(/\s+/g, '-');
+            validateInput(formatName);
+
             const postRequest = VectorCollectionPostModel.parse({
-                name: name.trim().replace(/\s+/g, '-'),
+                name: formatName,
                 embedding_model_id: embeddingModel.id,
                 distance_func: distanceFunction
             })
-
-            console.log(postRequest);
 
             const response = await fetch(
                 `${API_URL}/vec-col/`,

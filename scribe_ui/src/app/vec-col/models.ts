@@ -4,7 +4,7 @@ import {EmbeddingModelResponseModel} from '@/src/app/embed-model/models';
 export const VectorCollectionPostModel = z.object({
     name: z.string(),
     embedding_model_id: z.number(),
-    distance_func: z.string().nullable()
+    distance_func: z.string()
 })
 
 export interface VectorCollectionResponseModel {
