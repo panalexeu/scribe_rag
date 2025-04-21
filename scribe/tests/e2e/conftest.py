@@ -9,16 +9,14 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import clear_mappers
 
-from src.api.app import app
-from src.bootstrap import bootstrap
-
 
 @pytest.fixture(scope='module')
 def client():
-    # checking for the SCRIBE_DB configuration to be 'dev'
-    if status := os.getenv('SCRIBE_DB'):
-        if status != 'dev':
-            raise Exception('Change or provide the env SCRIBE_DB status as \'dev\'')
+    os.environ['SCRIBE_DB'] = 'dev'
+
+    # importing here to rewrite env
+    from src.api.app import app
+    from src.bootstrap import bootstrap
 
     client = TestClient(app)
     bootstrap()  # <-- bootstrap here, because TestClient doesn't capture defined lifespan
