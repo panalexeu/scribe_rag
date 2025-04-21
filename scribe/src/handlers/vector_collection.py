@@ -44,7 +44,9 @@ class VecCollectionAddHandler:
             vector_collection_repo = self.async_vector_collection_repository(async_vec_db_client)  # type: ignore
             await vector_collection_repo.add(
                 name=request.name,
-                metadata={'hnswspace': request.distance_func.value}
+                metadata={
+                    'hnsw:space': request.distance_func.value
+                }
             )
 
             uow.commit()
