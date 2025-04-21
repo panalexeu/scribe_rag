@@ -2,6 +2,7 @@ import {z} from 'zod';
 
 import {ChatModelResponseModel} from "@/src/app/chat-model/models";
 import {SysPromptResponseModel} from '@/src/app/sys-prompt/models'
+import {VectorCollectionResponseModel} from "@/src/app/vec-col/models";
 
 
 export const BaseChatPostModel = z.object({
@@ -29,7 +30,8 @@ export interface BaseChatResponseModel {
     chat_model: ChatModelResponseModel | null,
     system_prompt_id: number | null,
     system_prompt: SysPromptResponseModel | null,
-    vec_col_name: string | null,
+    vec_col_id: number | null,
+    vec_col: VectorCollectionResponseModel | null,
     datetime: string
 }
 

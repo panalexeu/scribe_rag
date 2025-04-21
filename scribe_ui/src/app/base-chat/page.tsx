@@ -168,12 +168,12 @@ export default function Page() {
                                 <PolylineIcon sx={{marginLeft: 4}}/>
                                 <Typography marginLeft={1}>
                                     {
-                                        !item.vec_col_name ? 'null' :
+                                        !item.vec_col ? 'null' :
                                             <MUILink
                                                 component={Link}
-                                                href={`/vec-col/${item.vec_col_name}`}
+                                                href={`/vec-col/${item.vec_col.id}`}
                                             >
-                                                {item.vec_col_name}
+                                                {item.vec_col.name}
                                             </MUILink>
                                     }
                                 </Typography>
