@@ -205,7 +205,7 @@ export default function Page() {
                 desc: desc,
                 chat_model_id: chatModel.id,
                 system_prompt_id: !sysPrompt ? null : sysPrompt.id,
-                vec_col_name: !vecCol ? null : vecCol.name
+                vec_col_id: !vecCol ? null : vecCol.id
             });
 
             const response = await fetch(

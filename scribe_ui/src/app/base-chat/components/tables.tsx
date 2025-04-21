@@ -140,8 +140,8 @@ export function VecColTable(
                 <Table>
                     <TableHead>
                         <TableRow>
+                            <TableCell>date</TableCell>
                             <TableCell>name</TableCell>
-                            <TableCell>embedding</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -155,9 +155,12 @@ export function VecColTable(
                                 }}
                             >
                                 <TableCell>
+                                    {parseDateTime(vecCol.datetime)}
+                                </TableCell>
+                                <TableCell>
                                     <MUILink
                                         component={Link}
-                                        href={`/vec-col/${vecCol.name}`}
+                                        href={`/vec-col/${vecCol.id}`}
                                     >
                                         {vecCol.name}
                                     </MUILink>

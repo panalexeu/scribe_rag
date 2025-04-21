@@ -10,7 +10,7 @@ export const BaseChatPostModel = z.object({
     desc: z.string(),
     chat_model_id: z.number(),
     system_prompt_id: z.number().nullable(),
-    vec_col_name: z.string().nullable()
+    vec_col_id: z.number().nullable()
 })
 
 export const BaseChatPutModel = z.object({
@@ -18,7 +18,7 @@ export const BaseChatPutModel = z.object({
     desc: z.string(),
     chat_model_id: z.number(),
     system_prompt_id: z.number().nullable(),
-    vec_col_name: z.string().nullable()
+    vec_col_name: z.number().nullable()
 })
 
 
