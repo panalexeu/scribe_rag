@@ -27,7 +27,7 @@ def test_vec_doc_add(client, fake_chdb):
 
     # sending url in the multipart/form-data request
     res = client.post(
-        url='/vec-doc/string',
+        url='/vec-doc/1',
         data={
             'doc_processing_cnf_id': 1,
             'urls': ['https://en.wikipedia.org/wiki/Assembly']
@@ -40,7 +40,7 @@ def test_vec_doc_add(client, fake_chdb):
 
 def test_vec_doc_list_docs(client, fake_chdb):
     res = client.get(
-        url='/vec-doc/string/docs'
+        url='/vec-doc/1/docs'
     )
 
     assert res.status_code == 200
@@ -49,7 +49,7 @@ def test_vec_doc_list_docs(client, fake_chdb):
 
 def test_vec_doc_read_all(client, fake_chdb):
     res = client.get(
-        url='/vec-doc/string'
+        url='/vec-doc/1'
     )
 
     assert res.status_code == 200
@@ -58,7 +58,7 @@ def test_vec_doc_read_all(client, fake_chdb):
 
 def test_vec_doc_peek(client, fake_chdb):
     res = client.get(
-        url='/vec-doc/string/peek'
+        url='/vec-doc/1/peek'
     )
 
     assert res.status_code == 200
@@ -67,7 +67,7 @@ def test_vec_doc_peek(client, fake_chdb):
 
 def test_vec_doc_query(client, fake_chdb):
     res = client.post(
-        url='/vec-doc/string/query',
+        url='/vec-doc/1/query',
         json={
             "query_string": "string",
             'doc_names': None,
@@ -82,7 +82,7 @@ def test_vec_doc_query(client, fake_chdb):
 def test_vec_doc_delete(client, fake_chdb):
     res = client.request(
         method='DELETE',
-        url='/vec-doc/string',
+        url='/vec-doc/1',
         json={
             'doc_name': 'https://en.wikipedia.org/wiki/Assembly'
         }
@@ -93,7 +93,7 @@ def test_vec_doc_delete(client, fake_chdb):
 
 def test_vec_doc_count(client, fake_chdb):
     res = client.get(
-        url='/vec-doc/string/count',
+        url='/vec-doc/1/count',
     )
 
     assert res.status_code == 200
