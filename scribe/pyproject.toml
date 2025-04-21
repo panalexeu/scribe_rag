@@ -36,6 +36,7 @@ openai = "^1.56.0"
 cohere = "^5.13.0"
 radon = "^6.0.1"
 pytest-html = "^4.1.1"
+pytest-xdist = "^3.6.1"
 
 [build-system]
 requires = ["poetry-core"]
