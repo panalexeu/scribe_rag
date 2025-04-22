@@ -1,4 +1,5 @@
 import json
+from base64 import b64encode
 from abc import ABC
 from typing import AsyncGenerator, AsyncIterator
 
@@ -57,7 +58,12 @@ class LangchainChatModel(AbstractChatModel):
             yield f'event: docs\ndata: {json.dumps([doc.__dict__ for doc in docs_context])}\n\n'
 
         async for chunk in iterator:
-            yield f'event: response\ndata: {chunk.content}\n\n'
+            enc_chunk = chunk.content.encode('utf-8')
+            b64_chunk = b64encode(enc_chunk)
+            dec_chunk = b64_chunk.decode('utf-8')
+            yield 'event: response' \
+                + f'\ndata: {dec_chunk}' \
+                + '\n\n'
 
     def stream(self, input_: str):
         raise NotImplementedError
