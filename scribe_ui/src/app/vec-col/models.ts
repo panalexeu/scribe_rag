@@ -21,10 +21,17 @@ export const DistanceFunction = Object.freeze({
     COSINE: 'cosine'
 })
 
+export interface MetadataModel {
+    filename: string,
+    filetype: string,
+    languages: [string],
+    page_number: number
+}
+
 export interface VectorDocumentResponseModel {
     id_: string,
     distance: number | null,
     embedding: string,
     document: string,
-    metadata: Object
+    metadata: MetadataModel
 }

@@ -301,14 +301,16 @@ export default function Page() {
                                 {contextDocs.map((query, index) => (
                                     <Card key={index} variant="outlined" sx={{padding: 1, overflowX: 'auto'}}>
                                         <CardContent>
-                                            <Typography>ID: <strong>{query.id_}</strong></Typography>
+                                            <Typography><strong>ID:</strong> {query.id_}</Typography>
                                             <Typography><strong>Distance:</strong> {query.distance}</Typography>
                                             <Typography><strong>Embedding:</strong> {query.embedding}</Typography>
                                             <Typography><strong>Document:</strong> {query.document}</Typography>
-                                            <Typography><strong>Metadata:</strong>
-                                                <pre style={{whiteSpace: 'pre-wrap', wordWrap: 'break-word'}}>
-                          {JSON.stringify(query.metadata, null, 2)}
-                        </pre>
+                                            {/* Metadata*/}
+                                            <Typography>
+                                                <strong>File name:</strong> {query.metadata.filename} <br/>
+                                                <strong>File type:</strong> {query.metadata.filetype} <br/>
+                                                <strong>Languages:</strong> {query.metadata.languages} <br/>
+                                                <strong>Page № </strong> {query.metadata.page_number}
                                             </Typography>
                                         </CardContent>
                                     </Card>

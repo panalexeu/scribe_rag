@@ -492,7 +492,7 @@ export default function Page() {
                                 >
                                     <CardContent>
                                         <Typography>
-                                            ID: <strong>{peek.id_}</strong>
+                                            <strong>ID:</strong> {peek.id_}
                                         </Typography>
 
                                         <Typography >
@@ -503,11 +503,12 @@ export default function Page() {
                                             <strong>Document:</strong> {peek.document}
                                         </Typography>
 
-                                        <Typography >
-                                            <strong>Metadata:</strong>
-                                            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
-                                                {JSON.stringify(peek.metadata, null, 2)}
-                                            </pre>
+                                        {/* Metadata*/}
+                                        <Typography>
+                                            <strong>File name:</strong> {peek.metadata.filename} <br/>
+                                            <strong>File type:</strong> {peek.metadata.filetype} <br/>
+                                            <strong>Languages:</strong> {peek.metadata.languages} <br/>
+                                            <strong>Page № </strong> {peek.metadata.page_number}
                                         </Typography>
                                     </CardContent>
                                 </Card>
