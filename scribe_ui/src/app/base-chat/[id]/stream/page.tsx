@@ -131,9 +131,6 @@ export default function Page() {
                         const eventType = parsedLine[0].split(' ')[1];
                         const data = parsedLine[1].split('data: ')[1];
 
-                        // console.log(`received event: ${eventType}`);
-                        // console.log(`received data: ${data}`);
-
                         switch (eventType) {
                             case ('docs'):
                                 setContextDocs(JSON.parse(data));
