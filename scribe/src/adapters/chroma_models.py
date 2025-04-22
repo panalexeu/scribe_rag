@@ -17,11 +17,11 @@ class VectorChromaDocument:
             embedding: numpy.ndarray,
             distance: Optional[float] = None
     ):
-        self.id_ = id_[:8] + '...'
+        self.id_ = id_[:16] + '...'
         self.document = document
         self.metadata = self._filter_metadata(metadata)
         self.embedding: str = self._embedding_repr(embedding)
-        self.distance = round(distance, 2)
+        self.distance = round(distance, 4) if distance else None
 
     @staticmethod
     def _embedding_repr(embedding: numpy.ndarray) -> str:
