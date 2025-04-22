@@ -68,6 +68,13 @@ export default function Page() {
         }
     }
 
+    function decodeBase64Utf8(base64: string): string {
+        const binaryStr = atob(base64);
+        const bytes = Uint8Array.from(binaryStr, char => char.charCodeAt(0));
+        const decoder = new TextDecoder('utf-8');
+        return decoder.decode(bytes);
+    }
+
     async function handleSubmit() {
         if (!queryString) {
             setSnackbarMessage(`please provide a query string! 😠`);
@@ -124,15 +131,16 @@ export default function Page() {
                         const eventType = parsedLine[0].split(' ')[1];
                         const data = parsedLine[1].split('data: ')[1];
 
-                        console.log(`received event: ${eventType}`);
-                        console.log(`received data: ${data}`);
+                        // console.log(`received event: ${eventType}`);
+                        // console.log(`received data: ${data}`);
 
                         switch (eventType) {
                             case ('docs'):
                                 setContextDocs(JSON.parse(data));
                                 break;
                             case ('response'):
-                                setLLMResponse(prevState => prevState + data);
+                                const decodedData = decodeBase64Utf8(data);
+                                setLLMResponse(prevState => prevState + decodedData);
                                 break;
                         }
                     }
