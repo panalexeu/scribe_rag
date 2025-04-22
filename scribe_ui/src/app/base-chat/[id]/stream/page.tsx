@@ -20,12 +20,14 @@ import {API_URL} from "@/src/constants";
 import {useState, useEffect} from "react";
 import PolylineIcon from "@mui/icons-material/Polyline";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
+import {MuiMarkdown} from "mui-markdown";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SendIcon from '@mui/icons-material/Send';
 import {VectorCollectionResponseModel, VectorDocumentResponseModel} from "@/src/app/vec-col/models";
 import {SysPromptResponseModel} from '@/src/app/sys-prompt/models';
 import {ChatModelResponseModel} from "@/src/app/chat-model/models";
 import {BaseChatResponseModel, BaseChatStreamModel} from '@/src/app/base-chat/models';
+
 
 export default function Page() {
     const {id} = useParams();
@@ -257,9 +259,12 @@ export default function Page() {
                             variant={'outlined'}
                             sx={{height: '512px', overflowY: 'auto', width: '70%', position: 'relative' }}
                         >
-                            <Typography variant="body1" sx={{whiteSpace: 'pre-wrap', wordWrap: 'break-word'}}>
+                            <MuiMarkdown>
                                 {llmResponse}
-                            </Typography>
+                            </MuiMarkdown>
+                            {/*<Typography variant="body1" sx={{whiteSpace: 'pre-wrap', wordWrap: 'break-word'}}>*/}
+                            {/*    {llmResponse}*/}
+                            {/*</Typography>*/}
 
                             {/* copy button*/}
                             <IconButton
