@@ -7,6 +7,8 @@ from typing import Optional
 
 
 class VectorChromaDocument:
+    """View of a document from Chroma."""
+
     def __init__(
             self,
             id_: str,
@@ -15,12 +17,26 @@ class VectorChromaDocument:
             embedding: numpy.ndarray,
             distance: Optional[float] = None
     ):
-        self.id_ = id_
+        self.id_ = id_[:8] + '...'
         self.document = document
-        self.metadata = metadata
-        self.embedding: str = self.embedding_repr(embedding)
-        self.distance = distance
+        self.metadata = self._filter_metadata(metadata)
+        self.embedding: str = self._embedding_repr(embedding)
+        self.distance = round(distance, 2)
 
     @staticmethod
-    def embedding_repr(embedding: numpy.ndarray) -> str:
-        return f'[{embedding[0]} {embedding[1]} {embedding[2]} ... {embedding[-3]} {embedding[-2]} {embedding[-1]}] {len(embedding)} items'
+    def _embedding_repr(embedding: numpy.ndarray) -> str:
+        return f'[{embedding[0]} ... {embedding[-1]}] {len(embedding)} items'
+
+    @staticmethod
+    def _filter_metadata(metadata: dict) -> dict:
+        """Removes from final vector document view specified fields."""
+        filter_keys = [
+            'category',
+            'element_id',
+            'orig_elements'
+        ]
+
+        for key in filter_keys:
+            metadata.pop(key)
+
+        return metadata
