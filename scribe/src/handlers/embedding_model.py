@@ -6,12 +6,13 @@ from dependency_injector.wiring import inject, Provide
 
 from src.di_container import Container
 from src.domain.models import EmbeddingModel
-from src.enums import EmbeddingModelName
+from src.enums import EmbeddingModelName, Device
 from src.adapters.uow import AbstractUoW
 
 
 class EmbeddingModelAddCommand(BaseModel, GenericQuery[EmbeddingModel]):
     name: EmbeddingModelName
+    device: Device
     api_key_credential_id: int
 
 
@@ -79,6 +80,7 @@ class EmbeddingModelReadAll:
 class EmbeddingModelUpdateCommand(BaseModel, GenericQuery[EmbeddingModel]):
     id_: int
     name: EmbeddingModelName | None
+    device: Device | None
     api_key_credential_id: int | None
 
 

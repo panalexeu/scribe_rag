@@ -6,7 +6,8 @@ from src.enums import (
     ChunkingStrategy,
     ChatModelName,
     DistanceFunction,
-    EmbeddingModelName
+    EmbeddingModelName,
+    Device
 )
 
 
@@ -116,16 +117,17 @@ class ChatModel:
         return json.loads(self.stop_sequences) if self.stop_sequences is not None else None
 
 
-
 class EmbeddingModel:
     api_key_credential: ApiKeyCredential
 
     def __init__(
             self,
             name: EmbeddingModelName,
+            device: Device,
             api_key_credential_id: int
     ):
         self.name = name
+        self.device = device
         self.api_key_credential_id = api_key_credential_id
 
 

@@ -6,6 +6,7 @@ def test_embed_model_adds(client):
         url='/embed-model/',
         json={
             "name": "all-MiniLM-L6-v2",
+            "device": "cpu",
             "api_key_credential_id": 0
         }
     )
@@ -35,6 +36,7 @@ def test_embed_model_updates(client):
         url='/embed-model/1',
         json={
             'name': 'all-MiniLM-L6-v2',
+            'device': 'cuda',
             'api_key_credential_id': 1
         }
     )

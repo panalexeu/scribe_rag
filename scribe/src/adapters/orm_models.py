@@ -31,7 +31,8 @@ from src.enums import (
     ChatModelName,
     ChunkingStrategy,
     EmbeddingModelName,
-    DistanceFunction
+    DistanceFunction,
+    Device
 )
 
 
@@ -100,6 +101,7 @@ def map_sqlalchemy_models(registry_: registry):
         registry_.metadata,
         Column('id', Integer, primary_key=True),
         Column('name', Enum(EmbeddingModelName), nullable=False),
+        Column('device', Enum(Device), nullable=False),
         Column('api_key_credential_id', Integer, ForeignKey('api_key_credential.id'), nullable=False),
         Column('datetime', DateTime, default=datetime.now)
     )
