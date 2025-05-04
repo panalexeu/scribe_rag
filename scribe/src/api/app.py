@@ -26,7 +26,8 @@ from .routers import (
     chat_model,
     embedding_model,
     vector_collection,
-    vector_document
+    vector_document,
+    sem_doc_proc_cnf
 )
 from src.handlers.base_chat import InvalidBaseChatObjectError
 
@@ -47,6 +48,7 @@ app.include_router(chat_model.router)
 app.include_router(embedding_model.router)
 app.include_router(vector_collection.router)
 app.include_router(vector_document.router)
+app.include_router(sem_doc_proc_cnf.router)
 
 app.add_middleware(
     CORSMiddleware,

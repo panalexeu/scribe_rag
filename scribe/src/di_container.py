@@ -28,7 +28,8 @@ from src.domain.models import (
     BaseChat,
     ChatModel,
     EmbeddingModel,
-    VectorCollection
+    VectorCollection,
+    SemanticDocProcessingConfig
 )
 from src.domain.services import (
     EncodeApiKeyCredentialService,
@@ -153,6 +154,11 @@ class Container(DeclarativeContainer):
     doc_proc_cnf_uow = Factory(
         SqlAlchemyUoW,
         repository=SqlAlchemyRepository[DocProcessingConfig],
+        session=session
+    )
+    sem_doc_proc_cnf_uow = Factory(
+        SqlAlchemyUoW,
+        repository=SqlAlchemyRepository[SemanticDocProcessingConfig],
         session=session
     )
     base_chat_uow = Factory(

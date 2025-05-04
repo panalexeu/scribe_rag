@@ -22,6 +22,7 @@ from src.domain.models import (
     FakeModel,
     SystemPrompt,
     DocProcessingConfig,
+    SemanticDocProcessingConfig,
     BaseChat,
     ChatModel,
     EmbeddingModel,
@@ -81,6 +82,15 @@ def map_sqlalchemy_models(registry_: registry):
         Column('datetime', DateTime, default=datetime.now)
     )
 
+    semantic_doc_proc_config_table = Table(
+        'semantic_doc_processing_config',
+        registry_.metadata,
+        Column('id', Integer, primary_key=True),
+        Column('thresh', Float, nullable=False),
+        Column('max_chunk_size', Integer, nullable=False),
+        Column('datetime', DateTime, default=datetime.now)
+    )
+
     chat_model_table = Table(
         'chat_model',
         registry_.metadata,
@@ -132,6 +142,7 @@ def map_sqlalchemy_models(registry_: registry):
     registry_.map_imperatively(FakeModel, fake_table)
     registry_.map_imperatively(SystemPrompt, system_prompt_table)
     registry_.map_imperatively(DocProcessingConfig, doc_processing_config_table)
+    registry_.map_imperatively(SemanticDocProcessingConfig, semantic_doc_proc_config_table)
     registry_.map_imperatively(
         ChatModel,
         chat_model_table,

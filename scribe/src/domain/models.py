@@ -86,6 +86,16 @@ class DocProcessingConfig:
             self.overlap_all = False if self.overlap_all is None else self.overlap_all
 
 
+class SemanticDocProcessingConfig:
+    def __init__(
+            self,
+            thresh: float,
+            max_chunk_size: int
+    ):
+        self.thresh = thresh
+        self.max_chunk_size = max_chunk_size
+
+
 class ChatModel:
     api_key_credential: ApiKeyCredential
 
