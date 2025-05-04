@@ -1,4 +1,7 @@
-from  chromadb.utils import embedding_functions
+from typing import Literal
+
+import torch
+from chromadb.utils import embedding_functions
 
 from src.adapters.codecs import AbstractCodec
 from src.domain.models import EmbeddingModel
@@ -16,6 +19,7 @@ class EmbeddingModelBuilder:
     def build(
             self,
             embedding_model: EmbeddingModel,
+            device: Literal['cpu', 'cuda'] = 'cuda'
     ) -> embedding_functions.EmbeddingFunction:
         """
         Decodes API-key and forms embedding function.
@@ -28,17 +32,20 @@ class EmbeddingModelBuilder:
                 case ModelProvider.OPENAI:
                     return embedding_functions.OpenAIEmbeddingFunction(
                         api_key=decoded_api_key,
-                        model_name=embedding_model.name.value
+                        model_name=embedding_model.name.value,
+                        device=device
                     )
                 case ModelProvider.COHERE:
                     return embedding_functions.CohereEmbeddingFunction(
                         api_key=decoded_api_key,
-                        model_name=embedding_model.name.value
+                        model_name=embedding_model.name.value,
+                        device=device
                     )
 
         else:
             return embedding_functions.SentenceTransformerEmbeddingFunction(
-                model_name=embedding_model.name.value
+                model_name=embedding_model.name.value,
+                device=device
             )
 
     @staticmethod
