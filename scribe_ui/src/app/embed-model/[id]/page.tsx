@@ -15,7 +15,7 @@ import {
 import Link from "next/link";
 
 import {API_URL, TABLE_PAGE_LIMIT} from "@/src/constants";
-import {EmbeddingModelName, EmbeddingModelPutModel, EmbeddingModelResponseModel} from '../models';
+import {EmbeddingModelName, EmbeddingModelPutModel, EmbeddingModelResponseModel, Device} from '../models';
 import {ApiKeyResponseModel} from "@/src/app/api-key/models";
 import {parseDateTime} from "@/src/utils";
 
@@ -29,10 +29,12 @@ export default function Page() {
     const [currPage, setCurrPage] = useState(1);
 
     const [name, setName] = useState(null);
+    const [device, setDevice] = useState(null);
     const [apiKeyCredential, setApiKeyCredential] = useState<ApiKeyResponseModel>(null);
     const [apiKeys, setApiKeys] = useState<ApiKeyResponseModel[]>([]);
 
     const embeddingModelNameEnum = Object.values(EmbeddingModelName);
+    const deviceEnum = Object.values(Device);
 
     async function fetchApiKeyCount() {
         try {
@@ -92,6 +94,7 @@ export default function Page() {
             if (response.status === 200) {
                 const data: EmbeddingModelResponseModel = await response.json();
                 setName(data.name);
+                setDevice(data.device);
                 setApiKeyCredential(data.api_key_credential)
             } else {
                 setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
@@ -105,14 +108,15 @@ export default function Page() {
 
     async function handleSubmit() {
         try {
-            if (!name) {
-                setSnackbarMessage("fulfill the name field 😡");
+            if (!name || !device) {
+                setSnackbarMessage("fulfill both fields 😡");
                 setOpenSnackbar(true);
                 return;
             }
 
             const requestModel = EmbeddingModelPutModel.parse({
                 name: name,
+                device: device,
                 api_key_credential_id: apiKeyCredential.id
             })
 
@@ -187,6 +191,15 @@ export default function Page() {
                     renderInput={(params) => <TextField {...params} label='embed-model name'/>}
                 />
 
+                {/* DEVICE */}
+                <Autocomplete
+                    fullWidth={true}
+                    value={device}
+                    options={deviceEnum}
+                    onChange={(_, newValue) => setDevice(newValue)}
+                    renderInput={(params) => <TextField {...params} label='device'/>}
+                />
+
                 {/* SELECTED API KEY */}
                 <TextField
                     id={'api-key'}
@@ -225,6 +238,7 @@ export default function Page() {
                         {/* TABLE CONTENT */}
                         {apiKeys.map((apiKey) => (
                             <TableRow
+                                key={apiKey.id}
                                 onClick={() => {
                                     setApiKeyCredential(apiKey)
                                 }}

@@ -24,7 +24,7 @@ import Link from 'next/link';
 
 import {parseDateTime} from "@/src/utils";
 import {ApiKeyResponseModel} from "@/src/app/api-key/models";
-import {EmbeddingModelPostModel, EmbeddingModelName} from '../models';
+import {EmbeddingModelPostModel, EmbeddingModelName, Device} from '../models';
 import {API_URL, TABLE_PAGE_LIMIT} from "@/src/constants";
 
 export default function Page() {
@@ -36,10 +36,12 @@ export default function Page() {
 
 
     const [name, setName] = useState(null);
+    const [device, setDevice] = useState(null);
     const [apiKeyCredential, setApiKeyCredential] = useState<ApiKeyResponseModel>(null);
     const [apiKeys, setApiKeys] = useState<ApiKeyResponseModel[]>([]);
 
     const embeddingModelNameEnum = Object.values(EmbeddingModelName);
+    const deviceEnum = Object.values(Device);
 
     async function fetchApiKeyCount() {
         try {
@@ -89,8 +91,8 @@ export default function Page() {
 
 
     async function handleSubmit() {
-        if (!name || !apiKeyCredential) {
-            setSnackbarMessage("fulfill both fields 😡");
+        if (!name || !apiKeyCredential || !device) {
+            setSnackbarMessage("fulfill all fields 😡");
             setOpenSnackbar(true);
             return;
         }
@@ -98,6 +100,7 @@ export default function Page() {
         try {
             const postRequest = EmbeddingModelPostModel.parse({
                 name: name,
+                device: device,
                 api_key_credential_id: apiKeyCredential.id
             })
 
@@ -167,6 +170,15 @@ export default function Page() {
                     options={embeddingModelNameEnum}
                     onChange={(_, newValue) => setName(newValue)}
                     renderInput={(params) => <TextField {...params} label='embed-model name'/>}
+                />
+
+                {/* DEVICE */}
+                <Autocomplete
+                    fullWidth={true}
+                    value={device}
+                    options={deviceEnum}
+                    onChange={(_, newValue) => setDevice(newValue)}
+                    renderInput={(params) => <TextField {...params} label='device'/>}
                 />
 
                 {/* SELECTED API KEY */}

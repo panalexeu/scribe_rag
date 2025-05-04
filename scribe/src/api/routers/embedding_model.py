@@ -7,7 +7,7 @@ from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Depends
 from fastapi import status
 
-from src.enums import EmbeddingModelName
+from src.enums import EmbeddingModelName, Device
 from src.api.routers.api_key_credential import ApiKeyResponseModel
 from src.di_container import Container
 from src.handlers.embedding_model import (
@@ -28,6 +28,7 @@ router = APIRouter(
 class EmbeddingModelResponseModel(BaseModel):
     id: int
     name: EmbeddingModelName
+    device: Device
     api_key_credential_id: int
     api_key_credential: ApiKeyResponseModel | None
     datetime: datetime
@@ -35,11 +36,13 @@ class EmbeddingModelResponseModel(BaseModel):
 
 class EmbeddingModelPostModel(BaseModel):
     name: EmbeddingModelName
+    device: Device
     api_key_credential_id: int
 
 
 class EmbeddingModelPutModel(BaseModel):
     name: Optional[EmbeddingModelName] = None
+    device: Optional[Device] = None
     api_key_credential_id: Optional[int] = None
 
 

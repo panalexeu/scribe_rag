@@ -235,6 +235,9 @@ export default function Page() {
                                 name
                             </TableCell>
                             <TableCell>
+                                device
+                            </TableCell>
+                            <TableCell>
                                 api-key
                             </TableCell>
                         </TableRow>
@@ -254,6 +257,9 @@ export default function Page() {
                                 </TableCell>
                                 <TableCell>
                                     {embedModel.name}
+                                </TableCell>
+                                <TableCell>
+                                    {embedModel.device}
                                 </TableCell>
                                 <TableCell>
                                     {
