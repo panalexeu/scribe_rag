@@ -143,6 +143,9 @@ export default function Page() {
                             {/* NAME */}
                             <Typography marginLeft={4}>{item.name}</Typography>
 
+                            {/*DEVICE */}
+                            <Typography marginLeft={4}>{item.device}</Typography>
+
                             {/* API KEY */}
                             <KeyIcon sx={{marginLeft: 4}}/>
                             <Typography marginLeft={1}>
