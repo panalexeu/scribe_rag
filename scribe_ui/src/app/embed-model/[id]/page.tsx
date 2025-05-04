@@ -238,6 +238,7 @@ export default function Page() {
                         {/* TABLE CONTENT */}
                         {apiKeys.map((apiKey) => (
                             <TableRow
+                                key={apiKey.id}
                                 onClick={() => {
                                     setApiKeyCredential(apiKey)
                                 }}
