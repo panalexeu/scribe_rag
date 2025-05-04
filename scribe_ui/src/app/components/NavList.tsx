@@ -15,6 +15,7 @@ import DataArrayIcon from '@mui/icons-material/DataArray';
 import {useRouter} from 'next/navigation';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PolylineIcon from '@mui/icons-material/Polyline';
+import FunctionsIcon from '@mui/icons-material/Functions';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 
 export default function NavList() {
@@ -63,6 +64,21 @@ export default function NavList() {
                         <PendingActionsIcon/>
                     </ListItemIcon>
                     <ListItemText primary={"doc-proc-cnf"}/>
+                </ListItemButton>
+            </ListItem>
+            <Divider/>
+
+            {/* sem-doc-proc-cnf */}
+            <ListItem disablePadding={true}>
+                <ListItemButton
+                    onClick={
+                        () => router.push('/sem-doc-proc-cnf')
+                    }
+                >
+                    <ListItemIcon>
+                        <FunctionsIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary={"sem-doc-proc-cnf"}/>
                 </ListItemButton>
             </ListItem>
             <Divider/>
