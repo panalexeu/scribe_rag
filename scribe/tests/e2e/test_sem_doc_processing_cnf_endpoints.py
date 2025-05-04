@@ -5,6 +5,7 @@ def test_sem_doc_proc_cnf_creates(client):
     res = client.post(
         '/sem-doc-proc-cnf/',
         json={
+            'name': 'fake' ,
             'thresh': 0.5,
             'max_chunk_size': 1
         }
@@ -34,12 +35,14 @@ def test_sem_doc_proc_cnf_updates(client):
     res = client.put(
         '/sem-doc-proc-cnf/1',
         json={
+            'name': 'fake1',
             'thresh': 0.7,
             'max_chunk_size': 10
         }
     )
 
     assert res.status_code == 200
+    assert res.json()['name'] == 'fake1'
     assert res.json()['thresh'] == 0.7
     assert res.json()['max_chunk_size'] == 10
 

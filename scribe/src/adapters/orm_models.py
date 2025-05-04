@@ -86,6 +86,7 @@ def map_sqlalchemy_models(registry_: registry):
         'semantic_doc_processing_config',
         registry_.metadata,
         Column('id', Integer, primary_key=True),
+        Column('name', String, nullable=False),
         Column('thresh', Float, nullable=False),
         Column('max_chunk_size', Integer, nullable=False),
         Column('datetime', DateTime, default=datetime.now)

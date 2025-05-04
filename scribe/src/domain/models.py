@@ -89,9 +89,11 @@ class DocProcessingConfig:
 class SemanticDocProcessingConfig:
     def __init__(
             self,
+            name: str,
             thresh: float,
             max_chunk_size: int
     ):
+        self.name = name
         self.thresh = thresh
         self.max_chunk_size = max_chunk_size
 

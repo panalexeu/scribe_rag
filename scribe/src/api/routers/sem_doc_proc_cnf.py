@@ -24,17 +24,20 @@ router = APIRouter(
 
 class SemDocProcCnfResponseModel(BaseModel):
     id: int
+    name: str
     thresh: float
     max_chunk_size: int
     datetime: datetime
 
 
 class SemDocProcCnfPostModel(BaseModel):
+    name: str
     thresh: float
     max_chunk_size: int
 
 
 class SemDocProcCnfPutModel(BaseModel):
+    name: Optional[str] = None
     thresh: Optional[float] = None
     max_chunk_size: Optional[int] = None
 
@@ -99,7 +102,7 @@ def update_sem_doc_proc_cnf(
         item: SemDocProcCnfPutModel,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
 ):
-    command = SemDocProcCnfUpdateCommand(id_, item.thresh, item.max_chunk_size)
+    command = SemDocProcCnfUpdateCommand(id_, item.model_dump())
     return mediatr.send(command)
 
 
