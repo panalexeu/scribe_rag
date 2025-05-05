@@ -37,6 +37,7 @@ class DocAddHandler:
             doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow],
             sem_doc_proc_cnf_uow: AbstractUoW = Provide[Container.sem_doc_proc_cnf_uow],
             load_document_service: BaseLoadDocumentService = Provide[Container.load_document_service],
+            sem_load_document_service: BaseLoadDocumentService = Provide[Container.sem_load_document_service],
             async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
                 Container.async_vector_collection_repository],
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
@@ -48,6 +49,7 @@ class DocAddHandler:
         self.doc_proc_cnf_uow = doc_proc_cnf_uow
         self.sem_doc_proc_cnf_uow = sem_doc_proc_cnf_uow
         self.load_document_service = load_document_service
+        self.sem_load_document_service = sem_load_document_service
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
@@ -76,8 +78,15 @@ class DocAddHandler:
                 doc_proc_cnf=doc_proc_cnf
             )
         # semantic chunking with horchunk
-        elif request.doc_proc_type == DocProcType.SEMANTIC:
-            loaded_docs = None
+        else:
+            with self.sem_doc_proc_cnf_uow as uow:
+                sem_doc_proc_cnf = uow.repository.read(request.doc_processing_cnf_id)
+
+            loaded_docs = await self.sem_load_document_service.load_async(
+                files=request.files,
+                doc_proc_cnf=sem_doc_proc_cnf,
+                embedding_function=ef
+            )
 
         async_doc_repo = self.async_document_repository(collection)  # type: ignore
         return await async_doc_repo.add(loaded_docs)

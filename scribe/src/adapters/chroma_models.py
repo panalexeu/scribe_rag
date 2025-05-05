@@ -37,6 +37,7 @@ class VectorChromaDocument:
         ]
 
         for key in filter_keys:
-            metadata.pop(key)
+            if key in metadata.keys():
+                metadata.pop(key)
 
         return metadata
