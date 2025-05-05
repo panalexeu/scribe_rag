@@ -12,7 +12,10 @@ from src.adapters.vector_collection_repository import (
 )
 from src.enums import DocProcType
 from src.di_container import Container
-from src.domain.services.load_document_service import LoadDocumentService
+from src.domain.services.load_document_service import (
+    BaseLoadDocumentService,
+    LoadDocumentService,
+)
 from src.adapters.chroma_models import VectorChromaDocument
 from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
 from src.domain.models import VectorCollection
@@ -33,7 +36,7 @@ class DocAddHandler:
             self,
             doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow],
             sem_doc_proc_cnf_uow: AbstractUoW = Provide[Container.sem_doc_proc_cnf_uow],
-            load_document_service: LoadDocumentService = Provide[Container.load_document_service],
+            load_document_service: BaseLoadDocumentService = Provide[Container.load_document_service],
             async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
                 Container.async_vector_collection_repository],
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
