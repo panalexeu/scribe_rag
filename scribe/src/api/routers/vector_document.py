@@ -4,6 +4,7 @@ from mediatr import Mediator
 from typing import Optional
 from pydantic import BaseModel
 
+from src.enums import DocProcType
 from src.di_container import Container
 from src.handlers.vector_document import (
     DocAddCommand,
@@ -48,6 +49,7 @@ class VectorQueryPostModel(BaseModel):
 async def create_doc(
         id_: int,
         doc_processing_cnf_id: int = Form(...),
+        cnf_type: DocProcType = Form(...),
         urls: Optional[list[str]] = Form(None),
         files: Optional[list[UploadFile]] = None,
         mediatr: Mediator = Depends(Provide[Container.mediatr])
@@ -63,7 +65,8 @@ async def create_doc(
         id_=id_,
         doc_processing_cnf_id=doc_processing_cnf_id,
         files=files,
-        urls=urls
+        urls=urls,
+        cnf_type=cnf_type
     )
 
     return await mediatr.send_async(command)  # type: ignore
