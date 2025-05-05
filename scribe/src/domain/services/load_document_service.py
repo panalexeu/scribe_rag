@@ -1,5 +1,6 @@
 import io
 import logging
+from abc import ABC, abstractmethod
 from typing import Type
 
 from langchain_unstructured.document_loaders import UnstructuredLoader
@@ -21,6 +22,7 @@ from unstructured.partition.common import UnsupportedFileFormatError as Unstruct
 from src.enums import Postprocessor
 from src.domain.models import (
     DocProcessingConfig,
+    SemanticDocProcessingConfig,
     VectorDocument
 )
 
@@ -34,7 +36,19 @@ class UnsupportedFileFormatError(RuntimeError):
         )
 
 
-class LoadDocumentService:
+class BaseLoadDocumentService(ABC):
+
+    @abstractmethod
+    async def load_async(
+            self,
+            files: dict[str, bytes] | None,
+            urls: list[str] | None,
+            doc_proc_cnf: DocProcessingConfig | SemanticDocProcessingConfig
+    ) -> list[VectorDocument]:
+        pass
+
+
+class LoadDocumentService(BaseLoadDocumentService):
     """
     Service that wraps around langchain_core.document_loaders.base.BaseLoader
     to load documents asynchronously.
@@ -142,3 +156,4 @@ class LoadDocumentService:
             page_content=doc.page_content,
             metadata=doc.metadata
         )
+

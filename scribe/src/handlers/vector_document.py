@@ -74,7 +74,7 @@ class DocAddHandler:
             )
         # semantic chunking with horchunk
         elif request.doc_proc_type == DocProcType.SEMANTIC:
-            pass
+            loaded_docs = None
 
         async_doc_repo = self.async_document_repository(collection)  # type: ignore
         return await async_doc_repo.add(loaded_docs)
