@@ -296,11 +296,9 @@ export default function Page() {
                                         </Typography>
 
                                         {/* Metadata*/}
-                                        <Typography>
-                                            <strong>File name:</strong> {query.metadata.filename} <br/>
-                                            <strong>File type:</strong> {query.metadata.filetype} <br/>
-                                            <strong>Languages:</strong> {query.metadata.languages} <br/>
-                                            <strong>Page № </strong> {query.metadata.page_number}
+                                        <Typography component={"pre"}>
+                                            Metadata:
+                                            {JSON.stringify(query.metadata, null,2)}
                                         </Typography>
                                     </CardContent>
                                 </Card>
