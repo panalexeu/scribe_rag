@@ -1,4 +1,5 @@
 import io
+import re
 import logging
 from abc import ABC, abstractmethod
 from typing import Type
@@ -195,6 +196,7 @@ class SemanticLoadDocumentService(BaseLoadDocumentService):
                 # extracting content
                 doc = pymupdf.open(filetype=ext, stream=bytes_)
                 full_text = " ".join(doc.load_page(i).get_text() for i in range(doc.page_count))
+                full_text = self.normalize_pdf(full_text)
 
                 # chunking
                 splits = SentenceSplitter(full_text).__call__()
@@ -210,6 +212,11 @@ class SemanticLoadDocumentService(BaseLoadDocumentService):
     def check_file_ext(ext: str) -> None:
         if ext not in ['pdf']:
             raise UnsupportedSemanticFileFormatError()
+
+    @staticmethod
+    def normalize_pdf(text: str) -> str:
+        return re.sub(r'(?<!\n)\n(?!\n)', ' ', text).strip()
+
 
     @staticmethod
     def map_chunks(chunks: list[Chunk], filename: str) -> list[VectorDocument]:
