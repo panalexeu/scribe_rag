@@ -39,7 +39,7 @@ from src.domain.services.chat_model_builder import (
 )
 from src.domain.services.chat_prompt_template_builder import ChatPromptTemplateBuilder
 from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
-from src.domain.services.load_document_service import LoadDocumentService
+from src.domain.services.load_document_service import LoadDocumentService, SemanticLoadDocumentService
 from src.system.dir import get_scribe_dir_path, read_scribe_key
 from src.system.logging import read_log_config
 
@@ -186,6 +186,9 @@ class Container(DeclarativeContainer):
     load_document_service = Singleton(
         LoadDocumentService,
         doc_loader=UnstructuredLoader
+    )
+    sem_load_document_service = Singleton(
+        SemanticLoadDocumentService
     )
     encode_api_key_service = Factory(
         EncodeApiKeyCredentialService,

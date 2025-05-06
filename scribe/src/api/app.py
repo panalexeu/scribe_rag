@@ -17,7 +17,10 @@ from src.adapters.vector_collection_repository import (
     CollectionNotFoundError
 )
 from src.bootstrap import bootstrap, shutdown
-from src.domain.services.load_document_service import UnsupportedFileFormatError
+from src.domain.services.load_document_service import (
+    UnsupportedFileFormatError,
+    UnsupportedSemanticFileFormatError
+)
 from .routers import (
     api_key_credential,
     system_prompt,
@@ -86,6 +89,14 @@ async def handle_item_not_found_error(req, exc: ItemNotFoundError):
 
 @app.exception_handler(UnsupportedFileFormatError)
 async def handle_unsupported_file_format_error(req, exc: UnsupportedFileFormatError):
+    raise HTTPException(
+        status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        detail=exc.__str__()
+    )
+
+
+@app.exception_handler(UnsupportedSemanticFileFormatError)
+async def handle_unsupported_file_format_error(req, exc: UnsupportedSemanticFileFormatError):
     raise HTTPException(
         status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         detail=exc.__str__()

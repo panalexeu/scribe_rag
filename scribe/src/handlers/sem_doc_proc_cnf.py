@@ -11,9 +11,11 @@ from src.domain.models import SemanticDocProcessingConfig
 class SemDocProcCnfAddCommand(GenericQuery[SemanticDocProcessingConfig]):
     def __init__(
             self,
+            name: str,
             thresh: float,
             max_chunk_size: int
     ):
+        self.name = name
         self.thresh = thresh
         self.max_chunk_size = max_chunk_size
 
@@ -89,13 +91,10 @@ class SemDocProcCnfUpdateCommand(GenericQuery[SemanticDocProcessingConfig]):
     def __init__(
             self,
             id_: int,
-            thresh: float,
-            max_chunk_size: int
+            kwargs
     ):
         self.id_ = id_
-        self.thresh = thresh
-        self.max_chunk_size = max_chunk_size
-
+        self.kwargs = kwargs
 
 @Mediator.handler
 class SemDocProcCnfUpdateHandler:
@@ -108,7 +107,7 @@ class SemDocProcCnfUpdateHandler:
 
     def handle(self, request: SemDocProcCnfUpdateCommand) -> SemanticDocProcessingConfig:
         with self.sem_doc_proc_cnf_uow as uow:
-            upd_item = uow.repository.update(**request.__dict__)
+            upd_item = uow.repository.update(request.id_, **request.kwargs)
             uow.commit()
 
             return upd_item

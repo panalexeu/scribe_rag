@@ -65,3 +65,8 @@ class DistanceFunction(Enum):
 class Device(Enum):
     CPU = 'cpu'
     CUDA = 'cuda'
+
+
+class DocProcType(Enum):
+    SEMANTIC = 'semantic'
+    BASE = 'base'

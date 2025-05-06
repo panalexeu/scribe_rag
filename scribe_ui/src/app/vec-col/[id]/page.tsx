@@ -42,6 +42,7 @@ import {useParams} from "next/navigation";
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import {useState, useEffect} from "react";
 
+import {SemDocProcCnfResponseModel} from "@/src/app/sem-doc-proc-cnf/models";
 import {DocProcCnfResponseModel} from '@/src/app/doc-proc-cnf/models';
 import {VectorCollectionResponseModel, VectorDocumentResponseModel} from '../models';
 import {API_URL, TABLE_PAGE_LIMIT} from "@/src/constants";
@@ -54,17 +55,25 @@ export default function Page() {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [urlDialog, setUrlDialog] = useState(false);
     const [scroll, setScroll] = useState<DialogProps['scroll']>('paper');
-    const [count, setCount] = useState(null);
-    const [currPage, setCurrPage] = useState(1);
 
     const [vectorCollection, setVectorCollection] = useState<VectorCollectionResponseModel>(null)
 
     const [selectedUrlInput, setSelectedUrlInput] = useState(null);
     const [selectedUrls, setSelectedUrls] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
+
     const [uploading, setUploading] = useState(false);
-    const [docProcConfigs, setDocProcConfigs] = useState<DocProcCnfResponseModel[]>([]);
+
+    const [docProcConfigs, setDocProcConfigs] = useState<SemDocProcCnfResponseModel[]>([]);
     const [docProcessingConfig, setDocProcessingConfig] = useState(null);
+    const [currPageDocProc, setCurrPageDocProc] = useState(1);
+    const [docProcCount, setDocProcCount] = useState(null);
+
+    const [semDocProcConfigs, setSemDocProcConfigs] = useState<SemDocProcCnfResponseModel[]>([]);
+    const [semDocProcessingConfig, setSemDocProcessingConfig] = useState(null);
+    const [currPageSemProc, setCurrPageSemProc] = useState(1);
+    const [semDocProcCount, setSemDocProcCount] = useState(null);
+
     const [vecColPeek, setVecColPeek] = useState<VectorDocumentResponseModel[]>([]);
     const [vecColDocsCount, setVecColDocsCount] = useState(0);
 
@@ -112,6 +121,7 @@ export default function Page() {
         }
     }
 
+    // DOC PROCESSING CONFIG
     async function fetchDocProcCnfCount() {
         try {
             const response = await fetch(
@@ -123,7 +133,7 @@ export default function Page() {
 
             if (response.status === 200) {
                 const data = await response.json();
-                setCount(data);
+                setDocProcCount(data);
             } else {
                 setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
                 setOpenSnackbar(true);
@@ -135,7 +145,7 @@ export default function Page() {
     }
 
     async function fetchDocProcCnfItems() {
-        const offset = (currPage - 1) * TABLE_PAGE_LIMIT;
+        const offset = (currPageDocProc - 1) * TABLE_PAGE_LIMIT;
 
         try {
             const response = await fetch(
@@ -158,6 +168,54 @@ export default function Page() {
         }
     }
 
+    // SEMANTIC DOC PROCESSING CONFIG
+    async function fetchSemDocProcCnfCount() {
+        try {
+            const response = await fetch(
+                `${API_URL}/sem-doc-proc-cnf/count`,
+                {
+                    method: 'GET'
+                }
+            );
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setSemDocProcCount(data);
+            } else {
+                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
+                setOpenSnackbar(true);
+            }
+        } catch (error) {
+            setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            setOpenSnackbar(true);
+        }
+    }
+
+    async function fetchSemDocProcCnfItems() {
+        const offset = (currPageSemProc - 1) * TABLE_PAGE_LIMIT;
+
+        try {
+            const response = await fetch(
+                `${API_URL}/sem-doc-proc-cnf/?limit=${TABLE_PAGE_LIMIT}&offset=${offset}`,
+                {
+                    method: 'GET'
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setSemDocProcConfigs(data);
+            } else {
+                setSnackbarMessage(`something went wrong 😢, status code: ${response.status}`);
+                setOpenSnackbar(true);
+            }
+        } catch (error) {
+            setSnackbarMessage(`something went wrong 😢, error: ${error.message}`);
+            setOpenSnackbar(true);
+        }
+    }
+
+    // VECTOR COLLECTION
     async function fetchVectorCollection() {
         try {
             const response = await fetch(
@@ -195,8 +253,8 @@ export default function Page() {
     }
 
     const handleUpload = async () => {
-        if (!docProcessingConfig) {
-            setSnackbarMessage(`provide doc-proc-cnf! 😡`);
+        if (!docProcessingConfig && !semDocProcessingConfig) {
+            setSnackbarMessage(`provide doc-proc-cnf or sem-doc-proc-cnf! 😡`);
             setOpenSnackbar(true);
             return;
         }
@@ -213,7 +271,15 @@ export default function Page() {
         const formData = new FormData();
         if (selectedFiles.length > 0) selectedFiles.forEach((file) => formData.append('files', file));
         if (selectedUrls.length > 0) selectedUrls.forEach((url) => formData.append('urls', url));
-        formData.set('doc_processing_cnf_id', docProcessingConfig.id)
+
+        if (docProcessingConfig) {
+            formData.set('cnf_type', 'base');
+            formData.set('doc_processing_cnf_id', docProcessingConfig.id);
+        } else if (semDocProcessingConfig) {
+            formData.set('cnf_type', 'semantic');
+            formData.set('doc_processing_cnf_id', semDocProcessingConfig.id);
+        }
+
 
         console.log(JSON.stringify(formData));
 
@@ -257,10 +323,17 @@ export default function Page() {
         fetchVectorDocsCount()
     }, []);
 
+    // Doc processing config
     useEffect(() => {
         fetchDocProcCnfCount()
         fetchDocProcCnfItems()
-    }, [currPage])
+    }, [currPageDocProc])
+
+    // Semantic doc processing config
+    useEffect(() => {
+        fetchSemDocProcCnfItems()
+        fetchSemDocProcCnfCount()
+    }, [currPageSemProc])
 
     return (
         <Box
@@ -327,14 +400,14 @@ export default function Page() {
                     variant={'outlined'}
                     label={'embed-func'}
                     value={!vectorCollection || !vectorCollection.embedding_model ?
-                            '' : vectorCollection.embedding_model.name}
+                        '' : vectorCollection.embedding_model.name}
                     InputProps={{
                         readOnly: true,
                         endAdornment: (
                             <MUILink
                                 component={Link}
                                 href={!vectorCollection || !vectorCollection.embedding_model ?
-                                        '/' : `/embed-model/${vectorCollection.embedding_model.id}`}
+                                    '/' : `/embed-model/${vectorCollection.embedding_model.id}`}
                                 underline={'none'}
                             >
                                 <OpenInNewIcon/>
@@ -346,7 +419,7 @@ export default function Page() {
 
             <Divider sx={{width: '100%'}}/>
 
-            {/* DOC PROC CNF AND DATA PEEK*/}
+            {/* DOC PROC CONFIGS AND DATA PEEK*/}
             <Box
                 display={'flex'}
                 flexDirection={'row'}
@@ -395,7 +468,8 @@ export default function Page() {
                                 {docProcConfigs.map((docProcCnf) => (
                                     <TableRow
                                         onClick={() => {
-                                            setDocProcessingConfig(docProcCnf)
+                                            setDocProcessingConfig(docProcCnf);
+                                            setSemDocProcessingConfig(null);
                                         }}
                                         sx={{
                                             cursor: 'pointer',
@@ -424,10 +498,92 @@ export default function Page() {
                         </Table>
                     </TableContainer>
                     <TablePagination
-                        page={currPage - 1}
-                        count={count}
+                        page={currPageDocProc - 1}
+                        count={docProcCount}
                         onPageChange={(_, newPage) => {
-                            setCurrPage(newPage + 1)
+                            setCurrPageDocProc(newPage + 1)
+                        }}
+                        rowsPerPage={TABLE_PAGE_LIMIT}
+                        rowsPerPageOptions={[]}
+                    />
+                </Box>
+
+                {/* SEMANTIC DOC PROCESSING CONFIG */}
+                <Box
+                    sx={{width: '50%'}}
+                >
+                    <Box
+                        display={'flex'}
+                        gap={2}
+                    >
+                        <Typography>
+                            sem-doc-proc-cnf
+                        </Typography>
+
+                        <TextField
+                            id={'sem-doc-proc-cnf'}
+                            variant={'outlined'}
+                            label={'sem-doc-proc-cnf'}
+                            value={!semDocProcessingConfig ? '' : semDocProcessingConfig.name}
+                            inputProps={{readOnly: true,}}
+                        />
+                    </Box>
+
+                    {/* TABLE */}
+                    <TableContainer>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>
+                                        datetime
+                                    </TableCell>
+                                    <TableCell>
+                                        name
+                                    </TableCell>
+                                    <TableCell>
+                                        link
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {/* TABLE CONTENT */}
+                                {semDocProcConfigs.map((docProcCnf) => (
+                                    <TableRow
+                                        onClick={() => {
+                                            setSemDocProcessingConfig(docProcCnf);
+                                            setDocProcessingConfig(null);
+                                        }}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            backgroundColor: semDocProcessingConfig && semDocProcessingConfig.id === docProcCnf.id ? 'rgba(0, 0, 0, 0.1)' : 'inherit',
+                                        }}
+                                    >
+                                        <TableCell>
+                                            {parseDateTime(docProcCnf.datetime)}
+                                        </TableCell>
+                                        <TableCell>
+                                            {docProcCnf.name}
+                                        </TableCell>
+                                        <TableCell>
+                                            <MUILink
+                                                component={Link}
+                                                href={`/sem-doc-proc-cnf/${docProcCnf.id}`}
+                                                underline={'none'}
+                                            >
+                                                <OpenInNewIcon/>
+                                            </MUILink>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                                }
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        page={currPageSemProc - 1}
+                        count={semDocProcCount}
+                        onPageChange={(_, newPage) => {
+                            setCurrPageSemProc(newPage + 1)
                         }}
                         rowsPerPage={TABLE_PAGE_LIMIT}
                         rowsPerPageOptions={[]}
@@ -495,20 +651,18 @@ export default function Page() {
                                             <strong>ID:</strong> {peek.id_}
                                         </Typography>
 
-                                        <Typography >
+                                        <Typography>
                                             <strong>Embedding:</strong> {peek.embedding}
                                         </Typography>
 
-                                        <Typography >
+                                        <Typography>
                                             <strong>Document:</strong> {peek.document}
                                         </Typography>
 
                                         {/* Metadata*/}
-                                        <Typography>
-                                            <strong>File name:</strong> {peek.metadata.filename} <br/>
-                                            <strong>File type:</strong> {peek.metadata.filetype} <br/>
-                                            <strong>Languages:</strong> {peek.metadata.languages} <br/>
-                                            <strong>Page № </strong> {peek.metadata.page_number}
+                                        <Typography component={"pre"}>
+                                            Metadata: 
+                                            {JSON.stringify(peek.metadata, null,2)}
                                         </Typography>
                                     </CardContent>
                                 </Card>

@@ -1,7 +1,9 @@
 import io
 import logging
+from abc import ABC, abstractmethod
 from typing import Type
 
+import pymupdf
 from langchain_unstructured.document_loaders import UnstructuredLoader
 from unstructured.cleaners.core import (
     bytes_string_to_string,
@@ -15,12 +17,16 @@ from unstructured.cleaners.core import (
     remove_punctuation,
     replace_unicode_quotes
 )
+from horchunk.chunkers import WindowChunker, Chunk
+from horchunk.splitters import SentenceSplitter
+from chromadb.utils import embedding_functions
 from langchain_core.documents.base import Document
 from unstructured.partition.common import UnsupportedFileFormatError as UnstructuredUnsupportedFileFormatError
 
 from src.enums import Postprocessor
 from src.domain.models import (
     DocProcessingConfig,
+    SemanticDocProcessingConfig,
     VectorDocument
 )
 
@@ -34,7 +40,18 @@ class UnsupportedFileFormatError(RuntimeError):
         )
 
 
-class LoadDocumentService:
+class BaseLoadDocumentService(ABC):
+
+    @abstractmethod
+    async def load_async(
+            self,
+            *args,
+            **kwargs
+    ) -> list[VectorDocument]:
+        pass
+
+
+class LoadDocumentService(BaseLoadDocumentService):
     """
     Service that wraps around langchain_core.document_loaders.base.BaseLoader
     to load documents asynchronously.
@@ -142,3 +159,70 @@ class LoadDocumentService:
             page_content=doc.page_content,
             metadata=doc.metadata
         )
+
+
+class UnsupportedSemanticFileFormatError(RuntimeError):
+    supported_formats = ['.pdf']
+
+    def __init__(self):
+        super().__init__(
+            f'Unsupported file formate provided. Currently supported are: {', '.join(self.supported_formats)}.'
+        )
+
+
+class SemanticLoadDocumentService(BaseLoadDocumentService):
+
+    async def load_async(
+            self,
+            files: dict[str, bytes] | None,
+            doc_proc_cnf: SemanticDocProcessingConfig,
+            embedding_function: embedding_functions.EmbeddingFunction
+    ) -> list[VectorDocument]:
+
+        chunker = WindowChunker(
+            embedding_function,
+            thresh=doc_proc_cnf.thresh,
+            max_chunk_size=doc_proc_cnf.max_chunk_size
+        )
+
+        all_docs = []
+        if files is not None:
+            for filename, bytes_ in files.items():
+                # checking extension
+                ext = filename.split('.')[-1]
+                self.check_file_ext(ext)
+
+                # extracting content
+                doc = pymupdf.open(filetype=ext, stream=bytes_)
+                full_text = " ".join(doc.load_page(i).get_text() for i in range(doc.page_count))
+
+                # chunking
+                splits = SentenceSplitter(full_text).__call__()
+                chunks = chunker(splits)
+
+                # mapping chunks to VectorDocument
+                vector_docs = self.map_chunks(chunks, filename)
+                all_docs.extend(vector_docs)
+
+        return all_docs
+
+    @staticmethod
+    def check_file_ext(ext: str) -> None:
+        if ext not in ['pdf']:
+            raise UnsupportedSemanticFileFormatError()
+
+    @staticmethod
+    def map_chunks(chunks: list[Chunk], filename: str) -> list[VectorDocument]:
+        documents = []
+        for chunk in chunks:
+            documents.append(VectorDocument(
+                page_content=chunk.join(),
+                metadata={
+                    'size': chunk.size,
+                    'chars': chunk.chars,
+                    'tokens': chunk.tokens,
+                    'filename': filename,
+                }
+            ))
+
+        return documents

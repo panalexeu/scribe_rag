@@ -10,8 +10,12 @@ from src.adapters.vector_collection_repository import (
     AbstractAsyncVectorCollectionRepository,
     AbstractAsyncDocumentRepository
 )
+from src.enums import DocProcType
 from src.di_container import Container
-from src.domain.services.load_document_service import LoadDocumentService
+from src.domain.services.load_document_service import (
+    BaseLoadDocumentService,
+    LoadDocumentService,
+)
 from src.adapters.chroma_models import VectorChromaDocument
 from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
 from src.domain.models import VectorCollection
@@ -19,6 +23,7 @@ from src.domain.models import VectorCollection
 
 class DocAddCommand(BaseModel, GenericQuery[None]):
     id_: int
+    cnf_type: DocProcType
     doc_processing_cnf_id: int
     files: dict[str, bytes] | None
     urls: list[str] | None
@@ -30,7 +35,9 @@ class DocAddHandler:
     def __init__(
             self,
             doc_proc_cnf_uow: AbstractUoW = Provide[Container.doc_proc_cnf_uow],
-            load_document_service: LoadDocumentService = Provide[Container.load_document_service],
+            sem_doc_proc_cnf_uow: AbstractUoW = Provide[Container.sem_doc_proc_cnf_uow],
+            load_document_service: BaseLoadDocumentService = Provide[Container.load_document_service],
+            sem_load_document_service: BaseLoadDocumentService = Provide[Container.sem_load_document_service],
             async_vector_collection_repository: Type[AbstractAsyncVectorCollectionRepository] = Provide[
                 Container.async_vector_collection_repository],
             async_vector_document_repository: Type[AbstractAsyncDocumentRepository] = Provide[
@@ -40,7 +47,9 @@ class DocAddHandler:
             embedding_model_builder_service: EmbeddingModelBuilder = Provide[Container.embedding_model_builder]
     ):
         self.doc_proc_cnf_uow = doc_proc_cnf_uow
+        self.sem_doc_proc_cnf_uow = sem_doc_proc_cnf_uow
         self.load_document_service = load_document_service
+        self.sem_load_document_service = sem_load_document_service
         self.async_vector_collection_repository = async_vector_collection_repository
         self.async_document_repository = async_vector_document_repository
         self.async_vector_db_client = async_vector_db_client
@@ -58,14 +67,26 @@ class DocAddHandler:
             ef = self.embedding_model_builder_service.build(vec_col_obj.embedding_model)
             collection = await vector_collection_repo.read(vec_col_obj.name, embedding_function=ef)
 
-        with self.doc_proc_cnf_uow as uow:
-            doc_proc_cnf = uow.repository.read(request.doc_processing_cnf_id)
+        # basic chunking with unstructured
+        if request.cnf_type == DocProcType.BASE:
+            with self.doc_proc_cnf_uow as uow:
+                doc_proc_cnf = uow.repository.read(request.doc_processing_cnf_id)
 
-        loaded_docs = await self.load_document_service.load_async(
-            files=request.files,
-            urls=request.urls,
-            doc_proc_cnf=doc_proc_cnf
-        )
+            loaded_docs = await self.load_document_service.load_async(
+                files=request.files,
+                urls=request.urls,
+                doc_proc_cnf=doc_proc_cnf
+            )
+        # semantic chunking with horchunk
+        else:
+            with self.sem_doc_proc_cnf_uow as uow:
+                sem_doc_proc_cnf = uow.repository.read(request.doc_processing_cnf_id)
+
+            loaded_docs = await self.sem_load_document_service.load_async(
+                files=request.files,
+                doc_proc_cnf=sem_doc_proc_cnf,
+                embedding_function=ef
+            )
 
         async_doc_repo = self.async_document_repository(collection)  # type: ignore
         return await async_doc_repo.add(loaded_docs)
