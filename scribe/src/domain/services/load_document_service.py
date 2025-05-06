@@ -3,8 +3,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Type
 
-from pymupdf4llm import to_markdown
-from pymupdf import open
+import pymupdf
 from langchain_unstructured.document_loaders import UnstructuredLoader
 from unstructured.cleaners.core import (
     bytes_string_to_string,
@@ -188,32 +187,32 @@ class SemanticLoadDocumentService(BaseLoadDocumentService):
 
         all_docs = []
         if files is not None:
-            for filename, bytes_ in files:
+            for filename, bytes_ in files.items():
                 # checking extension
                 ext = filename.split('.')[-1]
                 self.check_file_ext(ext)
 
                 # extracting content
-                document = open(ext, bytes_)
-                extracted_content = to_markdown(document).join(' ')
+                doc = pymupdf.open(filetype=ext, stream=bytes_)
+                full_text = " ".join(doc.load_page(i).get_text() for i in range(doc.page_count))
 
                 # chunking
-                splits = SentenceSplitter(extracted_content).__call__()
+                splits = SentenceSplitter(full_text).__call__()
                 chunks = chunker(splits)
 
                 # mapping chunks to VectorDocument
-                vector_docs = self.map_chunks(chunks)
+                vector_docs = self.map_chunks(chunks, filename)
                 all_docs.extend(vector_docs)
 
         return all_docs
 
     @staticmethod
     def check_file_ext(ext: str) -> None:
-        if ext not in ['pdf', 'txt', 'md']:
+        if ext not in ['pdf']:
             raise UnsupportedSemanticFileFormatError()
 
     @staticmethod
-    def map_chunks(chunks: list[Chunk]) -> list[VectorDocument]:
+    def map_chunks(chunks: list[Chunk], filename: str) -> list[VectorDocument]:
         documents = []
         for chunk in chunks:
             documents.append(VectorDocument(
@@ -221,6 +220,9 @@ class SemanticLoadDocumentService(BaseLoadDocumentService):
                 metadata={
                     'size': chunk.size,
                     'chars': chunk.chars,
-                    'tokens': chunk.tokens
+                    'tokens': chunk.tokens,
+                    'filename': filename,
                 }
             ))
+
+        return documents
