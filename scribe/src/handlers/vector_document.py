@@ -21,6 +21,11 @@ from src.domain.services.embedding_model_builder import EmbeddingModelBuilder
 from src.domain.models import VectorCollection
 
 
+class UnsupportedSemanticChunkingFormat(RuntimeError):
+    def __init__(self):
+        super().__init__(f'Semantic chunking supports only files in pdf format for processing.')
+
+
 class DocAddCommand(BaseModel, GenericQuery[None]):
     id_: int
     cnf_type: DocProcType
@@ -79,6 +84,10 @@ class DocAddHandler:
             )
         # semantic chunking with horchunk
         else:
+            # semantic chunking does not process urls
+            if request.urls:
+                raise UnsupportedSemanticChunkingFormat()
+
             with self.sem_doc_proc_cnf_uow as uow:
                 sem_doc_proc_cnf = uow.repository.read(request.doc_processing_cnf_id)
 

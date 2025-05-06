@@ -21,6 +21,7 @@ from src.domain.services.load_document_service import (
     UnsupportedFileFormatError,
     UnsupportedSemanticFileFormatError
 )
+from src.handlers.vector_document import UnsupportedSemanticChunkingFormat
 from .routers import (
     api_key_credential,
     system_prompt,
@@ -97,6 +98,14 @@ async def handle_unsupported_file_format_error(req, exc: UnsupportedFileFormatEr
 
 @app.exception_handler(UnsupportedSemanticFileFormatError)
 async def handle_unsupported_file_format_error(req, exc: UnsupportedSemanticFileFormatError):
+    raise HTTPException(
+        status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        detail=exc.__str__()
+    )
+
+
+@app.exception_handler(UnsupportedSemanticChunkingFormat)
+async def handle_unsupported_file_format_error(req, exc: UnsupportedSemanticChunkingFormat):
     raise HTTPException(
         status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         detail=exc.__str__()

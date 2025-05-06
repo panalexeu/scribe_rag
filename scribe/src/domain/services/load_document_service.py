@@ -175,7 +175,7 @@ class SemanticLoadDocumentService(BaseLoadDocumentService):
 
     async def load_async(
             self,
-            files: dict[str, bytes] | None,
+            files: dict[str, bytes],
             doc_proc_cnf: SemanticDocProcessingConfig,
             embedding_function: embedding_functions.EmbeddingFunction
     ) -> list[VectorDocument]:
@@ -187,24 +187,23 @@ class SemanticLoadDocumentService(BaseLoadDocumentService):
         )
 
         all_docs = []
-        if files is not None:
-            for filename, bytes_ in files.items():
-                # checking extension
-                ext = filename.split('.')[-1]
-                self.check_file_ext(ext)
+        for filename, bytes_ in files.items():
+            # checking extension
+            ext = filename.split('.')[-1]
+            self.check_file_ext(ext)
 
-                # extracting content
-                doc = pymupdf.open(filetype=ext, stream=bytes_)
-                full_text = " ".join(doc.load_page(i).get_text() for i in range(doc.page_count))
-                full_text = self.normalize_pdf(full_text)
+            # extracting content
+            doc = pymupdf.open(filetype=ext, stream=bytes_)
+            full_text = " ".join(doc.load_page(i).get_text() for i in range(doc.page_count))
+            full_text = self.normalize_pdf(full_text)
 
-                # chunking
-                splits = SentenceSplitter(full_text).__call__()
-                chunks = chunker(splits)
+            # chunking
+            splits = SentenceSplitter(full_text).__call__()
+            chunks = chunker(splits)
 
-                # mapping chunks to VectorDocument
-                vector_docs = self.map_chunks(chunks, filename)
-                all_docs.extend(vector_docs)
+            # mapping chunks to VectorDocument
+            vector_docs = self.map_chunks(chunks, filename)
+            all_docs.extend(vector_docs)
 
         return all_docs
 
