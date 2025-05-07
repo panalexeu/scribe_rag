@@ -56,7 +56,7 @@ def add_api_key(
     '/count'
 )
 @inject
-def count_api_key(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+def count_api_key(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int | None:
     query = ApiKeyCountQuery()
     return mediatr.send(query)
 

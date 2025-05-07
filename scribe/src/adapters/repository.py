@@ -46,7 +46,7 @@ class AbstractRepository[T](ABC):
     def delete(self, id_: int) -> None:
         pass
 
-    def count(self) -> int:
+    def count(self) -> int | None:
         pass
 
 
@@ -125,7 +125,7 @@ class SqlAlchemyRepository[T](AbstractRepository):
 
         self.session.delete(item)
 
-    def count(self) -> int:
+    def count(self) -> int | None:
         """
         Counts rows in a type_T table.
         """

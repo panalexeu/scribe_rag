@@ -120,7 +120,7 @@ class EmbeddingModelDeleteHandler:
             uow.commit()
 
 
-class EmbeddingModelCountQuery(BaseModel, GenericQuery[int]):
+class EmbeddingModelCountQuery(BaseModel, GenericQuery[int | None]):
     pass
 
 
@@ -133,6 +133,6 @@ class EmbeddingModelCountHandler:
     ):
         self.embedding_model_uow = embedding_model_uow
 
-    def handle(self, request: EmbeddingModelCountQuery) -> int:
+    def handle(self, request: EmbeddingModelCountQuery) -> int | None:
         with self.embedding_model_uow as uow:
             return uow.repository.count()

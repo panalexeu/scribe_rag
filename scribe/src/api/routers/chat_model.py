@@ -78,7 +78,7 @@ def add_chat_model(
     path='/count'
 )
 @inject
-def count_chat_model(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+def count_chat_model(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int | None:
     query = ChatModelCountQuery()
     return mediatr.send(query)
 

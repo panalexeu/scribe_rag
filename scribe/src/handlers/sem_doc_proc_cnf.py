@@ -133,7 +133,7 @@ class SemDocProcCnfDeleteHandler:
             uow.commit()
 
 
-class SemDocProcCnfCountQuery(GenericQuery[int]):
+class SemDocProcCnfCountQuery(GenericQuery[int | None]):
     pass
 
 
@@ -146,6 +146,6 @@ class SemDocProcCnfCountHandler:
     ):
         self.sem_doc_proc_cnf_uow = sem_doc_proc_cnf_uow
 
-    def handle(self, request: SemDocProcCnfCountQuery) -> int:
+    def handle(self, request: SemDocProcCnfCountQuery) -> int | None:
         with self.sem_doc_proc_cnf_uow as uow:
             return uow.repository.count()

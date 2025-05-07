@@ -57,7 +57,7 @@ def add_sys_prompt(
     '/count'
 )
 @inject
-def count_sys_prompt(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+def count_sys_prompt(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int | None:
     query = SystemPromptCountQuery()
     return mediatr.send(query)
 

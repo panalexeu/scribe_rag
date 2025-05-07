@@ -70,7 +70,7 @@ async def delete_vec_col(
 @inject
 def count_vec_col(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
-) -> int:
+) -> int | None:
     query = VecCollectionCountQuery()
     return mediatr.send(query)
 

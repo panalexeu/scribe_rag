@@ -119,7 +119,7 @@ class SystemPromptDeleteHandler:
             uow.commit()
 
 
-class SystemPromptCountQuery(GenericQuery[int]):
+class SystemPromptCountQuery(GenericQuery[int | None]):
     pass
 
 
@@ -132,6 +132,6 @@ class SystemPromptCountHandler:
     ):
         self.system_prompt_uow = system_prompt_uow
 
-    def handle(self, request: SystemPromptCountQuery) -> int:
+    def handle(self, request: SystemPromptCountQuery) -> int | None:
         with self.system_prompt_uow as uow:
             return uow.repository.count()

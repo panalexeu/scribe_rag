@@ -66,7 +66,7 @@ def add_embedding_model(
 @inject
 def count_embedding_model(
         mediatr: Mediator = Depends(Provide[Container.mediatr])
-) -> int:
+) -> int | None:
     query = EmbeddingModelCountQuery()
     return mediatr.send(query)
 

@@ -60,7 +60,7 @@ def add_sem_doc_proc_cnf(
     '/count'
 )
 @inject
-def count_sem_doc_proc_cnf(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+def count_sem_doc_proc_cnf(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int | None:
     query = SemDocProcCnfCountQuery()
     return mediatr.send(query)
 

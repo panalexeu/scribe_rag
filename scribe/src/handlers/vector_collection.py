@@ -124,7 +124,7 @@ class VecCollectionReadAllHandler:
             return uow.repository.read_all(**request.model_dump())  # type: ignore
 
 
-class VecCollectionCountQuery(GenericQuery[int]):
+class VecCollectionCountQuery(GenericQuery[int | None]):
     pass
 
 
@@ -137,6 +137,6 @@ class VecCollectionCountHandler:
     ):
         self.domain_vector_collection_uow = domain_vector_collection_uow
 
-    def handle(self, request: VecCollectionCountQuery) -> int:
+    def handle(self, request: VecCollectionCountQuery) -> int | None:
         with self.domain_vector_collection_uow as uow:
             return uow.repository.count()

@@ -134,7 +134,7 @@ class BaseChatDeleteHandler:
             uow.commit()
 
 
-class BaseChatCountQuery(GenericQuery[int]):
+class BaseChatCountQuery(GenericQuery[int | None]):
     pass
 
 
@@ -147,7 +147,7 @@ class BaseChatCountHandler:
     ):
         self.base_chat_uow = base_chat_uow
 
-    def handle(self, request: BaseChatCountQuery) -> int:
+    def handle(self, request: BaseChatCountQuery) -> int | None:
         with self.base_chat_uow as uow:
             return uow.repository.count()
 

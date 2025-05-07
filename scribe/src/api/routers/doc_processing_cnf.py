@@ -76,7 +76,7 @@ def add_doc_proc_cnf(
     '/count'
 )
 @inject
-def count_doc_proc_cnf(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+def count_doc_proc_cnf(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int | None:
     query = DocProcCountQuery()
     return mediatr.send(query)
 

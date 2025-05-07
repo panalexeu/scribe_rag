@@ -129,7 +129,7 @@ class DocProcCnfDeleteHandler:
             uow.commit()
 
 
-class DocProcCountQuery(GenericQuery[int]):
+class DocProcCountQuery(GenericQuery[int | None]):
     pass
 
 
@@ -142,6 +142,6 @@ class DocProcCountHandler:
     ):
         self.doc_proc_cnf_uow = doc_proc_cnf_uow
 
-    def handle(self, request: DocProcCountQuery) -> int:
+    def handle(self, request: DocProcCountQuery) -> int | None:
         with self.doc_proc_cnf_uow as uow:
             return uow.repository.count()

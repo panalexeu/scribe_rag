@@ -138,7 +138,7 @@ class ApiKeyDeleteHandler:
             uow.commit()
 
 
-class ApiKeyCountQuery(GenericQuery[int]):
+class ApiKeyCountQuery(GenericQuery[int | None]):
     pass
 
 
@@ -151,6 +151,6 @@ class ApiKeyCountHandler:
     ):
         self.api_key_uow = api_key_uow
 
-    def handle(self, request: ApiKeyCountQuery) -> int:
+    def handle(self, request: ApiKeyCountQuery) -> int | None:
         with self.api_key_uow as uow:
             return uow.repository.count()

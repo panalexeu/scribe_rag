@@ -76,7 +76,7 @@ def add_base_chat(
     '/count'
 )
 @inject
-def count_base_chat(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int:
+def count_base_chat(mediatr: Mediator = Depends(Provide[Container.mediatr])) -> int | None:
     query = BaseChatCountQuery()
     return mediatr.send(query)
 
