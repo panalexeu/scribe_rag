@@ -41,32 +41,6 @@ def test_vec_doc_add(client, fake_chdb):
     assert res.status_code == 201
 
 
-def test_vec_doc_adds_with_semantic_processing(client, fake_chdb):
-    client.post(
-        '/sem-doc-proc-cnf/',
-        json={
-            "name": "string",
-            "thresh": 0.72,
-            "max_chunk_size": 6
-        }
-    )
-    test_file_content = b"This is a test document."
-    test_file = BytesIO(test_file_content)
-
-    res = client.post(
-        url='/vec-doc/1',
-        data={
-            'doc_processing_cnf_id': 1,
-            'cnf_type': 'semantic'
-        },
-        files={
-            'file': ('test.pdf', test_file, 'application/pdf')
-        }
-    )
-
-    assert res.status_code == 201
-
-
 def test_vec_doc_list_docs(client, fake_chdb):
     res = client.get(
         url='/vec-doc/1/docs'

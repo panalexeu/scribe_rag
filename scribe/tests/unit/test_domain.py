@@ -205,7 +205,8 @@ def test_embedding_model_builder_correctly_assigns_provider():
 def test_embedding_model_builder_builds_models():
     model = EmbeddingModel(
         name=EmbeddingModelName.XLM_ROBERTA_UA_DISTILLED,
-        api_key_credential_id=0
+        api_key_credential_id=0,
+        device='cpu'
     )
 
     assert isinstance(EmbeddingModelBuilder(FakeCodec('fake-key')).build(model), EmbeddingFunction)
