@@ -6,6 +6,7 @@ from langchain_unstructured.document_loaders import UnstructuredLoader
 from langchain_core.documents.base import Document
 from langchain_core.prompts import ChatPromptTemplate
 
+from src.enums import Device
 from src.adapters.chat_model import LangchainChatModel
 from src.adapters.codecs import FakeCodec
 from src.domain.models import (
@@ -206,7 +207,7 @@ def test_embedding_model_builder_builds_models():
     model = EmbeddingModel(
         name=EmbeddingModelName.XLM_ROBERTA_UA_DISTILLED,
         api_key_credential_id=0,
-        device='cpu'
+        device=Device.CPU
     )
 
     assert isinstance(EmbeddingModelBuilder(FakeCodec('fake-key')).build(model), EmbeddingFunction)
