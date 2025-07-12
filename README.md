@@ -38,7 +38,7 @@ Semantic chunking configuration:
 
 ![sem_chunk](./imgs/sem_chunk.png)
 
-Vector collection configuration and document ingestion:
+Vector collection configuration and document ingestion (the request was: How to format formulas?):
 
 ![vec_col](./imgs/vector_collection.png)
 
