@@ -7,3 +7,7 @@
 [*] create markdown doc formatting;
 [*] rework document chunks render in;
 * https://docs.trychroma.com/docs/collections/configure - check this;
+create locustfile;
+check count; 
+that's it.
+
